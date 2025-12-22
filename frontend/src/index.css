@@ -542,13 +542,34 @@ main {
   position: relative;
   display: flex;
   gap: 1rem;
+  animation: slideInLeft 0.6s ease-out backwards;
+}
+
+.timeline-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.timeline-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.timeline-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.timeline-item:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.timeline-item:nth-child(5) {
+  animation-delay: 0.5s;
 }
 
 .timeline-number {
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  background: radial-gradient(circle at 0 0, #DD1764, #DD1764);
+  background: linear-gradient(135deg, #DD1764, #D81260);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -558,6 +579,45 @@ main {
   position: absolute;
   left: -1.9rem;
   top: 0.35rem;
+  transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(221, 23, 100, 0.3);
+  animation: scaleIn 0.5s ease-out backwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.timeline-item:nth-child(1) .timeline-number {
+  animation-delay: 0.15s;
+}
+
+.timeline-item:nth-child(2) .timeline-number {
+  animation-delay: 0.25s;
+}
+
+.timeline-item:nth-child(3) .timeline-number {
+  animation-delay: 0.35s;
+}
+
+.timeline-item:nth-child(4) .timeline-number {
+  animation-delay: 0.45s;
+}
+
+.timeline-item:nth-child(5) .timeline-number {
+  animation-delay: 0.55s;
+}
+
+.timeline-item:hover .timeline-number {
+  transform: scale(1.3) rotate(360deg);
+  box-shadow: 0 8px 24px rgba(221, 23, 100, 0.4);
 }
 
 .timeline-item h3 {

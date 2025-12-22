@@ -1,4 +1,9 @@
+import { useInView } from '../hooks/useInView'
+
 export default function PsychoEducationPage() {
+  const [cardRef1, cardInView1] = useInView()
+  const [cardRef2, cardInView2] = useInView()
+
   return (
     <main>
       <section className="section section-alt" style={{ paddingTop: '6rem' }}>
@@ -33,7 +38,7 @@ export default function PsychoEducationPage() {
         </div>
       </section>
 
-      <section className="section section-alt">
+      <section className={`section section-alt ${cardRef1 ? 'in-view' : ''}`} ref={cardRef1}>
         <div className="section-header">
           <p className="eyebrow">Psycho-education</p>
           <h2>Resources to begin your journey</h2>
