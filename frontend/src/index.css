@@ -186,9 +186,10 @@ main {
   position: sticky;
   top: 0;
   z-index: 20;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(180%);
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9));
-  border-bottom: 1px solid rgba(63, 41, 101, 0.15);
+  border-bottom: 1px solid rgba(63, 41, 101, 0.1);
+  box-shadow: 0 8px 32px rgba(63, 41, 101, 0.08);
 }
 
 .nav-inner {
@@ -212,13 +213,20 @@ main {
   width: 32px;
   height: 32px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 0, #DD1764, #DD1764);
+  background: linear-gradient(135deg, #DD1764, #D81260);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
   font-weight: 600;
   color: #FFFFFF;
+  transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(221, 23, 100, 0.25);
+}
+
+.brand:hover .brand-logo {
+  transform: scale(1.15) rotate(360deg);
+  box-shadow: 0 8px 20px rgba(221, 23, 100, 0.35);
 }
 
 .brand-text {
@@ -970,8 +978,24 @@ textarea {
   gap: 1.4rem;
 }
 
+.resource-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
 .resource-card h3 {
   margin-top: 0.35rem;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  transition: background-size 400ms ease;
+}
+
+.resource-card:hover h3 {
+  background-size: 100% 100%;
 }
 
 .muted {
@@ -989,8 +1013,9 @@ textarea {
 
 .site-footer {
   border-top: 1px solid rgba(63, 41, 101, 0.15);
-  background: rgba(248, 248, 248, 0.98);
+  background: linear-gradient(180deg, rgba(248, 248, 248, 0.98) 0%, rgba(245, 245, 245, 0.96) 100%);
   padding: 1.6rem 1.25rem 1.8rem;
+  animation: fadeInUp 0.6s ease-out 0.3s backwards;
 }
 
 .footer-inner {
@@ -1012,10 +1037,27 @@ textarea {
 .footer-links a {
   color: var(--text-soft);
   text-decoration: none;
+  transition: color 250ms ease;
+  position: relative;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .footer-links a:hover {
   color: var(--accent);
+}
+
+.footer-links a:hover::after {
+  width: 100%;
 }
 
 .policies {
