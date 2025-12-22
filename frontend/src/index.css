@@ -1,20 +1,20 @@
 :root {
-  --bg: #050810;
-  --bg-alt: #0b101c;
-  --card: #111827;
-  --accent: #7dd3fc;
-  --accent-soft: rgba(125, 211, 252, 0.06);
-  --accent-strong: #22c4f5;
-  --text: #e5e7eb;
-  --text-soft: #9ca3af;
-  --border-subtle: rgba(148, 163, 184, 0.3);
+  --bg: #FFFFFF;
+  --bg-alt: #f5f5f5;
+  --card: #f0f0f0;
+  --accent: #DD1764;
+  --accent-soft: rgba(221, 23, 100, 0.06);
+  --accent-strong: #DD1764;
+  --text: #3F2965;
+  --text-soft: #6b5b7f;
+  --border-subtle: rgba(63, 41, 101, 0.2);
   --danger: #f97373;
   --success: #4ade80;
   --radius-lg: 18px;
   --radius-md: 12px;
   --radius-pill: 999px;
-  --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.75);
-  --shadow-subtle: 0 18px 40px rgba(15, 23, 42, 0.6);
+  --shadow-soft: 0 24px 60px rgba(63, 41, 101, 0.15);
+  --shadow-subtle: 0 18px 40px rgba(63, 41, 101, 0.1);
 }
 
 * {
@@ -26,7 +26,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-  background: radial-gradient(circle at top, #020617 0%, #020617 35%, #020617 100%);
+  background: radial-gradient(circle at top, #FFFFFF 0%, #FFFFFF 35%, #FFFFFF 100%);
   background-color: var(--bg);
   color: var(--text);
   scroll-behavior: smooth;
@@ -42,10 +42,10 @@ body {
 
 .app-root {
   min-height: 100vh;
-  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.08) 0, rgba(15, 23, 42, 0) 45%),
-    radial-gradient(circle at 100% 0, rgba(129, 140, 248, 0.09) 0, rgba(15, 23, 42, 0) 45%),
-    radial-gradient(circle at 50% 100%, rgba(52, 211, 153, 0.05) 0, rgba(15, 23, 42, 0) 45%),
-    linear-gradient(to bottom, #020617, #020617 40%, #020617 100%);
+  background: radial-gradient(circle at 0 0, rgba(221, 23, 100, 0.03) 0, rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 100% 0, rgba(63, 41, 101, 0.02) 0, rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 50% 100%, rgba(221, 23, 100, 0.02) 0, rgba(255, 255, 255, 0) 45%),
+    linear-gradient(to bottom, #FFFFFF, #FFFFFF 40%, #FFFFFF 100%);
   color: var(--text);
   transition: opacity 500ms ease, transform 600ms ease;
   opacity: 0;
@@ -62,8 +62,8 @@ body {
   top: 0;
   z-index: 20;
   backdrop-filter: blur(20px);
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.7));
-  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9));
+  border-bottom: 1px solid rgba(63, 41, 101, 0.15);
 }
 
 .nav-inner {
@@ -87,13 +87,13 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 0, #7dd3fc, #22c4f5);
+  background: radial-gradient(circle at 30% 0, #DD1764, #DD1764);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #FFFFFF;
 }
 
 .brand-text {
@@ -129,8 +129,8 @@ body {
 }
 
 .nav-links button:hover {
-  border-color: rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(221, 23, 100, 0.3);
+  background: rgba(221, 23, 100, 0.08);
   color: var(--text);
   transform: translateY(-1px);
 }
@@ -173,11 +173,11 @@ body {
 }
 
 .journey-card {
-  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.35) 0, rgba(15, 23, 42, 0.1) 35%),
-    radial-gradient(circle at 100% 100%, rgba(94, 234, 212, 0.2) 0, rgba(15, 23, 42, 0.1) 35%),
-    rgba(15, 23, 42, 0.96);
+  background: radial-gradient(circle at 0 0, rgba(221, 23, 100, 0.08) 0, rgba(255, 255, 255, 0.1) 35%),
+    radial-gradient(circle at 100% 100%, rgba(221, 23, 100, 0.06) 0, rgba(255, 255, 255, 0.1) 35%),
+    rgba(245, 245, 245, 0.96);
   border-radius: 24px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  border: 1px solid rgba(63, 41, 101, 0.15);
   padding: 1.5rem 1.6rem;
   max-width: 360px;
   box-shadow: var(--shadow-soft);
@@ -198,9 +198,9 @@ body {
 }
 
 .section-alt {
-  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.08) 0, rgba(15, 23, 42, 0) 40%),
-    radial-gradient(circle at 100% 100%, rgba(76, 201, 240, 0.08) 0, rgba(15, 23, 42, 0) 40%),
-    rgba(15, 23, 42, 0.98);
+  background: radial-gradient(circle at 0 0, rgba(221, 23, 100, 0.03) 0, rgba(255, 255, 255, 0) 40%),
+    radial-gradient(circle at 100% 100%, rgba(63, 41, 101, 0.02) 0, rgba(255, 255, 255, 0) 40%),
+    rgba(250, 250, 250, 0.98);
 }
 
 .section-header {
@@ -251,7 +251,7 @@ body {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.96);
+  background: rgba(245, 245, 245, 0.96);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   padding: 1.4rem 1.5rem;
@@ -271,7 +271,7 @@ body {
 .timeline {
   max-width: 900px;
   margin: 0 auto;
-  border-left: 1px dashed rgba(148, 163, 184, 0.5);
+  border-left: 1px dashed rgba(63, 41, 101, 0.3);
   padding-left: 1.4rem;
   display: flex;
   flex-direction: column;
@@ -288,13 +288,13 @@ body {
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  background: radial-gradient(circle at 0 0, #7dd3fc, #22c4f5);
+  background: radial-gradient(circle at 0 0, #DD1764, #DD1764);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #FFFFFF;
   position: absolute;
   left: -1.9rem;
   top: 0.35rem;
@@ -322,7 +322,7 @@ body {
 }
 
 .journey-stage {
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.95));
+  background: linear-gradient(to top, rgba(245, 245, 245, 0.3), rgba(255, 255, 255, 0.95));
   border-radius: 20px;
   border: 1px solid var(--border-subtle);
   padding: 1rem 1rem 1.2rem;
@@ -381,8 +381,8 @@ input,
 select,
 textarea {
   border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(63, 41, 101, 0.2);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--text);
   padding: 0.55rem 0.75rem;
   font-size: 0.84rem;
@@ -401,10 +401,10 @@ textarea {
 }
 
 .primary-btn {
-  background: linear-gradient(to right, #7dd3fc, #22c4f5);
+  background: linear-gradient(to right, #DD1764, #DD1764);
   border-radius: var(--radius-pill);
   border: none;
-  color: #0f172a;
+  color: #FFFFFF;
   padding: 0.6rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
@@ -414,12 +414,12 @@ textarea {
   justify-content: center;
   gap: 0.35rem;
   transition: transform 120ms ease, box-shadow 160ms ease;
-  box-shadow: 0 14px 35px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 14px 35px rgba(221, 23, 100, 0.3);
 }
 
 .primary-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 40px rgba(56, 189, 248, 0.45);
+  box-shadow: 0 18px 40px rgba(221, 23, 100, 0.35);
 }
 
 .primary-btn:disabled {
@@ -430,8 +430,8 @@ textarea {
 
 .secondary-btn {
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(63, 41, 101, 0.2);
+  background: rgba(240, 240, 240, 0.9);
   color: var(--text);
   padding: 0.55rem 1.3rem;
   font-size: 0.85rem;
@@ -444,8 +444,8 @@ textarea {
 }
 
 .secondary-btn:hover {
-  background: rgba(30, 64, 175, 0.9);
-  border-color: rgba(129, 140, 248, 0.9);
+  background: rgba(221, 23, 100, 0.1);
+  border-color: rgba(221, 23, 100, 0.5);
   transform: translateY(-1px);
 }
 
@@ -474,8 +474,8 @@ textarea {
 
 .pill {
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(63, 41, 101, 0.2);
+  background: rgba(240, 240, 240, 0.9);
   color: var(--text-soft);
   padding: 0.35rem 0.9rem;
   font-size: 0.8rem;
@@ -483,9 +483,9 @@ textarea {
 }
 
 .pill.active {
-  border-color: rgba(125, 211, 252, 1);
-  color: #0f172a;
-  background: linear-gradient(to right, #7dd3fc, #22c4f5);
+  border-color: rgba(221, 23, 100, 0.6);
+  color: #FFFFFF;
+  background: linear-gradient(to right, #DD1764, #DD1764);
 }
 
 .pill.small {
@@ -505,8 +505,8 @@ textarea {
 .info-pill {
   margin-top: 1rem;
   border-radius: var(--radius-md);
-  border: 1px dashed rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.9);
+  border: 1px dashed rgba(63, 41, 101, 0.2);
+  background: rgba(245, 245, 245, 0.9);
   padding: 0.75rem 0.8rem;
   font-size: 0.8rem;
   color: var(--text-soft);
@@ -559,8 +559,8 @@ textarea {
 }
 
 .site-footer {
-  border-top: 1px solid rgba(148, 163, 184, 0.4);
-  background: rgba(15, 23, 42, 0.98);
+  border-top: 1px solid rgba(63, 41, 101, 0.15);
+  background: rgba(248, 248, 248, 0.98);
   padding: 1.6rem 1.25rem 1.8rem;
 }
 
@@ -613,7 +613,7 @@ textarea {
   padding: 1rem 1.1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
-  background: rgba(15, 23, 42, 0.96);
+  background: rgba(245, 245, 245, 0.96);
 }
 
 .faq-item summary {
@@ -665,7 +665,7 @@ textarea {
 .admin-table th,
 .admin-table td {
   padding: 0.5rem 0.6rem;
-  border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+  border-bottom: 1px solid rgba(63, 41, 101, 0.15);
 }
 
 .admin-table th {
@@ -714,8 +714,8 @@ textarea {
 .chatbot-panel {
   width: min(320px, 90vw);
   border-radius: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: radial-gradient(circle at 0 0, rgba(125, 211, 252, 0.25) 0, rgba(15, 23, 42, 0.98) 55%);
+  border: 1px solid rgba(63, 41, 101, 0.15);
+  background: radial-gradient(circle at 0 0, rgba(221, 23, 100, 0.08) 0, rgba(255, 255, 255, 0.98) 55%);
   box-shadow: var(--shadow-soft);
   padding: 0.9rem 1rem 1rem;
   margin-bottom: 0.7rem;
@@ -748,19 +748,19 @@ textarea {
 
 .chatbot-toggle {
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(148, 163, 184, 0.8);
-  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(63, 41, 101, 0.2);
+  background: rgba(245, 245, 245, 0.98);
   color: var(--text);
   padding: 0.4rem 0.9rem;
   font-size: 0.8rem;
   cursor: pointer;
-  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.8);
+  box-shadow: 0 14px 35px rgba(63, 41, 101, 0.1);
 }
 
 .icon-btn {
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(63, 41, 101, 0.2);
+  background: rgba(240, 240, 240, 0.9);
   color: var(--text-soft);
   width: 26px;
   height: 26px;
