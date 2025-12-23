@@ -132,37 +132,51 @@ function ChatbotWidget() {
 
 function Header() {
   const navigate = useNavigate()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false)
 
   return (
     <header className="top-nav">
       <div className="nav-inner">
-        <div className="brand" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+        <div className="brand" onClick={() => { navigate('/'); closeMobileMenu() }} style={{ cursor: 'pointer' }}>
           <img
             src="/Mindsettler_logo_Final-Photoroom.png"
             alt="MindSettler by Parnika - Psycho-education & mental well-being studio"
             className="brand-logo-img"
           />
         </div>
-        <nav className="nav-links">
-          <a href="/about">
+
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label="Toggle navigation menu"
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
+        >
+          <span className="nav-toggle-bar" />
+          <span className="nav-toggle-bar" />
+        </button>
+
+        <nav className={`nav-links ${isMobileMenuOpen ? 'nav-links-open' : ''}`}>
+          <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
           </a>
-          <a href="/psycho-education">
+          <a href="/psycho-education" onClick={closeMobileMenu}>
             <button type="button">Psycho-education</button>
           </a>
-          <a href="/journey">
+          <a href="/journey" onClick={closeMobileMenu}>
             <button type="button">Journey</button>
           </a>
-          <a href="/booking">
+          <a href="/booking" onClick={closeMobileMenu}>
             <button type="button">Book a session</button>
           </a>
-          <a href="/corporate">
+          <a href="/corporate" onClick={closeMobileMenu}>
             <button type="button">Corporate</button>
           </a>
-          <a href="/faqs">
+          <a href="/faqs" onClick={closeMobileMenu}>
             <button type="button">FAQs</button>
           </a>
-          <a href="/contact">
+          <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
           </a>
         </nav>
