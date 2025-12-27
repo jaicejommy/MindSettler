@@ -1,15 +1,21 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const { v4: uuidv4 } = require('uuid')
-const { readData, writeData } = require('./config/db')
+const connectDB = require('./config/db')
+
+// Models
+const Booking = require('./models/Booking')
+const DisabledSlot = require('./models/DisabledSlot')
+const Contact = require('./models/Contact')
+const CorporateRequest = require('./models/CorporateRequest')
 
 dotenv.config()
+connectDB()
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
-// Basic config
+// Middleware
 app.use(express.json())
 app.use(
   cors({
@@ -17,209 +23,246 @@ app.use(
   }),
 )
 
-// Utility: basic slot config controlled on backend
-const DAILY_SLOTS = [
-  '08:00',
-  '10:00',
-  '12:00',
-  '14:00',
-  '16:00',
-  '18:00',
-]
+// Fixed daily slots
+const DAILY_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00']
 
-function getAvailableSlots(date) {
-  const data = readData()
-  const disabledForDate = data.disabledSlots[date] || []
-  const takenSlots = new Set(
-    data.bookings
-      .filter(
-        (b) =>
-          b.date === date &&
-          (b.status === 'pending' || b.status === 'confirmed'),
-      )
-      .map((b) => b.time),
-  )
+// Utility: get available slots for a date
+async function getAvailableSlots(date) {
+  // Booked slots (pending or confirmed)
+  const bookings = await Booking.find({
+    date,
+    status: { $in: ['pending', 'confirmed'] },
+  }).select('time')
+
+  const takenSlots = new Set(bookings.map((b) => b.time))
+
+  // Disabled slots
+  const disabled = await DisabledSlot.find({ date }).select('time')
+  const disabledSlots = new Set(disabled.map((d) => d.time))
 
   return DAILY_SLOTS.map((time) => ({
     time,
-    isAvailable: !takenSlots.has(time) && !disabledForDate.includes(time),
+    isAvailable: !takenSlots.has(time) && !disabledSlots.has(time),
   }))
 }
 
-// ROUTES
+// ================= ROUTES =================
+
+// Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'MindSettler backend' })
 })
 
-// Get slots for a specific date
-app.get('/api/slots', (req, res) => {
-  const { date } = req.query
-  if (!date) {
-    return res.status(400).json({ message: 'date query param is required (YYYY-MM-DD)' })
+// Get slots for a date
+app.get('/api/slots', async (req, res) => {
+  try {
+    const { date } = req.query
+    if (!date) {
+      return res
+        .status(400)
+        .json({ message: 'date query param is required (YYYY-MM-DD)' })
+    }
+
+    const slots = await getAvailableSlots(date)
+    res.json({ date, slots })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch slots' })
   }
-  const slots = getAvailableSlots(date)
-  res.json({ date, slots })
 })
 
-// Create a new booking (appointment)
-app.post('/api/bookings', (req, res) => {
-  const {
-    name,
-    email,
-    phone,
-    mode, // online | offline
-    sessionType,
-    isFirstSession,
-    date,
-    time,
-    notes,
-  } = req.body || {}
+// Create booking
+app.post('/api/bookings', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      mode,
+      sessionType,
+      isFirstSession,
+      date,
+      time,
+      notes,
+    } = req.body || {}
 
-  if (!name || !email || !date || !time) {
-    return res.status(400).json({ message: 'name, email, date and time are required' })
+    if (!name || !email || !date || !time) {
+      return res
+        .status(400)
+        .json({ message: 'name, email, date and time are required' })
+    }
+
+    const slots = await getAvailableSlots(date)
+    const selected = slots.find((s) => s.time === time)
+
+    if (!selected || !selected.isAvailable) {
+      return res
+        .status(400)
+        .json({ message: 'Selected slot is no longer available' })
+    }
+
+    const booking = await Booking.create({
+      name,
+      email,
+      phone: phone || '',
+      mode: mode || 'online',
+      sessionType: sessionType || 'individual',
+      isFirstSession: Boolean(isFirstSession),
+      date,
+      time,
+      notes: notes || '',
+      status: 'pending',
+    })
+
+    res.status(201).json({
+      message:
+        'Booking request received. You will be contacted for confirmation.',
+      booking,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to create booking' })
   }
-
-  const data = readData()
-  const existingSlots = getAvailableSlots(date)
-  const selectedSlot = existingSlots.find((s) => s.time === time)
-  if (!selectedSlot || !selectedSlot.isAvailable) {
-    return res.status(400).json({ message: 'Selected slot is no longer available' })
-  }
-
-  const booking = {
-    id: uuidv4(),
-    name,
-    email,
-    phone: phone || '',
-    mode: mode || 'online',
-    sessionType: sessionType || 'individual',
-    isFirstSession: Boolean(isFirstSession),
-    date,
-    time,
-    notes: notes || '',
-    status: 'pending', // pending | confirmed | rejected
-    createdAt: new Date().toISOString(),
-  }
-
-  data.bookings.push(booking)
-  writeData(data)
-
-  res.status(201).json({
-    message: 'Booking request received. You will be contacted for confirmation.',
-    booking,
-  })
 })
 
-// List bookings (basic admin usage)
-app.get('/api/bookings', (_req, res) => {
-  const data = readData()
-  res.json({ bookings: data.bookings })
+// List bookings (admin)
+app.get('/api/bookings', async (_req, res) => {
+  try {
+    const bookings = await Booking.find().sort({ createdAt: -1 })
+    res.json({ bookings })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch bookings' })
+  }
 })
 
 // Update booking status (admin)
-app.patch('/api/bookings/:id/status', (req, res) => {
-  const { id } = req.params
-  const { status } = req.body || {}
-  if (!['pending', 'confirmed', 'rejected'].includes(status)) {
-    return res.status(400).json({ message: 'Invalid status' })
-  }
+app.patch('/api/bookings/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { status } = req.body || {}
 
-  const data = readData()
-  const booking = data.bookings.find((b) => b.id === id)
-  if (!booking) {
-    return res.status(404).json({ message: 'Booking not found' })
-  }
-
-  booking.status = status
-  booking.updatedAt = new Date().toISOString()
-  writeData(data)
-
-  res.json({ message: 'Status updated', booking })
-})
-
-// Disable or enable a time slot for a specific date (admin)
-app.post('/api/slots/disable', (req, res) => {
-  const { date, time, disabled } = req.body || {}
-  if (!date || !time) {
-    return res.status(400).json({ message: 'date and time are required' })
-  }
-
-  const data = readData()
-  if (!data.disabledSlots[date]) {
-    data.disabledSlots[date] = []
-  }
-
-  if (disabled) {
-    if (!data.disabledSlots[date].includes(time)) {
-      data.disabledSlots[date].push(time)
+    if (!['pending', 'confirmed', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' })
     }
-  } else {
-    data.disabledSlots[date] = data.disabledSlots[date].filter((t) => t !== time)
-  }
 
-  writeData(data)
-  res.json({ message: 'Slot updated', disabledSlots: data.disabledSlots })
+    const booking = await Booking.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true },
+    )
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' })
+    }
+
+    res.json({ message: 'Status updated', booking })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to update status' })
+  }
 })
 
-// Contact form submissions
-app.post('/api/contact', (req, res) => {
-  const { name, email, phone, message, preferredChannel } = req.body || {}
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: 'name, email and message are required' })
-  }
+// Disable / enable slot (admin)
+app.post('/api/slots/disable', async (req, res) => {
+  try {
+    const { date, time, disabled } = req.body || {}
 
-  const data = readData()
-  const contact = {
-    id: uuidv4(),
-    name,
-    email,
-    phone: phone || '',
-    preferredChannel: preferredChannel || 'email',
-    message,
-    createdAt: new Date().toISOString(),
-  }
-  data.contacts.push(contact)
-  writeData(data)
+    if (!date || !time) {
+      return res
+        .status(400)
+        .json({ message: 'date and time are required' })
+    }
 
-  res.status(201).json({ message: 'Thank you for reaching out. We will contact you shortly.', contact })
+    if (disabled) {
+      await DisabledSlot.updateOne(
+        { date, time },
+        { date, time },
+        { upsert: true },
+      )
+    } else {
+      await DisabledSlot.deleteOne({ date, time })
+    }
+
+    res.json({ message: 'Slot updated' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to update slot' })
+  }
 })
 
-// Corporate services enquiry
-app.post('/api/corporate', (req, res) => {
-  const { organizationName, contactPerson, email, phone, requirements, groupSize } = req.body || {}
+// Contact form
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, phone, message, preferredChannel } = req.body || {}
 
-  if (!organizationName || !contactPerson || !email) {
-    return res
-      .status(400)
-      .json({ message: 'organizationName, contactPerson and email are required' })
+    if (!name || !email || !message) {
+      return res
+        .status(400)
+        .json({ message: 'name, email and message are required' })
+    }
+
+    const contact = await Contact.create({
+      name,
+      email,
+      phone: phone || '',
+      preferredChannel: preferredChannel || 'email',
+      message,
+    })
+
+    res.status(201).json({
+      message: 'Thank you for reaching out. We will contact you shortly.',
+      contact,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to submit contact form' })
   }
-
-  const data = readData()
-  const corporateRequest = {
-    id: uuidv4(),
-    organizationName,
-    contactPerson,
-    email,
-    phone: phone || '',
-    requirements: requirements || '',
-    groupSize: groupSize || '',
-    createdAt: new Date().toISOString(),
-  }
-  data.corporateRequests.push(corporateRequest)
-  writeData(data)
-
-  res.status(201).json({
-    message:
-      'Your corporate enquiry has been received. MindSettler will connect with you to design a suitable workshop or program.',
-    corporateRequest,
-  })
 })
 
-// Fallback 404
-app.use((req, res) => {
+// Corporate enquiry
+app.post('/api/corporate', async (req, res) => {
+  try {
+    const {
+      organizationName,
+      contactPerson,
+      email,
+      phone,
+      requirements,
+      groupSize,
+    } = req.body || {}
+
+    if (!organizationName || !contactPerson || !email) {
+      return res.status(400).json({
+        message: 'organizationName, contactPerson and email are required',
+      })
+    }
+
+    const corporateRequest = await CorporateRequest.create({
+      organizationName,
+      contactPerson,
+      email,
+      phone: phone || '',
+      requirements: requirements || '',
+      groupSize: groupSize || '',
+    })
+
+    res.status(201).json({
+      message:
+        'Your corporate enquiry has been received. MindSettler will connect with you.',
+      corporateRequest,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to submit corporate enquiry' })
+  }
+})
+
+// 404 fallback
+app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })
 })
 
 app.listen(PORT, () => {
-  console.log(`MindSettler backend is running on port ${PORT}`)
+  console.log(`🚀 MindSettler backend running on port ${PORT}`)
 })
