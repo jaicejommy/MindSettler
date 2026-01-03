@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import './overrides.css'
 
@@ -16,6 +16,8 @@ import BookingPage from './pages/BookingPage'
 import CorporatePage from './pages/CorporatePage'
 import FAQsPage from './pages/FAQsPage'
 import ContactPage from './pages/ContactPage'
+import AdminLoginPage from './pages/AdminLoginPage'
+import AdminDashboardPage from './pages/AdminDashboardPage'
 
 function App() {
   const [isReady, setIsReady] = useState(false)
@@ -23,6 +25,8 @@ function App() {
   useEffect(() => {
     setIsReady(true)
   }, [])
+
+  const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
 
   return (
     <div className={`app-root ${isReady ? 'app-ready' : ''}`}>
@@ -36,6 +40,14 @@ function App() {
           <Route path="/corporate" element={<CorporatePage />} />
           <Route path="/faqs" element={<FAQsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              isAdminAuthed ? <AdminDashboardPage /> : <Navigate to="/admin/login" />
+            }
+          />
         </Routes>
       </Layout>
     </div>

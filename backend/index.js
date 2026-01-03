@@ -23,8 +23,48 @@ app.use(
   }),
 )
 
+// ================= SIMPLE ADMIN AUTH (STATIC) =================
+// NOTE: This is a very basic, hard-coded admin login as requested.
+// Username: admin, Password: asdfghjkl123
+// It returns a static token that the frontend can store and use.
+
+const ADMIN_USERNAME = 'admin'
+const ADMIN_PASSWORD = 'asdfghjkl123'
+const ADMIN_TOKEN = 'mindsettler-admin-static-token'
+
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body || {}
+
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    return res.json({ token: ADMIN_TOKEN })
+  }
+
+  return res.status(401).json({ message: 'Invalid credentials' })
+})
+
+// Optional simple middleware for any future protected admin routes
+function requireAdmin(req, res, next) {
+  const auth = req.headers['authorization'] || ''
+  const token = auth.replace('Bearer ', '')
+
+  if (token === ADMIN_TOKEN) {
+    return next()
+  }
+
+  return res.status(401).json({ message: 'Unauthorized' })
+}
+
 // Fixed daily slots
 const DAILY_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00']
+
+function isPastDate(dateStr) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const candidate = new Date(year, month - 1, day)
+  candidate.setHours(0, 0, 0, 0)
+  return candidate < today
+}
 
 // Utility: get available slots for a date
 async function getAvailableSlots(date) {
@@ -63,6 +103,10 @@ app.get('/api/slots', async (req, res) => {
         .json({ message: 'date query param is required (YYYY-MM-DD)' })
     }
 
+    if (isPastDate(date)) {
+      return res.status(400).json({ message: 'Cannot fetch slots for a past date' })
+    }
+
     const slots = await getAvailableSlots(date)
     res.json({ date, slots })
   } catch (err) {
@@ -90,6 +134,10 @@ app.post('/api/bookings', async (req, res) => {
       return res
         .status(400)
         .json({ message: 'name, email, date and time are required' })
+    }
+
+    if (isPastDate(date)) {
+      return res.status(400).json({ message: 'Cannot book a slot in the past' })
     }
 
     const slots = await getAvailableSlots(date)
@@ -220,6 +268,17 @@ app.post('/api/contact', async (req, res) => {
   }
 })
 
+// List contact submissions (admin)
+app.get('/api/contact', async (_req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 })
+    res.json({ contacts })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch contacts' })
+  }
+})
+
 // Corporate enquiry
 app.post('/api/corporate', async (req, res) => {
   try {
@@ -255,6 +314,17 @@ app.post('/api/corporate', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to submit corporate enquiry' })
+  }
+})
+
+// List corporate enquiries (admin)
+app.get('/api/corporate', async (_req, res) => {
+  try {
+    const corporateRequests = await CorporateRequest.find().sort({ createdAt: -1 })
+    res.json({ corporateRequests })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch corporate enquiries' })
   }
 })
 

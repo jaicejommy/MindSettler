@@ -179,6 +179,13 @@ function Header() {
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
           </a>
+
+          {/* Admin login button */}
+          <a href="/admin/login" onClick={closeMobileMenu}>
+            <button type="button" className="nav-admin-btn">
+              Login
+            </button>
+          </a>
         </nav>
       </div>
     </header>

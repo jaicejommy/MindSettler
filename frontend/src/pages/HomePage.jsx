@@ -315,8 +315,6 @@ export default function HomePage() {
           </div>
           </div>
 
-
-
           <div className="mindsettler-reel-wrapper">
             <div className="mindsettler-reel-frame">
               <iframe

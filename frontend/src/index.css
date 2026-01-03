@@ -1876,3 +1876,242 @@ textarea {
   }
 }
 
+/* Admin shell */
+.admin-dashboard-page {
+  padding: 2.5rem 0 3rem;
+  min-height: 100vh;
+  background: radial-gradient(
+    circle at top left,
+    #ffe6f2 0%,
+    #f4f0ff 35%,
+    #f7fafc 100%
+  );
+}
+
+.admin-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem 2.5rem;
+  border-radius: 24px;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.65)
+  );
+  box-shadow:
+    0 24px 80px rgba(31, 41, 55, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px);
+}
+
+/* Top bar */
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.admin-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #271047;
+}
+
+.admin-subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  color: #7b6b9a;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 30px rgba(55, 65, 81, 0.12);
+}
+
+.admin-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7ab8, #a855f7);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-user-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #312e81;
+}
+
+.admin-user-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(107, 33, 168, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.85);
+  color: #4b5563;
+}
+
+.btn-outline:hover {
+  background: #faf5ff;
+  border-color: #6b21a8;
+  color: #111827;
+}
+
+.btn-small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-secondary {
+  background: rgba(148, 163, 184, 0.15);
+  color: #475569;
+}
+
+.btn-secondary:hover {
+  background: rgba(148, 163, 184, 0.28);
+}
+
+/* Stats */
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.admin-stat-card {
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, #ffffff, #f5f3ff);
+  box-shadow: 0 14px 35px rgba(148, 163, 184, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.admin-stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+.admin-stat-value {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.admin-stat-pill {
+  margin-top: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background: rgba(79, 70, 229, 0.06);
+  color: #4b5563;
+}
+
+.stat-success {
+  background: rgba(16, 185, 129, 0.08);
+  color: #047857;
+}
+
+.stat-pill-warning {
+  background: rgba(251, 191, 36, 0.12);
+  color: #92400e;
+}
+
+/* Layout */
+.admin-main {
+  position: relative;
+}
+
+.admin-status-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.admin-status-error {
+  color: #b91c1c;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 2.1fr 1.4fr;
+  gap: 1.5rem;
+}
+
+.admin-panel {
+  padding: 1.1rem 1.25rem 1.2rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 20px 45px rgba(31, 41, 55, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14px);
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.85rem;
+}
+
+.admin-panel-description {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+/* Table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
