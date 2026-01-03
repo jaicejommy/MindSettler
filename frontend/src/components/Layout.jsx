@@ -134,7 +134,20 @@ function Header() {
   const navigate = useNavigate()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false)
+
+  const handleAdminClick = () => {
+    navigate('/admin')
+    closeMobileMenu()
+  }
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('mindsettler_admin_token')
+    navigate('/admin/login')
+    closeMobileMenu()
+  }
 
   return (
     <header className="top-nav">
@@ -180,12 +193,20 @@ function Header() {
             <button type="button">Contact</button>
           </a>
 
-          {/* Admin login button */}
-          <a href="/admin/login" onClick={closeMobileMenu}>
-            <button type="button" className="nav-admin-btn">
-              Login
-            </button>
-          </a>
+          {/* Admin login / dashboard */}
+          {isAdminAuthed ? (
+            <a href="/admin" onClick={closeMobileMenu}>
+              <button type="button" className="nav-admin-btn">
+                Dashboard
+              </button>
+            </a>
+          ) : (
+            <a href="/admin/login" onClick={closeMobileMenu}>
+              <button type="button" className="nav-admin-btn">
+                Login
+              </button>
+            </a>
+          )}
         </nav>
       </div>
     </header>
