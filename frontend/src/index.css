@@ -1877,19 +1877,21 @@ textarea {
   border: none;
 }
 
-.sparkle {
+ .sparkle {
   position: fixed;
   pointer-events: none;
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  /* Strong enough to be clearly visible on white, but not fully solid */
   background: radial-gradient(circle,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(221, 23, 100, 0.85) 40%,
-    transparent 70%
+    rgba(63, 41, 101, 0.9) 0%,     /* deep purple core */
+    rgba(221, 23, 100, 0.9) 40%,   /* strong accent pink */
+    rgba(221, 23, 100, 0.35) 75%,  /* outer glow */
+    transparent 92%
   );
-  mix-blend-mode: screen;
-  filter: blur(0.3px);
+  mix-blend-mode: normal;
+  filter: blur(0.25px);
   animation: sparkle-fade 600ms ease-out forwards;
   z-index: 9999;
 }
