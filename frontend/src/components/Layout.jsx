@@ -228,9 +228,9 @@ function Footer() {
         <div className="footer-section">
           <h4 className="footer-section-title">Policies</h4>
           <div className="footer-links">
-            <a href="#policies">Privacy</a>
-            <a href="#policies">Non-refund policy</a>
-            <a href="#policies">Confidentiality</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/non-refund">Non-refund policy</a>
+            <a href="/confidentiality">Confidentiality</a>
           </div>
         </div>
         <div className="footer-section">

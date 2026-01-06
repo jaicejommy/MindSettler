@@ -18,6 +18,9 @@ import FAQsPage from './pages/FAQsPage'
 import ContactPage from './pages/ContactPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import PrivacyPage from './pages/PrivacyPage'
+import NonRefundPage from './pages/NonRefundPage'
+import ConfidentialityPage from './pages/ConfidentialityPage'
 
 function App() {
   const [isReady, setIsReady] = useState(false)
@@ -40,6 +43,9 @@ function App() {
           <Route path="/corporate" element={<CorporatePage />} />
           <Route path="/faqs" element={<FAQsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/non-refund" element={<NonRefundPage />} />
+          <Route path="/confidentiality" element={<ConfidentialityPage />} />
 
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route
