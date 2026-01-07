@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ChatBot from './ChatBot'
 
 function ChatbotWidget() {
   const [open, setOpen] = useState(false)
@@ -267,7 +268,7 @@ export default function Layout({ children }) {
       <Header />
       {children}
       <Footer />
-      <ChatbotWidget />
+      <ChatBot />
     </div>
   )
 }

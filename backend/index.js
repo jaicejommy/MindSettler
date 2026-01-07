@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
 const connectDB = require('./config/db')
+const { GoogleGenerativeAI } = require('@google/generative-ai')
 
 // Models
 const Booking = require('./models/Booking')
@@ -14,6 +15,12 @@ connectDB()
 
 const app = express()
 const PORT = process.env.PORT || 5000
+
+// Initialize Gemini AI (force v1 to avoid v1beta 404s)
+const genAI = new GoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+  apiVersion: 'v1',
+})
 
 // Middleware
 app.use(express.json())
@@ -325,6 +332,68 @@ app.get('/api/corporate', async (_req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to fetch corporate enquiries' })
+  }
+})
+
+// ================= CHATBOT ENDPOINT =================
+app.post('/api/chatbot', async (req, res) => {
+  try {
+    const { message, conversationHistory = [] } = req.body
+
+    if (!message) {
+      return res.status(400).json({ message: 'Message is required' })
+    }
+
+    // System prompt with context about MindSettler
+    const systemPrompt = `You are a helpful assistant for MindSettler, a mental health and wellness platform. 
+    
+About MindSettler:
+- MindSettler provides psychological counseling and therapy services
+- We offer individual counseling sessions, psycho-education, and corporate wellness programs
+- Our services include stress management, anxiety treatment, relationship counseling, and more
+- We have experienced psychologists and counselors
+- Booking slots are available from 8:00 AM to 6:00 PM
+- Sessions can be booked online through our website
+
+Your role:
+- Answer questions about mental health services, booking process, and wellness
+- Be empathetic, professional, and supportive
+- Provide helpful information about our services
+- Guide users on how to book appointments or contact us
+- If asked about emergencies, advise them to contact emergency services or our helpline
+- Keep responses concise but informative (2-3 sentences usually)
+
+Important: You provide general information and support, but you are not a substitute for professional mental health care.`
+
+    // Initialize the model (v1 models use -latest names)
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
+
+    // Build conversation context
+    let prompt = systemPrompt + '\n\n'
+    
+    // Add conversation history
+    if (conversationHistory.length > 0) {
+      prompt += 'Previous conversation:\n'
+      conversationHistory.slice(-6).forEach((msg) => {
+        prompt += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n`
+      })
+      prompt += '\n'
+    }
+
+    prompt += `User: ${message}\nAssistant:`
+
+    // Generate response
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const botReply = response.text()
+
+    res.json({ reply: botReply })
+  } catch (err) {
+    console.error('Chatbot error:', err)
+    res.status(500).json({ 
+      message: 'Sorry, I encountered an error. Please try again.',
+      error: err.message 
+    })
   }
 })
 
