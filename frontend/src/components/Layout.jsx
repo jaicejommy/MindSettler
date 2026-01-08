@@ -193,6 +193,9 @@ function Header() {
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
           </a>
+          <a href="/auth" onClick={closeMobileMenu}>
+            <button type="button">Sign in</button>
+          </a>
 
           {/* Admin login / dashboard */}
           {isAdminAuthed ? (

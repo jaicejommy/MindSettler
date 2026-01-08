@@ -9,6 +9,10 @@ const Booking = require('./models/Booking')
 const DisabledSlot = require('./models/DisabledSlot')
 const Contact = require('./models/Contact')
 const CorporateRequest = require('./models/CorporateRequest')
+const User = require('./models/User')
+
+// Middleware
+const firebaseAuth = require('./middleware/firebaseAuth')
 
 dotenv.config()
 connectDB()
@@ -98,6 +102,15 @@ async function getAvailableSlots(date) {
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'MindSettler backend' })
+})
+
+// Authenticated route: returns Firebase user + Mongo user document
+app.get('/api/me', firebaseAuth, (req, res) => {
+  res.json({
+    firebaseUser: req.firebaseUser,
+    user: req.user,
+    provider: req.authProvider,
+  })
 })
 
 // Get slots for a date

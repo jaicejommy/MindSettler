@@ -21,6 +21,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage'
 import PrivacyPage from './pages/PrivacyPage'
 import NonRefundPage from './pages/NonRefundPage'
 import ConfidentialityPage from './pages/ConfidentialityPage'
+import AuthPage from './pages/AuthPage'
 
 function App() {
   const [isReady, setIsReady] = useState(false)
@@ -47,6 +48,7 @@ function App() {
           <Route path="/non-refund" element={<NonRefundPage />} />
           <Route path="/confidentiality" element={<ConfidentialityPage />} />
 
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route
             path="/admin"
