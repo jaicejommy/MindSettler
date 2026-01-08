@@ -1,6 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+const path = require('path')
+const fs = require('fs')
+const multer = require('multer')
 const connectDB = require('./config/db')
 const { GoogleGenerativeAI } = require('@google/generative-ai')
 
@@ -20,6 +23,35 @@ connectDB()
 const app = express()
 const PORT = process.env.PORT || 5000
 
+// File uploads: profile pictures
+const uploadsDir = path.join(__dirname, 'uploads')
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true })
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir)
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || '') || '.jpg'
+    const uid = (req.firebaseUser && req.firebaseUser.uid) || 'anonymous'
+    cb(null, `profile-${uid}${ext}`)
+  },
+})
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'))
+    }
+    return cb(null, true)
+  },
+})
+
 // Initialize Gemini AI (force v1 to avoid v1beta 404s)
 const genAI = new GoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -33,6 +65,9 @@ app.use(
     origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
   }),
 )
+
+// Serve uploaded profile images
+app.use('/uploads', express.static(uploadsDir))
 
 // ================= SIMPLE ADMIN AUTH (STATIC) =================
 // NOTE: This is a very basic, hard-coded admin login as requested.
@@ -164,6 +199,44 @@ app.patch('/api/me', firebaseAuth, async (req, res) => {
   }
 })
 
+// Upload or update authenticated user's profile picture
+app.post('/api/me/profile-pic', firebaseAuth, upload.single('profilePic'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file uploaded' })
+    }
+
+    const relativePath = `/uploads/${path.basename(req.file.path)}`
+
+    let user = await User.findOneAndUpdate(
+      { firebaseUID: req.firebaseUser.uid },
+      { $set: { profilePic: relativePath, onboardingCompleted: true } },
+      { new: true },
+    )
+
+    if (!user) {
+      const usernameBase = req.firebaseUser.email
+        ? req.firebaseUser.email.split('@')[0]
+        : `user_${req.firebaseUser.uid.slice(0, 8)}`
+
+      user = await User.create({
+        username: usernameBase,
+        name: req.firebaseUser.name || usernameBase,
+        email: req.firebaseUser.email,
+        firebaseUID: req.firebaseUser.uid,
+        phone: req.firebaseUser.phone_number || '',
+        profilePic: relativePath,
+        onboardingCompleted: true,
+      })
+    }
+
+    return res.json({ user })
+  } catch (err) {
+    console.error('Failed to update profile picture', err)
+    return res.status(500).json({ message: 'Failed to update profile picture' })
+  }
+})
+
 // Resolve username or email to a login email for client-side auth
 app.get('/api/auth/resolve-username', async (req, res) => {
   try {
@@ -212,6 +285,23 @@ app.get('/api/slots', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to fetch slots' })
+  }
+})
+
+// Get authenticated user's bookings history
+app.get('/api/me/bookings', firebaseAuth, async (req, res) => {
+  try {
+    const email = (req.user && req.user.email) || (req.firebaseUser && req.firebaseUser.email)
+
+    if (!email) {
+      return res.status(400).json({ message: 'No email associated with this user' })
+    }
+
+    const bookings = await Booking.find({ email }).sort({ date: -1, time: -1 })
+    return res.json({ bookings })
+  } catch (err) {
+    console.error('Failed to fetch user bookings', err)
+    return res.status(500).json({ message: 'Failed to fetch user bookings' })
   }
 })
 

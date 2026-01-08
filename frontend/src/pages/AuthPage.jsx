@@ -30,7 +30,11 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
         name,
         phone,
       })
-      setBackendUser(data.user || null)
+      const updatedUser = data.user || null
+      setBackendUser(updatedUser)
+      window.dispatchEvent(
+        new CustomEvent('mindsettler-profile-updated', { detail: { user: updatedUser } }),
+      )
     } catch (err) {
       console.error('Failed to complete profile', err)
       if (err.response && err.response.data && err.response.data.message) {
@@ -46,7 +50,7 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
-        Complete your profile to finish signup.
+        Update your profile details.
       </p>
 
       <div className="form-group">
@@ -162,18 +166,31 @@ function AuthPage() {
   const [loginErrors, setLoginErrors] = useState({})
   const [signupErrors, setSignupErrors] = useState({})
 
+  const [bookings, setBookings] = useState([])
+  const [bookingsLoading, setBookingsLoading] = useState(false)
+  const [uploadingPic, setUploadingPic] = useState(false)
+
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
       setUser(firebaseUser)
       setBackendUser(null)
+      setBookings([])
+      setBookingsLoading(false)
 
-      // When a Firebase user logs in, call /api/me to sync into MongoDB
+      // When a Firebase user logs in, call /api/me to sync into MongoDB and load their bookings
       if (firebaseUser) {
         try {
-          const { data } = await authedApi.get('/me')
-          setBackendUser(data.user || null)
+          setBookingsLoading(true)
+          const [meRes, bookingsRes] = await Promise.all([
+            authedApi.get('/me'),
+            authedApi.get('/me/bookings'),
+          ])
+          setBackendUser(meRes.data.user || null)
+          setBookings(bookingsRes.data.bookings || [])
         } catch (err) {
           console.error('Failed to sync user with backend:', err)
+        } finally {
+          setBookingsLoading(false)
         }
       }
     })
@@ -290,6 +307,39 @@ function AuthPage() {
     }
   }
 
+  async function handleProfilePicChange(e) {
+    const file = e.target.files && e.target.files[0]
+    if (!file) return
+
+    setError('')
+    try {
+      setUploadingPic(true)
+      const formData = new FormData()
+      formData.append('profilePic', file)
+
+      const { data } = await authedApi.post('/me/profile-pic', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      const updatedUser = data.user || backendUser
+      setBackendUser(updatedUser)
+      window.dispatchEvent(
+        new CustomEvent('mindsettler-profile-updated', { detail: { user: updatedUser } }),
+      )
+    } catch (err) {
+      console.error('Failed to upload profile picture', err)
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message)
+      } else {
+        setError('Failed to upload profile picture')
+      }
+    } finally {
+      setUploadingPic(false)
+    }
+  }
+
   async function handleGoogleSignIn() {
     setError('')
     try {
@@ -305,41 +355,158 @@ function AuthPage() {
   }
 
   if (user) {
-    const showProfilePrompt = backendUser && !backendUser.onboardingCompleted
+    const avatarLetter =
+      (backendUser?.name && backendUser.name[0]) ||
+      (backendUser?.username && backendUser.username[0]) ||
+      (user.email && user.email[0]) ||
+      'U'
+
+    const hasProfilePic = backendUser && backendUser.profilePic
 
     return (
       <main className="page auth-page">
-        <div className="container" style={{ maxWidth: 520, margin: '4rem auto' }}>
-          <h1 style={{ marginBottom: '0.5rem' }}>Your account</h1>
+        <div className="container" style={{ maxWidth: 640, margin: '4rem auto' }}>
+          <h1 style={{ marginBottom: '0.5rem' }}>Your profile</h1>
           <p style={{ marginBottom: '0.75rem', color: 'var(--text-soft)' }}>
             Signed in as <strong>{user.email}</strong>
           </p>
 
-          {backendUser && !showProfilePrompt && (
-            <div style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--text-soft)' }}>
-              <p style={{ margin: '0 0 0.25rem' }}>
-                Username: <strong>{backendUser.username}</strong>
-              </p>
-              <p style={{ margin: '0 0 0.25rem' }}>Name: {backendUser.name}</p>
-              {backendUser.phone && <p style={{ margin: 0 }}>Phone: {backendUser.phone}</p>}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.25rem',
+              marginBottom: '1.5rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                background: 'rgba(63, 41, 101, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 600,
+                fontSize: '1.6rem',
+                color: '#3f2965',
+              }}
+            >
+              {hasProfilePic ? (
+                <img
+                  src={backendUser.profilePic}
+                  alt="Profile"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                avatarLetter.toUpperCase()
+              )}
             </div>
-          )}
+            <div>
+              <label
+                htmlFor="profile-photo"
+                style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, marginBottom: '0.35rem' }}
+              >
+                Profile photo
+              </label>
+              <input
+                id="profile-photo"
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePicChange}
+                disabled={uploadingPic}
+              />
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'var(--text-soft)' }}>
+                JPG or PNG, up to 5 MB.
+                {uploadingPic && ' Uploading…'}
+              </p>
+            </div>
+          </div>
 
-          {showProfilePrompt && (
-            <ProfileCompletionForm
-              backendUser={backendUser}
-              firebaseUser={user}
-              setBackendUser={setBackendUser}
-              setError={setError}
-              setLoading={setLoading}
-            />
-          )}
+          <ProfileCompletionForm
+            backendUser={backendUser}
+            firebaseUser={user}
+            setBackendUser={setBackendUser}
+            setError={setError}
+            setLoading={setLoading}
+          />
 
           {error && (
             <p style={{ color: 'var(--danger)', margin: '0.25rem 0 0.75rem' }}>{error}</p>
           )}
 
-          <button type="button" className="btn btn-primary" onClick={handleLogout}>
+          <section style={{ marginTop: '2rem' }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '0.75rem' }}>Your sessions</h2>
+            {bookingsLoading && <p style={{ fontSize: '0.9rem' }}>Loading your sessions…</p>}
+            {!bookingsLoading && bookings.length === 0 && (
+              <p className="muted" style={{ fontSize: '0.9rem' }}>
+                You have not booked any sessions yet.
+              </p>
+            )}
+            {!bookingsLoading && bookings.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {bookings.map((b) => (
+                  <div
+                    key={b._id}
+                    style={{
+                      borderRadius: '12px',
+                      border: '1px solid rgba(63, 41, 101, 0.12)',
+                      padding: '0.75rem 1rem',
+                      background: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '0.25rem',
+                      }}
+                    >
+                      <strong>
+                        {b.date} at {b.time}
+                      </strong>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                          padding: '0.1rem 0.5rem',
+                          borderRadius: '999px',
+                          background:
+                            b.status === 'confirmed'
+                              ? 'rgba(0, 150, 80, 0.12)'
+                              : b.status === 'pending'
+                              ? 'rgba(245, 186, 25, 0.16)'
+                              : 'rgba(220, 53, 69, 0.1)',
+                          color:
+                            b.status === 'confirmed'
+                              ? '#006644'
+                              : b.status === 'pending'
+                              ? '#806000'
+                              : '#842029',
+                        }}
+                      >
+                        {b.status || 'pending'}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-soft)' }}>
+                      Mode: {b.mode || 'online'} • Focus: {b.sessionType || 'individual'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleLogout}
+            style={{ marginTop: '2rem' }}
+          >
             Log out
           </button>
         </div>

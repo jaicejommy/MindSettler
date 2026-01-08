@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ChatBot from './ChatBot'
+import authedApi from '../authedApi'
+import { listenToAuthChanges } from '../firebase'
 
 function ChatbotWidget() {
   const [open, setOpen] = useState(false)
@@ -135,7 +137,39 @@ function Header() {
   const navigate = useNavigate()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  const [firebaseUser, setFirebaseUser] = useState(null)
+  const [accountUser, setAccountUser] = useState(null)
+
   const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
+
+  useEffect(() => {
+    const unsubscribe = listenToAuthChanges(async (user) => {
+      setFirebaseUser(user)
+      setAccountUser(null)
+
+      if (user) {
+        try {
+          const { data } = await authedApi.get('/me')
+          setAccountUser(data.user || null)
+        } catch (err) {
+          console.error('Failed to load user for header:', err)
+        }
+      }
+    })
+
+    function handleProfileUpdated(evt) {
+      if (evt.detail && evt.detail.user) {
+        setAccountUser(evt.detail.user)
+      }
+    }
+
+    window.addEventListener('mindsettler-profile-updated', handleProfileUpdated)
+
+    return () => {
+      unsubscribe()
+      window.removeEventListener('mindsettler-profile-updated', handleProfileUpdated)
+    }
+  }, [])
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false)
 
@@ -193,9 +227,62 @@ function Header() {
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
           </a>
-          <a href="/auth" onClick={closeMobileMenu}>
-            <button type="button">Sign in</button>
-          </a>
+
+          {/* User profile / auth */}
+          {firebaseUser ? (
+            <button
+              type="button"
+              onClick={() => {
+                navigate('/auth')
+                closeMobileMenu()
+              }}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                padding: 0,
+                marginLeft: '0.5rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  background: 'rgba(63, 41, 101, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#3f2965',
+                }}
+              >
+                {accountUser?.profilePic ? (
+                  <img
+                    src={accountUser.profilePic}
+                    alt="Profile"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  ((accountUser?.name && accountUser.name[0]) ||
+                    (accountUser?.username && accountUser.username[0]) ||
+                    (firebaseUser.email && firebaseUser.email[0]) ||
+                    'U'
+                  ).toUpperCase()
+                )}
+              </div>
+              <span style={{ fontSize: '0.85rem' }}>Profile</span>
+            </button>
+          ) : (
+            <a href="/auth" onClick={closeMobileMenu}>
+              <button type="button">Sign in</button>
+            </a>
+          )}
 
           {/* Admin login / dashboard */}
           {isAdminAuthed ? (
