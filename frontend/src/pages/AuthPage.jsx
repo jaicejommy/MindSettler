@@ -5,6 +5,8 @@ import {
   signInWithEmailPassword,
   signUpWithEmailPassword,
   signInWithGoogle,
+  sendPhoneOtp,
+  verifyPhoneOtp,
   logout,
 } from '../firebase'
 import authedApi from '../authedApi'
@@ -18,6 +20,11 @@ function AuthPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [backendUser, setBackendUser] = useState(null)
+
+  // Phone auth state
+  const [phone, setPhone] = useState('')
+  const [otpCode, setOtpCode] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
 
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
@@ -81,6 +88,36 @@ function AuthPage() {
     } catch (err) {
       console.error(err)
       setError(err?.message || 'Google sign-in failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleSendOtp(e) {
+    e.preventDefault()
+    setError('')
+    try {
+      setLoading(true)
+      await sendPhoneOtp(phone)
+      setOtpSent(true)
+    } catch (err) {
+      console.error(err)
+      setError(err?.message || 'Failed to send OTP')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleVerifyOtp(e) {
+    e.preventDefault()
+    setError('')
+    try {
+      setLoading(true)
+      await verifyPhoneOtp(otpCode)
+      setOtpCode('')
+    } catch (err) {
+      console.error(err)
+      setError(err?.message || 'Failed to verify OTP')
     } finally {
       setLoading(false)
     }
@@ -277,6 +314,89 @@ function AuthPage() {
           >
             <span>Sign in with Google</span>
           </button>
+        </div>
+
+        <div style={{ marginTop: '1.75rem' }}>
+          <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Sign in with phone (OTP)</h2>
+          <form
+            onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+          >
+            <div className="form-group">
+              <label
+                htmlFor="phone"
+                style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+              >
+                Phone number (with country code)
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. +91XXXXXXXXXX"
+                required
+                style={{
+                  width: '100%',
+                  height: '2.6rem',
+                  borderRadius: '999px',
+                  border: '1px solid rgba(63, 41, 101, 0.18)',
+                  padding: '0 1rem',
+                  fontSize: '0.95rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            {otpSent && (
+              <div className="form-group">
+                <label
+                  htmlFor="otpCode"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Enter OTP
+                </label>
+                <input
+                  id="otpCode"
+                  type="text"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn-secondary"
+              disabled={loading}
+              style={{
+                height: '2.6rem',
+                borderRadius: '999px',
+                fontSize: '0.85rem',
+              }}
+            >
+              {loading
+                ? otpSent
+                  ? 'Verifying OTP…'
+                  : 'Sending OTP…'
+                : otpSent
+                ? 'Verify OTP'
+                : 'Send OTP'}
+            </button>
+          </form>
+
+          {/* Container for invisible reCAPTCHA used by Firebase phone auth */}
+          <div id="recaptcha-container" />
         </div>
 
         <p
