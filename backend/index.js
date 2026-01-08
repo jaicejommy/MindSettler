@@ -113,6 +113,86 @@ app.get('/api/me', firebaseAuth, (req, res) => {
   })
 })
 
+// Update authenticated user's profile (username, name, phone)
+app.patch('/api/me', firebaseAuth, async (req, res) => {
+  try {
+    const { username, name, phone } = req.body || {}
+
+    if (!username && !name && !phone) {
+      return res.status(400).json({ message: 'At least one of username, name or phone is required' })
+    }
+
+    const updates = {}
+    if (username) updates.username = username.toLowerCase()
+    if (name) updates.name = name
+    if (phone !== undefined) updates.phone = phone
+    updates.onboardingCompleted = true
+
+    let user = await User.findOneAndUpdate(
+      { firebaseUID: req.firebaseUser.uid },
+      { $set: updates },
+      { new: true },
+    )
+
+    if (!user) {
+      // In rare cases if user doc does not exist, create it now
+      user = await User.create({
+        username: updates.username || req.firebaseUser.email.split('@')[0],
+        name: updates.name || req.firebaseUser.name || 'User',
+        email: req.firebaseUser.email,
+        firebaseUID: req.firebaseUser.uid,
+        phone: updates.phone || req.firebaseUser.phone_number || '',
+        onboardingCompleted: true,
+      })
+    }
+
+    return res.json({ user })
+  } catch (err) {
+    console.error('Failed to update profile', err)
+
+    // Handle duplicate username/email errors
+    if (err.code === 11000) {
+      if (err.keyPattern && err.keyPattern.username) {
+        return res.status(409).json({ message: 'Username is already taken' })
+      }
+      if (err.keyPattern && err.keyPattern.email) {
+        return res.status(409).json({ message: 'Email is already in use' })
+      }
+    }
+
+    return res.status(500).json({ message: 'Failed to update profile' })
+  }
+})
+
+// Resolve username or email to a login email for client-side auth
+app.get('/api/auth/resolve-username', async (req, res) => {
+  try {
+    const { identifier } = req.query
+
+    if (!identifier) {
+      return res.status(400).json({ message: 'identifier query param is required' })
+    }
+
+    const lowered = String(identifier).toLowerCase().trim()
+
+    let user = await User.findOne({ username: lowered })
+
+    // If not found by username but looks like an email, try email lookup
+    if (!user && lowered.includes('@')) {
+      user = await User.findOne({ email: lowered })
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    return res.json({ email: user.email })
+  } catch (err) {
+    console.error('Failed to resolve username', err)
+    return res.status(500).json({ message: 'Failed to resolve username' })
+  }
+})
+
 // Get slots for a date
 app.get('/api/slots', async (req, res) => {
   try {
