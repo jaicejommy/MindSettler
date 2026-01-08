@@ -4,6 +4,7 @@ import {
   listenToAuthChanges,
   signInWithEmailPassword,
   signUpWithEmailPassword,
+  signInWithGoogle,
   logout,
 } from '../firebase'
 import authedApi from '../authedApi'
@@ -68,6 +69,20 @@ function AuthPage() {
       await logout()
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setError('')
+    try {
+      setLoading(true)
+      await signInWithGoogle()
+      // auth state listener will run and sync with backend
+    } catch (err) {
+      console.error(err)
+      setError(err?.message || 'Google sign-in failed')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -240,6 +255,29 @@ function AuthPage() {
             {loading ? (mode === 'signup' ? 'Creating account…' : 'Signing in…') : mode === 'signup' ? 'Sign up' : 'Sign in'}
           </button>
         </form>
+
+        <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-soft)', marginBottom: '0.75rem' }}>
+            Or continue with
+          </p>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="btn btn-secondary"
+            disabled={loading}
+            style={{
+              height: '2.6rem',
+              borderRadius: '999px',
+              padding: '0 1.25rem',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>Sign in with Google</span>
+          </button>
+        </div>
 
         <p
           className="muted"

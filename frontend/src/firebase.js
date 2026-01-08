@@ -8,6 +8,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth'
 
 // TODO: replace these placeholder values with your actual Firebase project config
@@ -22,6 +24,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
+const googleProvider = new GoogleAuthProvider()
 
 export function listenToAuthChanges(callback) {
   // Small helper to subscribe to auth state changes and clean up
@@ -35,6 +38,11 @@ export async function signUpWithEmailPassword(email, password) {
 
 export async function signInWithEmailPassword(email, password) {
   const cred = await signInWithEmailAndPassword(auth, email, password)
+  return cred.user
+}
+
+export async function signInWithGoogle() {
+  const cred = await signInWithPopup(auth, googleProvider)
   return cred.user
 }
 
