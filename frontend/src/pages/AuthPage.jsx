@@ -9,15 +9,158 @@ import {
 } from '../firebase'
 import authedApi from '../authedApi'
 
+function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setError, setLoading }) {
+  const [username, setUsername] = useState(backendUser?.username || '')
+  const [name, setName] = useState(backendUser?.name || firebaseUser?.displayName || '')
+  const [phone, setPhone] = useState(backendUser?.phone || '')
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+
+    if (!username || !name) {
+      setError('Please fill in username and name')
+      return
+    }
+
+    try {
+      setLoading(true)
+      const { data } = await authedApi.patch('/me', {
+        username,
+        name,
+        phone,
+      })
+      setBackendUser(data.user || null)
+    } catch (err) {
+      console.error('Failed to complete profile', err)
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message)
+      } else {
+        setError('Failed to complete profile')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
+        Complete your profile to finish signup.
+      </p>
+
+      <div className="form-group">
+        <label
+          htmlFor="profile-username"
+          style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+        >
+          Username
+        </label>
+        <input
+          id="profile-username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          style={{
+            width: '100%',
+            height: '2.6rem',
+            borderRadius: '999px',
+            border: '1px solid rgba(63, 41, 101, 0.18)',
+            padding: '0 1rem',
+            fontSize: '0.95rem',
+            outline: 'none',
+          }}
+        />
+      </div>
+
+      <div className="form-group">
+        <label
+          htmlFor="profile-name"
+          style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+        >
+          Name
+        </label>
+        <input
+          id="profile-name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={{
+            width: '100%',
+            height: '2.6rem',
+            borderRadius: '999px',
+            border: '1px solid rgba(63, 41, 101, 0.18)',
+            padding: '0 1rem',
+            fontSize: '0.95rem',
+            outline: 'none',
+          }}
+        />
+      </div>
+
+      <div className="form-group">
+        <label
+          htmlFor="profile-phone"
+          style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+        >
+          Phone
+        </label>
+        <input
+          id="profile-phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          style={{
+            width: '100%',
+            height: '2.6rem',
+            borderRadius: '999px',
+            border: '1px solid rgba(63, 41, 101, 0.18)',
+            padding: '0 1rem',
+            fontSize: '0.95rem',
+            outline: 'none',
+          }}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="btn btn-secondary"
+        style={{
+          marginTop: '0.5rem',
+          height: '2.6rem',
+          borderRadius: '999px',
+          fontSize: '0.85rem',
+        }}
+      >
+        Save profile
+      </button>
+    </form>
+  )
+}
+
 function AuthPage() {
   const [mode, setMode] = useState('login') // 'login' | 'signup'
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+
+  // Login state (username + password)
+  const [loginUsername, setLoginUsername] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+
+  // Signup state (email/password + profile details)
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupConfirmPassword, setSignupConfirmPassword] = useState('')
+  const [signupUsername, setSignupUsername] = useState('')
+  const [signupName, setSignupName] = useState('')
+  const [signupPhone, setSignupPhone] = useState('')
+
   const [user, setUser] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [backendUser, setBackendUser] = useState(null)
+
+  const [loginErrors, setLoginErrors] = useState({})
+  const [signupErrors, setSignupErrors] = useState({})
 
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
@@ -37,28 +180,103 @@ function AuthPage() {
     return () => unsubscribe()
   }, [])
 
-  async function handleSubmit(e) {
+  async function handleLoginSubmit(e) {
     e.preventDefault()
     setError('')
+    setLoginErrors({})
 
-    if (mode === 'signup' && password !== confirmPassword) {
+    const fieldErrors = {}
+    if (!loginUsername) fieldErrors.username = 'Username is required'
+    if (!loginPassword) fieldErrors.password = 'Password is required'
+
+    if (Object.keys(fieldErrors).length > 0) {
+      setLoginErrors(fieldErrors)
+      setError('Please fill in your username and password')
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      let emailToUse = loginUsername.trim()
+      try {
+        const { data } = await authedApi.get('/auth/resolve-username', {
+          params: { identifier: emailToUse },
+        })
+        emailToUse = data.email
+      } catch (resolveErr) {
+        if (!emailToUse.includes('@')) {
+          setLoginErrors((prev) => ({ ...prev, username: 'User not found for this username' }))
+          throw new Error('User not found for this username')
+        }
+      }
+
+      await signInWithEmailPassword(emailToUse, loginPassword)
+      setLoginErrors({})
+      setLoginUsername('')
+      setLoginPassword('')
+    } catch (err) {
+      console.error(err)
+      setError(err?.message || 'Login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleSignupSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setSignupErrors({})
+
+    const fieldErrors = {}
+    if (!signupUsername) fieldErrors.username = 'Username is required'
+    if (!signupName) fieldErrors.name = 'Name is required'
+    if (!signupEmail) fieldErrors.email = 'Email is required'
+    if (!signupPassword) fieldErrors.password = 'Password is required'
+    if (!signupConfirmPassword) fieldErrors.confirmPassword = 'Please confirm your password'
+
+    if (Object.keys(fieldErrors).length > 0) {
+      setSignupErrors(fieldErrors)
+      setError('Please fix the highlighted fields')
+      return
+    }
+
+    if (signupPassword !== signupConfirmPassword) {
+      setSignupErrors((prev) => ({ ...prev, confirmPassword: 'Passwords do not match' }))
       setError('Passwords do not match')
       return
     }
 
     try {
       setLoading(true)
-      if (mode === 'signup') {
-        await signUpWithEmailPassword(email, password)
-      } else {
-        await signInWithEmailPassword(email, password)
+
+      await signUpWithEmailPassword(signupEmail, signupPassword)
+
+      // Immediately update profile in our backend (username, name, phone)
+      try {
+        const { data } = await authedApi.patch('/me', {
+          username: signupUsername,
+          name: signupName,
+          phone: signupPhone,
+        })
+        setBackendUser(data.user || null)
+      } catch (profileErr) {
+        console.error('Failed to update profile after signup', profileErr)
+        if (profileErr.response && profileErr.response.data && profileErr.response.data.message) {
+          setError(profileErr.response.data.message)
+        }
       }
-      setEmail('')
-      setPassword('')
-      setConfirmPassword('')
+
+      setSignupErrors({})
+      setSignupEmail('')
+      setSignupPassword('')
+      setSignupConfirmPassword('')
+      setSignupUsername('')
+      setSignupName('')
+      setSignupPhone('')
     } catch (err) {
       console.error(err)
-      setError(err?.message || 'Something went wrong')
+      setError(err?.message || 'Signup failed')
     } finally {
       setLoading(false)
     }
@@ -87,18 +305,40 @@ function AuthPage() {
   }
 
   if (user) {
+    const showProfilePrompt = backendUser && !backendUser.onboardingCompleted
+
     return (
       <main className="page auth-page">
-        <div className="container" style={{ maxWidth: 480, margin: '4rem auto' }}>
+        <div className="container" style={{ maxWidth: 520, margin: '4rem auto' }}>
           <h1 style={{ marginBottom: '0.5rem' }}>Your account</h1>
           <p style={{ marginBottom: '0.75rem', color: 'var(--text-soft)' }}>
             Signed in as <strong>{user.email}</strong>
           </p>
-          {backendUser && (
-            <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--text-soft)' }}>
-              Backend user ID: <code>{backendUser._id}</code>
-            </p>
+
+          {backendUser && !showProfilePrompt && (
+            <div style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--text-soft)' }}>
+              <p style={{ margin: '0 0 0.25rem' }}>
+                Username: <strong>{backendUser.username}</strong>
+              </p>
+              <p style={{ margin: '0 0 0.25rem' }}>Name: {backendUser.name}</p>
+              {backendUser.phone && <p style={{ margin: 0 }}>Phone: {backendUser.phone}</p>}
+            </div>
           )}
+
+          {showProfilePrompt && (
+            <ProfileCompletionForm
+              backendUser={backendUser}
+              firebaseUser={user}
+              setBackendUser={setBackendUser}
+              setError={setError}
+              setLoading={setLoading}
+            />
+          )}
+
+          {error && (
+            <p style={{ color: 'var(--danger)', margin: '0.25rem 0 0.75rem' }}>{error}</p>
+          )}
+
           <button type="button" className="btn btn-primary" onClick={handleLogout}>
             Log out
           </button>
@@ -112,7 +352,7 @@ function AuthPage() {
       <div
         className="container"
         style={{
-          maxWidth: 480,
+          maxWidth: 520,
           margin: '4rem auto',
           padding: '2.5rem 2rem',
           borderRadius: '24px',
@@ -145,93 +385,255 @@ function AuthPage() {
             {mode === 'signup' ? 'Create account' : 'Sign in'}
           </h1>
           <p style={{ margin: 0, color: 'var(--text-soft)', fontSize: '0.95rem' }}>
-            Use your email and password.
+            {mode === 'signup'
+              ? 'Create an account with your details and password.'
+              : 'Sign in with your username and password.'}
           </p>
         </header>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={mode === 'signup' ? handleSignupSubmit : handleLoginSubmit}
           className="form"
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
-          <div className="form-group">
-            <label
-              htmlFor="email"
-              style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-              style={{
-                width: '100%',
-                height: '2.6rem',
-                borderRadius: '999px',
-                border: '1px solid rgba(63, 41, 101, 0.18)',
-                padding: '0 1rem',
-                fontSize: '0.95rem',
-                outline: 'none',
-              }}
-            />
-          </div>
+          {mode === 'login' && (
+            <>
+              <div className="form-group">
+                <label
+                  htmlFor="login-username"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Username
+                </label>
+                <input
+                  id="login-username"
+                  type="text"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  autoComplete="username"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {loginErrors.username && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {loginErrors.username}
+                  </p>
+                )}
+              </div>
 
-          <div className="form-group">
-            <label
-              htmlFor="password"
-              style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-              required
-              style={{
-                width: '100%',
-                height: '2.6rem',
-                borderRadius: '999px',
-                border: '1px solid rgba(63, 41, 101, 0.18)',
-                padding: '0 1rem',
-                fontSize: '0.95rem',
-                outline: 'none',
-              }}
-            />
-          </div>
+              <div className="form-group">
+                <label
+                  htmlFor="login-password"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Password
+                </label>
+                <input
+                  id="login-password"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  autoComplete="current-password"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {loginErrors.password && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {loginErrors.password}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
 
           {mode === 'signup' && (
-            <div className="form-group">
-              <label
-                htmlFor="confirmPassword"
-                style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
-              >
-                Confirm password
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-                style={{
-                  width: '100%',
-                  height: '2.6rem',
-                  borderRadius: '999px',
-                  border: '1px solid rgba(63, 41, 101, 0.18)',
-                  padding: '0 1rem',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                }}
-              />
-            </div>
+            <>
+              <div className="form-group">
+                <label
+                  htmlFor="signup-username"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Username *
+                </label>
+                <input
+                  id="signup-username"
+                  type="text"
+                  value={signupUsername}
+                  onChange={(e) => setSignupUsername(e.target.value)}
+                  autoComplete="username"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {signupErrors.username && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {signupErrors.username}
+                  </p>
+                )}
+              </div>
+              <div className="form-group">
+                <label
+                  htmlFor="signup-name"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Name *
+                </label>
+                <input
+                  id="signup-name"
+                  type="text"
+                  value={signupName}
+                  onChange={(e) => setSignupName(e.target.value)}
+                  autoComplete="name"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {signupErrors.name && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {signupErrors.name}
+                  </p>
+                )}
+              </div>
+              <div className="form-group">
+                <label
+                  htmlFor="signup-phone"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Phone
+                </label>
+                <input
+                  id="signup-phone"
+                  type="tel"
+                  value={signupPhone}
+                  onChange={(e) => setSignupPhone(e.target.value)}
+                  autoComplete="tel"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div className="form-group">
+                <label
+                  htmlFor="signup-email"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Email *
+                </label>
+                <input
+                  id="signup-email"
+                  type="email"
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                  autoComplete="email"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {signupErrors.email && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {signupErrors.email}
+                  </p>
+                )}
+              </div>
+              <div className="form-group">
+                <label
+                  htmlFor="signup-password"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Password *
+                </label>
+                <input
+                  id="signup-password"
+                  type="password"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                  autoComplete="new-password"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {signupErrors.password && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {signupErrors.password}
+                  </p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label
+                  htmlFor="signup-confirm-password"
+                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                >
+                  Confirm password *
+                </label>
+                <input
+                  id="signup-confirm-password"
+                  type="password"
+                  value={signupConfirmPassword}
+                  onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
+                  style={{
+                    width: '100%',
+                    height: '2.6rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(63, 41, 101, 0.18)',
+                    padding: '0 1rem',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+                {signupErrors.confirmPassword && (
+                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                    {signupErrors.confirmPassword}
+                  </p>
+                )}
+              </div>
+            </>
           )}
 
           {error && (
@@ -252,7 +654,13 @@ function AuthPage() {
               fontSize: '0.8rem',
             }}
           >
-            {loading ? (mode === 'signup' ? 'Creating account…' : 'Signing in…') : mode === 'signup' ? 'Sign up' : 'Sign in'}
+            {loading
+              ? mode === 'signup'
+                ? 'Creating account…'
+                : 'Signing in…'
+              : mode === 'signup'
+              ? 'Create account'
+              : 'Sign in'}
           </button>
         </form>
 
@@ -275,7 +683,7 @@ function AuthPage() {
               gap: '0.5rem',
             }}
           >
-            <span>Sign in with Google</span>
+            <span>{mode === 'signup' ? 'Sign up with Google' : 'Sign in with Google'}</span>
           </button>
         </div>
 
