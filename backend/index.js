@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 const multer = require('multer')
 const connectDB = require('./config/db')
-const { GoogleGenerativeAI } = require('@google/generative-ai')
+const { GoogleGenAI } = require('@google/genai')
 
 // Models
 const Booking = require('./models/Booking')
@@ -52,11 +52,8 @@ const upload = multer({
   },
 })
 
-// Initialize Gemini AI (force v1 to avoid v1beta 404s)
-const genAI = new GoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  apiVersion: 'v1',
-})
+// Initialize Gemini AI
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
 // Middleware
 app.use(express.json())
@@ -548,12 +545,9 @@ Your role:
 
 Important: You provide general information and support, but you are not a substitute for professional mental health care.`
 
-    // Initialize the model (v1 models use -latest names)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
-
     // Build conversation context
     let prompt = systemPrompt + '\n\n'
-    
+
     // Add conversation history
     if (conversationHistory.length > 0) {
       prompt += 'Previous conversation:\n'
@@ -565,17 +559,19 @@ Important: You provide general information and support, but you are not a substi
 
     prompt += `User: ${message}\nAssistant:`
 
-    // Generate response
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const botReply = response.text()
+    // Generate response using new SDK
+    const response = await genAI.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    })
+    const botReply = response.text
 
     res.json({ reply: botReply })
   } catch (err) {
     console.error('Chatbot error:', err)
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Sorry, I encountered an error. Please try again.',
-      error: err.message 
+      error: err.message
     })
   }
 })
