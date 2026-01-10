@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import API_BASE_URL from '../api'
 import './ChatBot.css'
 
@@ -75,6 +76,56 @@ export default function ChatBot() {
     }
   }
 
+  // Helper to parse text and render links
+  const renderMessageWithLinks = (text) => {
+    // Split by spaces/newlines to process words individually while preserving whitespace
+    const parts = text.split(/(\s+)/)
+
+    return parts.map((part, i) => {
+      // Check for external URLs
+      if (part.match(/^(https?:\/\/|www\.)/)) {
+        let href = part
+        if (part.startsWith('www.')) {
+          href = `http://${part}`
+        }
+        // Remove trailing punctuation
+        const cleanHref = href.replace(/[.,;!?)]+$/, '')
+        const punctuation = part.slice(cleanHref.length)
+
+        return (
+          <span key={i}>
+            <a
+              href={cleanHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#007bff', textDecoration: 'underline' }}
+            >
+              {cleanHref}
+            </a>
+            {punctuation}
+          </span>
+        )
+      }
+      // Check for internal paths (must start with / and have at least 1 letter)
+      else if (part.startsWith('/') && part.length > 1 && !part.includes('//')) {
+        // Remove trailing punctuation
+        const to = part.replace(/[.,;!?)]+$/, '')
+        const punctuation = part.slice(to.length)
+
+        // Basic valid path check
+        if (/^[\w\-/]+$/.test(to)) {
+          return (
+            <span key={i}>
+              <Link to={to} style={{ color: '#007bff', textDecoration: 'underline' }}>{to}</Link>
+              {punctuation}
+            </span>
+          )
+        }
+      }
+      return <span key={i}>{part}</span>
+    })
+  }
+
   return (
     <>
       {/* Chat Button */}
@@ -104,11 +155,14 @@ export default function ChatBot() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`chat-message ${
-                  msg.role === 'user' ? 'user-message' : 'bot-message'
-                }`}
+                className={`chat-message ${msg.role === 'user' ? 'user-message' : 'bot-message'
+                  }`}
               >
-                <div className="message-content">{msg.content}</div>
+                <div className="message-content">
+                  {msg.role === 'assistant'
+                    ? renderMessageWithLinks(msg.content)
+                    : msg.content}
+                </div>
               </div>
             ))}
             {isLoading && (
