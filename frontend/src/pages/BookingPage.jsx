@@ -16,6 +16,7 @@ export default function BookingPage() {
     date: '',
     time: '',
     notes: '',
+    paymentScreenshot: null,
   })
   const [touched, setTouched] = useState({})
   const [slots, setSlots] = useState([])
@@ -49,11 +50,15 @@ export default function BookingPage() {
   }, [form.date])
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
+    const { name, value, type, checked, files } = e.target
+    if (type === 'file') {
+      setForm((prev) => ({ ...prev, [name]: files[0] }))
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }))
+    }
     if (!touched[name]) {
       setTouched((prev) => ({ ...prev, [name]: true }))
     }
@@ -73,7 +78,16 @@ export default function BookingPage() {
     setError('')
     setResult(null)
     try {
-      const res = await authedApi.post('/bookings', form)
+      const formData = new FormData()
+      Object.keys(form).forEach((key) => {
+        if (form[key] !== null) {
+          formData.append(key, form[key])
+        }
+      })
+
+      const res = await authedApi.post('/bookings', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
       setResult(res.data.booking)
       setForm({
         name: '',
@@ -85,6 +99,7 @@ export default function BookingPage() {
         date: '',
         time: '',
         notes: '',
+        paymentScreenshot: null,
       })
       setTouched({})
     } catch (err) {
@@ -292,6 +307,27 @@ export default function BookingPage() {
                 />
               </div>
 
+              <div className="card booking-payment" style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                <h3>Complete Payment</h3>
+                <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
+                <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+                  <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                </div>
+                <div className="field">
+                  <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
+                  <input
+                    id="paymentScreenshot"
+                    name="paymentScreenshot"
+                    type="file"
+                    accept="image/*"
+                    required
+                    onChange={handleChange}
+                    className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
+                  />
+                  {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
+                </div>
+              </div>
+
               {error && <p className="form-error">{error}</p>}
 
               <button type="submit" className="primary-btn" disabled={submitting}>
@@ -326,6 +362,6 @@ export default function BookingPage() {
           </div>
         )}
       </section>
-    </main >
+    </main>
   )
 }

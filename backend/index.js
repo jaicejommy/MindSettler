@@ -52,6 +52,29 @@ const upload = multer({
   },
 })
 
+// Payment screenshot storage
+const paymentStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir)
+  },
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '') || '.jpg'
+    const timestamp = Date.now()
+    cb(null, `payment-${timestamp}${ext}`)
+  },
+})
+
+const paymentUpload = multer({
+  storage: paymentStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'))
+    }
+    return cb(null, true)
+  },
+})
+
 // Initialize Gemini AI
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
@@ -303,7 +326,7 @@ app.get('/api/me/bookings', firebaseAuth, async (req, res) => {
 })
 
 // Create booking
-app.post('/api/bookings', firebaseAuth, async (req, res) => {
+app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'), async (req, res) => {
   try {
     const {
       name,
@@ -347,6 +370,8 @@ app.post('/api/bookings', firebaseAuth, async (req, res) => {
       time,
       notes: notes || '',
       status: 'pending',
+      paymentScreenshot: req.file ? `/uploads/${path.basename(req.file.path)}` : '',
+      paymentStatus: 'pending',
     })
 
     res.status(201).json({
