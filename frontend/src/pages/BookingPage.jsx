@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-
+import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import authedApi from '../authedApi'
 import API_BASE_URL from '../api'
 
 
@@ -21,6 +23,8 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+
+  const { user, loading: authLoading } = useAuth()
 
   useEffect(() => {
     async function fetchSlots() {
@@ -69,16 +73,8 @@ export default function BookingPage() {
     setError('')
     setResult(null)
     try {
-      const res = await fetch(`${API_BASE_URL}/bookings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        throw new Error(data.message || 'Something went wrong')
-      }
-      setResult(data.booking)
+      const res = await authedApi.post('/bookings', form)
+      setResult(res.data.booking)
       setForm({
         name: '',
         email: '',
@@ -93,7 +89,8 @@ export default function BookingPage() {
       setTouched({})
     } catch (err) {
       console.error(err)
-      setError(err.message || 'Unable to submit booking at the moment.')
+      console.error(err)
+      setError(err.response?.data?.message || err.message || 'Unable to submit booking at the moment.')
     } finally {
       setSubmitting(false)
     }
@@ -133,190 +130,202 @@ export default function BookingPage() {
           </p>
         </div>
 
-        <div className="booking-grid">
-          <form className="card booking-form" onSubmit={handleSubmit}>
-            <h3>Your details</h3>
-            <div className="field-grid">
-              <div className="field">
-                <label htmlFor="name">Full Name *</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={form.name && touched.name ? 'success' : ''}
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="email">Email *</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
-                />
-                {touched.email && !isValidEmail(form.email) && form.email && (
-                  <span className="form-error">Please enter a valid email address</span>
-                )}
-              </div>
-              <div className="field">
-                <label htmlFor="phone">Phone (WhatsApp preferred)</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={form.phone}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={form.phone && touched.phone ? (isValidPhone(form.phone) ? 'success' : '') : ''}
-                />
-                {touched.phone && form.phone && !isValidPhone(form.phone) && (
-                  <span className="form-error">Please enter a valid phone number</span>
-                )}
-              </div>
+        {!authLoading && !user ? (
+          <div className="card" style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+            <h3>Sign in to Book</h3>
+            <p>You need to be logged in to book a session.</p>
+            <div style={{ marginTop: '1.5rem' }}>
+              <Link to="/auth" className="primary-btn">
+                Sign In / Register
+              </Link>
             </div>
+          </div>
+        ) : (
+          <div className="booking-grid">
+            <form className="card booking-form" onSubmit={handleSubmit}>
+              <h3>Your details</h3>
+              <div className="field-grid">
+                <div className="field">
+                  <label htmlFor="name">Full Name *</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={form.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={form.name && touched.name ? 'success' : ''}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="email">Email *</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
+                  />
+                  {touched.email && !isValidEmail(form.email) && form.email && (
+                    <span className="form-error">Please enter a valid email address</span>
+                  )}
+                </div>
+                <div className="field">
+                  <label htmlFor="phone">Phone (WhatsApp preferred)</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={form.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={form.phone && touched.phone ? (isValidPhone(form.phone) ? 'success' : '') : ''}
+                  />
+                  {touched.phone && form.phone && !isValidPhone(form.phone) && (
+                    <span className="form-error">Please enter a valid phone number</span>
+                  )}
+                </div>
+              </div>
 
-            <h3>Session preferences</h3>
-            <div className="field-grid">
-              <div className="field">
-                <label>Mode</label>
-                <div className="pill-group">
-                  <button
-                    type="button"
-                    className={form.mode === 'online' ? 'pill active' : 'pill'}
-                    onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+              <h3>Session preferences</h3>
+              <div className="field-grid">
+                <div className="field">
+                  <label>Mode</label>
+                  <div className="pill-group">
+                    <button
+                      type="button"
+                      className={form.mode === 'online' ? 'pill active' : 'pill'}
+                      onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+                    >
+                      Online
+                    </button>
+                    <button
+                      type="button"
+                      className={form.mode === 'offline' ? 'pill active' : 'pill'}
+                      onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                    >
+                      Offline Studio
+                    </button>
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="sessionType">Session focus</label>
+                  <select
+                    id="sessionType"
+                    name="sessionType"
+                    value={form.sessionType}
+                    onChange={handleChange}
                   >
-                    Online
-                  </button>
-                  <button
-                    type="button"
-                    className={form.mode === 'offline' ? 'pill active' : 'pill'}
-                    onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                    <option value="individual">Individual psycho-education</option>
+                    <option value="relationship">Relationships & family</option>
+                    <option value="career">Career & performance</option>
+                    <option value="stress">Stress, burnout & anxiety</option>
+                  </select>
+                </div>
+
+                <div className="field field-checkbox">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="isFirstSession"
+                      checked={form.isFirstSession}
+                      onChange={handleChange}
+                    />
+                    This is my first session with MindSettler
+                  </label>
+                </div>
+              </div>
+
+              <h3>Pick a slot</h3>
+              <div className="field-grid">
+                <div className="field">
+                  <label htmlFor="date">Preferred date *</label>
+                  <input
+                    id="date"
+                    name="date"
+                    type="date"
+                    required
+                    min={new Date().toISOString().split('T')[0]}
+                    value={form.date}
+                    onChange={(e) => {
+                      setForm((prev) => ({ ...prev, date: e.target.value, time: '' }))
+                    }}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="time">Available time slots *</label>
+                  <select
+                    id="time"
+                    name="time"
+                    required
+                    value={form.time}
+                    onChange={handleChange}
+                    disabled={!form.date || loadingSlots}
                   >
-                    Offline Studio
-                  </button>
+                    <option value="">
+                      {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
+                    </option>
+                    {slots
+                      .filter((s) => s.isAvailable)
+                      .map((slot) => (
+                        <option key={slot.time} value={slot.time}>
+                          {slot.time}
+                        </option>
+                      ))}
+                  </select>
                 </div>
               </div>
 
               <div className="field">
-                <label htmlFor="sessionType">Session focus</label>
-                <select
-                  id="sessionType"
-                  name="sessionType"
-                  value={form.sessionType}
+                <label htmlFor="notes">Anything you would like us to know before we meet?</label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  rows={4}
+                  value={form.notes}
                   onChange={handleChange}
-                >
-                  <option value="individual">Individual psycho-education</option>
-                  <option value="relationship">Relationships & family</option>
-                  <option value="career">Career & performance</option>
-                  <option value="stress">Stress, burnout & anxiety</option>
-                </select>
-              </div>
-
-              <div className="field field-checkbox">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="isFirstSession"
-                    checked={form.isFirstSession}
-                    onChange={handleChange}
-                  />
-                  This is my first session with MindSettler
-                </label>
-              </div>
-            </div>
-
-            <h3>Pick a slot</h3>
-            <div className="field-grid">
-              <div className="field">
-                <label htmlFor="date">Preferred date *</label>
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  required
-                  min={new Date().toISOString().split('T')[0]}
-                  value={form.date}
-                  onChange={(e) => {
-                    setForm((prev) => ({ ...prev, date: e.target.value, time: '' }))
-                  }}
                 />
               </div>
-              <div className="field">
-                <label htmlFor="time">Available time slots *</label>
-                <select
-                  id="time"
-                  name="time"
-                  required
-                  value={form.time}
-                  onChange={handleChange}
-                  disabled={!form.date || loadingSlots}
-                >
-                  <option value="">
-                    {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
-                  </option>
-                  {slots
-                    .filter((s) => s.isAvailable)
-                    .map((slot) => (
-                      <option key={slot.time} value={slot.time}>
-                        {slot.time}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
 
-            <div className="field">
-              <label htmlFor="notes">Anything you would like us to know before we meet?</label>
-              <textarea
-                id="notes"
-                name="notes"
-                rows={4}
-                value={form.notes}
-                onChange={handleChange}
-              />
-            </div>
+              {error && <p className="form-error">{error}</p>}
 
-            {error && <p className="form-error">{error}</p>}
+              <button type="submit" className="primary-btn" disabled={submitting}>
+                {submitting ? 'Submitting…' : 'Book session'}
+              </button>
+            </form>
 
-            <button type="submit" className="primary-btn" disabled={submitting}>
-              {submitting ? 'Submitting…' : 'Book session'}
-            </button>
-          </form>
-
-          {result && (
-            <div className="card booking-highlight">
-              <h3>Session confirmed</h3>
-              <p>
-                <strong>{result.name}</strong>, your booking has been marked as pending. You will receive a
-                confirmation email or WhatsApp message within 24 hours.
-              </p>
-              <div className="info-pill">
+            {result && (
+              <div className="card booking-highlight">
+                <h3>Session confirmed</h3>
                 <p>
-                  <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
+                  <strong>{result.name}</strong>, your booking has been marked as pending. You will receive a
+                  confirmation email or WhatsApp message within 24 hours.
                 </p>
+                <div className="info-pill">
+                  <p>
+                    <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
+                  </p>
+                </div>
+                <p className="muted">
+                  Once confirmed, you will receive payment details and a final message with the meeting link (for
+                  online) or studio address (for offline).
+                </p>
+                <p className="muted">
+                  In the meantime, you can add this to your calendar:
+                </p>
+                <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
+                  Add to Google Calendar
+                </a>
               </div>
-              <p className="muted">
-                Once confirmed, you will receive payment details and a final message with the meeting link (for
-                online) or studio address (for offline).
-              </p>
-              <p className="muted">
-                In the meantime, you can add this to your calendar:
-              </p>
-              <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
-                Add to Google Calendar
-              </a>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </section>
-    </main>
+    </main >
   )
 }

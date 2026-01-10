@@ -303,7 +303,7 @@ app.get('/api/me/bookings', firebaseAuth, async (req, res) => {
 })
 
 // Create booking
-app.post('/api/bookings', async (req, res) => {
+app.post('/api/bookings', firebaseAuth, async (req, res) => {
   try {
     const {
       name,
