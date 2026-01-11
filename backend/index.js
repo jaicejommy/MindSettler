@@ -17,7 +17,7 @@ const User = require('./models/User')
 const Admin = require('./models/Admin')
 
 // Services
-const { sendPasswordResetEmail, sendBookingConfirmationEmail } = require('./services/emailService')
+const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail } = require('./services/emailService')
 
 // Middleware
 const firebaseAuth = require('./middleware/firebaseAuth')
@@ -683,7 +683,7 @@ app.get('/api/bookings', firebaseAdminAuth, async (_req, res) => {
 app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
   try {
     const { id } = req.params
-    const { status } = req.body || {}
+    const { status, reason } = req.body || {}
 
     if (!['pending', 'confirmed', 'rejected'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' })
@@ -705,7 +705,15 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
         await sendBookingConfirmationEmail(booking.email, booking)
       } catch (emailErr) {
         console.error('Failed to send confirmation email:', emailErr)
-        // Don't fail the request if email fails
+      }
+    }
+
+    // Send rejection email if status is rejected
+    if (status === 'rejected' && booking.email) {
+      try {
+        await sendBookingRejectionEmail(booking.email, booking, reason)
+      } catch (emailErr) {
+        console.error('Failed to send rejection email:', emailErr)
       }
     }
 

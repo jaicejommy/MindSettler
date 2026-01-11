@@ -128,11 +128,6 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
   }
 }
 
-module.exports = {
-  sendPasswordResetEmail,
-  sendBookingConfirmationEmail,
-};
-
 /**
  * Send booking confirmation email
  * @param {string} to - Recipient email
@@ -273,3 +268,139 @@ async function sendBookingConfirmationEmail(to, booking) {
     throw error;
   }
 }
+
+/**
+ * Send booking rejection email
+ * @param {string} to - Recipient email
+ * @param {object} booking - Booking details
+ * @param {string} reason - Rejection reason from admin
+ */
+async function sendBookingRejectionEmail(to, booking, reason) {
+  const transporter = createTransporter();
+
+  const subject = 'MindSettler - Session Update';
+  const reasonText = reason || 'Unfortunately, the requested time slot is not available. Please try booking a different slot.';
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Session Update</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+      <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td align="center" style="padding: 40px 0;">
+            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
+              <!-- Header -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 40px 30px; text-align: center;">
+                  <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
+                  <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Session Update</h1>
+                  <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">MindSettler - Mental Well-being Platform</p>
+                </td>
+              </tr>
+              
+              <!-- Content -->
+              <tr>
+                <td style="padding: 40px 30px;">
+                  <h2 style="color: #1a1a2e; margin: 0 0 16px; font-size: 22px;">Hi ${booking.name || 'there'},</h2>
+                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.6;">
+                    We regret to inform you that your session request could not be confirmed at this time.
+                  </p>
+                  
+                  <!-- Booking Details Card -->
+                  <table role="presentation" style="width: 100%; background-color: #fef2f2; border-radius: 12px; margin: 24px 0; border-left: 4px solid #ef4444;">
+                    <tr>
+                      <td style="padding: 24px;">
+                        <p style="color: #991b1b; font-weight: 600; margin: 0 0 8px; font-size: 14px;">SESSION DETAILS</p>
+                        <p style="color: #1a1a2e; margin: 0; font-size: 16px;">
+                          <strong>Date:</strong> ${booking.date}<br>
+                          <strong>Time:</strong> ${booking.time}<br>
+                          <strong>Mode:</strong> ${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Reason Section -->
+                  <table role="presentation" style="width: 100%; background-color: #f8fafc; border-radius: 12px; margin: 24px 0;">
+                    <tr>
+                      <td style="padding: 24px;">
+                        <p style="color: #64748b; font-weight: 600; margin: 0 0 8px; font-size: 14px;">REASON FROM OUR TEAM</p>
+                        <p style="color: #1a1a2e; margin: 0; font-size: 16px; line-height: 1.6;">
+                          ${reasonText}
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <p style="color: #64748b; margin: 24px 0; font-size: 16px; line-height: 1.6;">
+                    We apologize for any inconvenience. Please feel free to book another available slot that works for you.
+                  </p>
+                  
+                  <p style="color: #94a3b8; margin: 24px 0 0; font-size: 14px; line-height: 1.6;">
+                    If you have any questions, please don't hesitate to contact us.
+                  </p>
+                </td>
+              </tr>
+              
+              <!-- Footer -->
+              <tr>
+                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
+                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const text = `
+    MindSettler - Session Update
+
+    Hi ${booking.name || 'there'},
+
+    We regret to inform you that your session request could not be confirmed at this time.
+
+    Session Details:
+    - Date: ${booking.date}
+    - Time: ${booking.time}
+    - Mode: ${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}
+
+    Reason: ${reasonText}
+
+    We apologize for any inconvenience. Please feel free to book another available slot.
+
+    © ${new Date().getFullYear()} MindSettler. All rights reserved.
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    console.log(`Booking rejection email sent to ${to}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send booking rejection email:', error);
+    throw error;
+  }
+}
+
+module.exports = {
+  sendPasswordResetEmail,
+  sendBookingConfirmationEmail,
+  sendBookingRejectionEmail,
+};

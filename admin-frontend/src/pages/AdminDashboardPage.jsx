@@ -8,6 +8,8 @@ function AdminDashboardPage() {
     const [contacts, setContacts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [rejectModal, setRejectModal] = useState({ open: false, bookingId: null })
+    const [rejectReason, setRejectReason] = useState('')
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -52,14 +54,14 @@ function AdminDashboardPage() {
         fetchData()
     }, [token, navigate])
 
-    async function updateBookingStatus(id, status) {
+    async function updateBookingStatus(id, status, reason = '') {
         const res = await fetch(`${API_BASE_URL}/bookings/${id}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({ status, reason }),
         })
 
         const data = await res.json()
@@ -69,6 +71,23 @@ function AdminDashboardPage() {
                 b._id === id ? { ...b, status: data.booking.status } : b
             )
         )
+    }
+
+    function openRejectModal(bookingId) {
+        setRejectModal({ open: true, bookingId })
+        setRejectReason('')
+    }
+
+    function closeRejectModal() {
+        setRejectModal({ open: false, bookingId: null })
+        setRejectReason('')
+    }
+
+    async function handleReject() {
+        if (rejectModal.bookingId) {
+            await updateBookingStatus(rejectModal.bookingId, 'rejected', rejectReason)
+            closeRejectModal()
+        }
     }
 
     function handleLogout() {
@@ -158,7 +177,7 @@ function AdminDashboardPage() {
                                                             </button>
                                                             <button
                                                                 className="btn-small btn-reject"
-                                                                onClick={() => updateBookingStatus(b._id, 'rejected')}
+                                                                onClick={() => openRejectModal(b._id)}
                                                             >
                                                                 ✕ Reject
                                                             </button>
@@ -236,6 +255,49 @@ function AdminDashboardPage() {
                     )}
                 </section>
             </div>
+
+            {/* Rejection Reason Modal */}
+            {rejectModal.open && (
+                <div className="modal-overlay" onClick={closeRejectModal}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <h3>Rejection Reason</h3>
+                        <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+                            Please provide a reason for rejecting this session (optional):
+                        </p>
+                        <textarea
+                            value={rejectReason}
+                            onChange={e => setRejectReason(e.target.value)}
+                            placeholder="e.g., The requested time slot is unavailable..."
+                            rows={4}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: '8px',
+                                border: '1px solid #e2e8f0',
+                                fontSize: '0.95rem',
+                                resize: 'vertical',
+                                marginBottom: '1rem',
+                            }}
+                        />
+                        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                            <button
+                                className="btn-outline"
+                                onClick={closeRejectModal}
+                                style={{ padding: '0.5rem 1rem' }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn-small btn-reject"
+                                onClick={handleReject}
+                                style={{ padding: '0.5rem 1rem' }}
+                            >
+                                Reject Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }
