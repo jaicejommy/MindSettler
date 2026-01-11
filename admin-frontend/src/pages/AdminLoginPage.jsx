@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import API_BASE_URL from '../api'
+import { signInWithEmailPassword } from '../firebase'
 
 function AdminLoginPage() {
     const navigate = useNavigate()
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -14,22 +14,13 @@ function AdminLoginPage() {
         setError('')
         setLoading(true)
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            })
-
-            if (!res.ok) {
-                const data = await res.json().catch(() => ({}))
-                throw new Error(data.message || 'Login failed')
-            }
-
-            const data = await res.json()
-            localStorage.setItem('mindsettler_admin_token', data.token)
+            const user = await signInWithEmailPassword(email, password)
+            const token = await user.getIdToken()
+            localStorage.setItem('mindsettler_admin_token', token)
             navigate('/dashboard')
         } catch (err) {
-            setError(err.message)
+            console.error(err)
+            setError(err.message || 'Login failed')
         } finally {
             setLoading(false)
         }
@@ -47,20 +38,20 @@ function AdminLoginPage() {
                     </div>
                     <p className="eyebrow">MindSettler Console</p>
                     <h1>Admin Login</h1>
-                    <p className="subtitle">Sign in to review appointments and enquiries.</p>
+                    <p className="subtitle">Sign in with your admin email</p>
                 </header>
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label htmlFor="username">Username</label>
+                        <label htmlFor="email">Email</label>
                         <input
-                            id="username"
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            autoComplete="username"
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
                             required
-                            placeholder="Enter username"
+                            placeholder="bhanugovindu2007@gmail.com"
                         />
                     </div>
 
@@ -89,7 +80,7 @@ function AdminLoginPage() {
                 </form>
 
                 <p className="hint">
-                    Default credentials: <strong>admin</strong> / <code>asdfghjkl123</code>
+                    Ensure you are registered as an admin in Firebase.
                 </p>
             </div>
         </main>
@@ -97,4 +88,3 @@ function AdminLoginPage() {
 }
 
 export default AdminLoginPage
-

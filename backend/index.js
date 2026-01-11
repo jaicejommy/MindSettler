@@ -21,6 +21,7 @@ const { sendPasswordResetEmail } = require('./services/emailService')
 
 // Middleware
 const firebaseAuth = require('./middleware/firebaseAuth')
+const firebaseAdminAuth = require('./middleware/firebaseAdminAuth')
 
 dotenv.config()
 connectDB()
@@ -664,7 +665,7 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
 })
 
 // List bookings (admin)
-app.get('/api/bookings', async (_req, res) => {
+app.get('/api/bookings', firebaseAdminAuth, async (_req, res) => {
   try {
     const bookings = await Booking.find().sort({ createdAt: -1 })
     res.json({ bookings })
@@ -675,7 +676,7 @@ app.get('/api/bookings', async (_req, res) => {
 })
 
 // Update booking status (admin)
-app.patch('/api/bookings/:id/status', async (req, res) => {
+app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
   try {
     const { id } = req.params
     const { status } = req.body || {}
@@ -702,7 +703,7 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
 })
 
 // Disable / enable slot (admin)
-app.post('/api/slots/disable', async (req, res) => {
+app.post('/api/slots/disable', firebaseAdminAuth, async (req, res) => {
   try {
     const { date, time, disabled } = req.body || {}
 
@@ -759,7 +760,7 @@ app.post('/api/contact', async (req, res) => {
 })
 
 // List contact submissions (admin)
-app.get('/api/contact', async (_req, res) => {
+app.get('/api/contact', firebaseAdminAuth, async (_req, res) => {
   try {
     const contacts = await Contact.find().sort({ createdAt: -1 })
     res.json({ contacts })
@@ -808,7 +809,7 @@ app.post('/api/corporate', async (req, res) => {
 })
 
 // List corporate enquiries (admin)
-app.get('/api/corporate', async (_req, res) => {
+app.get('/api/corporate', firebaseAdminAuth, async (_req, res) => {
   try {
     const corporateRequests = await CorporateRequest.find().sort({ createdAt: -1 })
     res.json({ corporateRequests })

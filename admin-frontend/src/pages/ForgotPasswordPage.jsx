@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import API_BASE_URL from '../api'
+import { sendPasswordReset } from '../firebase'
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState('')
@@ -16,22 +16,12 @@ function ForgotPasswordPage() {
         setLoading(true)
 
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/forgot-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Failed to send reset email')
-            }
-
-            setMessage(data.message)
+            await sendPasswordReset(email)
+            setMessage('If an account exists with this email, a reset link has been sent.')
             setSent(true)
         } catch (err) {
-            setError(err.message)
+            console.error(err)
+            setError(err.message || 'Failed to send reset email')
         } finally {
             setLoading(false)
         }
@@ -63,7 +53,7 @@ function ForgotPasswordPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 autoComplete="email"
                                 required
-                                placeholder="admin@mindsettler.com"
+                                placeholder="bhanugovindu2007@gmail.com"
                             />
                         </div>
 
