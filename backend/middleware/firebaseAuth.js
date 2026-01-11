@@ -21,38 +21,12 @@ async function firebaseAuth(req, res, next) {
     const {
       uid,
       email,
-      name,
-      picture,
-      phone_number,
       firebase = {},
     } = decoded
 
     const provider = firebase.sign_in_provider || 'password'
 
-    const usernameBase = email ? email.split('@')[0] : `user_${uid.slice(0, 8)}`
-
-    let user = await User.findOne({ firebaseUID: uid })
-
-    if (!user) {
-      // Ensure unique username if needed
-      let username = usernameBase
-      let counter = 1
-      // eslint-disable-next-line no-await-in-loop
-      while (await User.findOne({ username })) {
-        username = `${usernameBase}${counter}`
-        counter += 1
-      }
-
-      user = await User.create({
-        username,
-        name: name || usernameBase,
-        email: email || `${usernameBase}@placeholder.local`,
-        firebaseUID: uid,
-        phone: phone_number || '',
-        profilePic: picture || '',
-        concerns: [],
-      })
-    }
+    const user = await User.findOne({ firebaseUID: uid })
 
     req.user = user
     req.authProvider = provider

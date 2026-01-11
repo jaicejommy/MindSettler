@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   auth,
   listenToAuthChanges,
@@ -6,6 +6,7 @@ import {
   signUpWithEmailPassword,
   signInWithGoogle,
   logout,
+  sendPasswordReset,
 } from '../firebase'
 import authedApi from '../authedApi'
 
@@ -144,7 +145,8 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
 }
 
 function AuthPage() {
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const [mode, setMode] = useState('login') // 'login' | 'signup' | 'forgot'
+  const strictLoginCheck = useRef(false)
 
   // Login state (username + password)
   const [loginUsername, setLoginUsername] = useState('')
@@ -157,9 +159,15 @@ function AuthPage() {
   const [signupUsername, setSignupUsername] = useState('')
   const [signupName, setSignupName] = useState('')
   const [signupPhone, setSignupPhone] = useState('')
+  const [isGoogleSignup, setIsGoogleSignup] = useState(false) // Track if signup is via Google
+
+  // Forgot password state
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [resetSent, setResetSent] = useState(false)
 
   const [user, setUser] = useState(null)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [backendUser, setBackendUser] = useState(null)
 
@@ -173,7 +181,10 @@ function AuthPage() {
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
       setUser(firebaseUser)
-      setBackendUser(null)
+
+      // Don't clear backend user immediately if we're just refreshing
+      // setBackendUser(null) 
+
       setBookings([])
       setBookingsLoading(false)
 
@@ -188,10 +199,26 @@ function AuthPage() {
           setBackendUser(meRes.data.user || null)
           setBookings(bookingsRes.data.bookings || [])
         } catch (err) {
-          console.error('Failed to sync user with backend:', err)
+          console.error('Failed to sync user with backend (probably new user):', err)
+          setBackendUser(null) // Ensure backendUser is null if not found
+
+          // If we have a firebase user but no backend profile, it's a new signup
+          // Pre-fill form and show signup, BUT only if we are still logged in (avoid race with strict login check)
+          // Also check strictLoginCheck ref to ensure we don't preempt handleGoogleSignIn's logic
+          if (strictLoginCheck.current) return
+
+          if (auth.currentUser) {
+            setMode('signup')
+            setIsGoogleSignup(true)
+            setSignupEmail(firebaseUser.email || '')
+            setSignupName(firebaseUser.displayName || '')
+            setSuccessMessage('Please complete your profile to continue')
+          }
         } finally {
           setBookingsLoading(false)
         }
+      } else {
+        setBackendUser(null)
       }
     })
     return () => unsubscribe()
@@ -248,9 +275,13 @@ function AuthPage() {
     const fieldErrors = {}
     if (!signupUsername) fieldErrors.username = 'Username is required'
     if (!signupName) fieldErrors.name = 'Name is required'
-    if (!signupEmail) fieldErrors.email = 'Email is required'
-    if (!signupPassword) fieldErrors.password = 'Password is required'
-    if (!signupConfirmPassword) fieldErrors.confirmPassword = 'Please confirm your password'
+
+    // Only require email/password for non-Google signups
+    if (!isGoogleSignup) {
+      if (!signupEmail) fieldErrors.email = 'Email is required'
+      if (!signupPassword) fieldErrors.password = 'Password is required'
+      if (!signupConfirmPassword) fieldErrors.confirmPassword = 'Please confirm your password'
+    }
 
     if (Object.keys(fieldErrors).length > 0) {
       setSignupErrors(fieldErrors)
@@ -258,7 +289,7 @@ function AuthPage() {
       return
     }
 
-    if (signupPassword !== signupConfirmPassword) {
+    if (!isGoogleSignup && signupPassword !== signupConfirmPassword) {
       setSignupErrors((prev) => ({ ...prev, confirmPassword: 'Passwords do not match' }))
       setError('Passwords do not match')
       return
@@ -267,9 +298,12 @@ function AuthPage() {
     try {
       setLoading(true)
 
-      await signUpWithEmailPassword(signupEmail, signupPassword)
+      // For non-Google signups, create Firebase account first
+      if (!isGoogleSignup) {
+        await signUpWithEmailPassword(signupEmail, signupPassword)
+      }
 
-      // Immediately update profile in our backend (username, name, phone)
+      // Update profile in our backend (username, name, phone)
       try {
         const { data } = await authedApi.patch('/me', {
           username: signupUsername,
@@ -281,9 +315,11 @@ function AuthPage() {
         console.error('Failed to update profile after signup', profileErr)
         if (profileErr.response && profileErr.response.data && profileErr.response.data.message) {
           setError(profileErr.response.data.message)
+          return
         }
       }
 
+      // Reset form
       setSignupErrors({})
       setSignupEmail('')
       setSignupPassword('')
@@ -291,6 +327,8 @@ function AuthPage() {
       setSignupUsername('')
       setSignupName('')
       setSignupPhone('')
+      setIsGoogleSignup(false)
+      setSuccessMessage('')
     } catch (err) {
       console.error(err)
       setError(err?.message || 'Signup failed')
@@ -344,17 +382,94 @@ function AuthPage() {
     setError('')
     try {
       setLoading(true)
-      await signInWithGoogle()
-      // auth state listener will run and sync with backend
+      if (mode === 'login') strictLoginCheck.current = true
+      const googleUser = await signInWithGoogle()
+
+      // Check if user already exists in backend (returning user)
+      try {
+        const { data } = await authedApi.get('/me')
+        if (data.user && data.user.username) {
+          // User already has a complete profile, let them in
+          return
+        }
+      } catch (err) {
+        // User doesn't exist in backend yet (404)
+
+        // If not in signup mode, reject new users
+        if (mode !== 'signup') {
+          await logout()
+          setMode('login')
+          setError('No account found with this email. Please create an account.')
+          return
+        }
+
+        // If in signup mode, continue to profile completion
+      }
+
+      // Pre-fill signup form with Google info and switch to signup mode
+      setSignupEmail(googleUser.email || '')
+      setSignupName(googleUser.displayName || '')
+      setIsGoogleSignup(true)
+      setMode('signup')
+      setSuccessMessage('Please complete your profile to continue')
     } catch (err) {
       console.error(err)
       setError(err?.message || 'Google sign-in failed')
+    } finally {
+      strictLoginCheck.current = false
+      setLoading(false)
+    }
+  }
+
+  async function handleResetSignup() {
+    try {
+      await logout()
+    } catch (err) {
+      console.error(err)
+    }
+    setSignupEmail('')
+    setSignupName('')
+    setSignupUsername('')
+    setSignupPhone('')
+    setIsGoogleSignup(false)
+    setMode('signup') // Keep in signup mode or switch to 'login' if preferred
+    setError('')
+    setSuccessMessage('')
+  }
+
+  async function handleForgotPassword(e) {
+    e.preventDefault()
+    setError('')
+    setSuccessMessage('')
+
+    if (!forgotEmail) {
+      setError('Please enter your email address')
+      return
+    }
+
+    try {
+      setLoading(true)
+      await sendPasswordReset(forgotEmail)
+      setResetSent(true)
+      setSuccessMessage('Password reset email sent! Check your inbox.')
+    } catch (err) {
+      console.error(err)
+      // Firebase error messages
+      if (err?.code === 'auth/user-not-found') {
+        setError('No account found with this email')
+      } else if (err?.code === 'auth/invalid-email') {
+        setError('Invalid email address')
+      } else {
+        setError(err?.message || 'Failed to send password reset email')
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  if (user) {
+  // Only show profile page if BOTH Firebase Auth AND Backend Profile exist
+  // If backendUser is missing, it means they need to complete signup
+  if (user && backendUser) {
     const avatarLetter =
       (backendUser?.name && backendUser.name[0]) ||
       (backendUser?.username && backendUser.username[0]) ||
@@ -479,14 +594,14 @@ function AuthPage() {
                             b.status === 'confirmed'
                               ? 'rgba(0, 150, 80, 0.12)'
                               : b.status === 'pending'
-                              ? 'rgba(245, 186, 25, 0.16)'
-                              : 'rgba(220, 53, 69, 0.1)',
+                                ? 'rgba(245, 186, 25, 0.16)'
+                                : 'rgba(220, 53, 69, 0.1)',
                           color:
                             b.status === 'confirmed'
                               ? '#006644'
                               : b.status === 'pending'
-                              ? '#806000'
-                              : '#842029',
+                                ? '#806000'
+                                : '#842029',
                         }}
                       >
                         {b.status || 'pending'}
@@ -549,17 +664,19 @@ function AuthPage() {
               letterSpacing: '-0.03em',
             }}
           >
-            {mode === 'signup' ? 'Create account' : 'Sign in'}
+            {mode === 'signup' ? 'Create account' : mode === 'forgot' ? 'Reset Password' : 'Sign in'}
           </h1>
           <p style={{ margin: 0, color: 'var(--text-soft)', fontSize: '0.95rem' }}>
             {mode === 'signup'
               ? 'Create an account with your details and password.'
-              : 'Sign in with your username and password.'}
+              : mode === 'forgot'
+                ? 'Enter your email to receive a password reset link.'
+                : 'Sign in with your username and password.'}
           </p>
         </header>
 
         <form
-          onSubmit={mode === 'signup' ? handleSignupSubmit : handleLoginSubmit}
+          onSubmit={mode === 'signup' ? handleSignupSubmit : mode === 'forgot' ? handleForgotPassword : handleLoginSubmit}
           className="form"
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
@@ -624,6 +741,86 @@ function AuthPage() {
                   </p>
                 )}
               </div>
+
+              {/* Forgot Password Link */}
+              <button
+                type="button"
+                onClick={() => { setMode('forgot'); setError(''); setSuccessMessage(''); }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#6b5b95',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  textAlign: 'right',
+                  marginTop: '-0.5rem',
+                  textDecoration: 'underline',
+                }}
+              >
+                Forgot Password?
+              </button>
+            </>
+          )}
+
+          {/* Forgot Password Form */}
+          {mode === 'forgot' && (
+            <>
+              {!resetSent ? (
+                <div className="form-group">
+                  <label
+                    htmlFor="forgot-email"
+                    style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    id="forgot-email"
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    autoComplete="email"
+                    style={{
+                      width: '100%',
+                      height: '2.6rem',
+                      borderRadius: '999px',
+                      border: '1px solid rgba(63, 41, 101, 0.18)',
+                      padding: '0 1rem',
+                      fontSize: '0.95rem',
+                      outline: 'none',
+                    }}
+                    placeholder="Enter your email"
+                  />
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '1rem',
+                  background: 'rgba(0, 150, 80, 0.1)',
+                  borderRadius: '12px',
+                  marginBottom: '1rem'
+                }}>
+                  <p style={{ color: '#006644', margin: 0, fontSize: '0.95rem' }}>
+                    ✓ {successMessage}
+                  </p>
+                </div>
+              )}
+
+              {/* Back to Sign In */}
+              <button
+                type="button"
+                onClick={() => { setMode('login'); setError(''); setSuccessMessage(''); setResetSent(false); setForgotEmail(''); }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#6b5b95',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  textDecoration: 'underline',
+                }}
+              >
+                ← Back to Sign In
+              </button>
             </>
           )}
 
@@ -717,7 +914,7 @@ function AuthPage() {
                   htmlFor="signup-email"
                   style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
                 >
-                  Email *
+                  Email {isGoogleSignup ? '(from Google)' : '*'}
                 </label>
                 <input
                   id="signup-email"
@@ -725,6 +922,8 @@ function AuthPage() {
                   value={signupEmail}
                   onChange={(e) => setSignupEmail(e.target.value)}
                   autoComplete="email"
+                  readOnly={isGoogleSignup}
+                  disabled={isGoogleSignup}
                   style={{
                     width: '100%',
                     height: '2.6rem',
@@ -733,74 +932,105 @@ function AuthPage() {
                     padding: '0 1rem',
                     fontSize: '0.95rem',
                     outline: 'none',
+                    backgroundColor: isGoogleSignup ? 'rgba(63, 41, 101, 0.05)' : 'white',
+                    cursor: isGoogleSignup ? 'not-allowed' : 'text',
                   }}
                 />
+                {isGoogleSignup && (
+                  <button
+                    type="button"
+                    onClick={handleResetSignup}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--primary)',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      marginTop: '0.25rem',
+                      textDecoration: 'underline',
+                      padding: 0,
+                    }}
+                  >
+                    Not you? Use a different email
+                  </button>
+                )}
                 {signupErrors.email && (
                   <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
                     {signupErrors.email}
                   </p>
                 )}
               </div>
-              <div className="form-group">
-                <label
-                  htmlFor="signup-password"
-                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
-                >
-                  Password *
-                </label>
-                <input
-                  id="signup-password"
-                  type="password"
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                  autoComplete="new-password"
-                  style={{
-                    width: '100%',
-                    height: '2.6rem',
-                    borderRadius: '999px',
-                    border: '1px solid rgba(63, 41, 101, 0.18)',
-                    padding: '0 1rem',
-                    fontSize: '0.95rem',
-                    outline: 'none',
-                  }}
-                />
-                {signupErrors.password && (
-                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
-                    {signupErrors.password}
-                  </p>
-                )}
-              </div>
 
-              <div className="form-group">
-                <label
-                  htmlFor="signup-confirm-password"
-                  style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
-                >
-                  Confirm password *
-                </label>
-                <input
-                  id="signup-confirm-password"
-                  type="password"
-                  value={signupConfirmPassword}
-                  onChange={(e) => setSignupConfirmPassword(e.target.value)}
-                  autoComplete="new-password"
-                  style={{
-                    width: '100%',
-                    height: '2.6rem',
-                    borderRadius: '999px',
-                    border: '1px solid rgba(63, 41, 101, 0.18)',
-                    padding: '0 1rem',
-                    fontSize: '0.95rem',
-                    outline: 'none',
-                  }}
-                />
-                {signupErrors.confirmPassword && (
-                  <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
-                    {signupErrors.confirmPassword}
-                  </p>
-                )}
-              </div>
+              {/* Password fields - only show for non-Google signups */}
+              {!isGoogleSignup && (
+                <>
+                  <div className="form-group">
+                    <label
+                      htmlFor="signup-password"
+                      style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                    >
+                      Password *
+                    </label>
+                    <input
+                      id="signup-password"
+                      type="password"
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      autoComplete="new-password"
+                      style={{
+                        width: '100%',
+                        height: '2.6rem',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(63, 41, 101, 0.18)',
+                        padding: '0 1rem',
+                        fontSize: '0.95rem',
+                        outline: 'none',
+                      }}
+                    />
+                    {signupErrors.password && (
+                      <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                        {signupErrors.password}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label
+                      htmlFor="signup-confirm-password"
+                      style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}
+                    >
+                      Confirm password *
+                    </label>
+                    <input
+                      id="signup-confirm-password"
+                      type="password"
+                      value={signupConfirmPassword}
+                      onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                      autoComplete="new-password"
+                      style={{
+                        width: '100%',
+                        height: '2.6rem',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(63, 41, 101, 0.18)',
+                        padding: '0 1rem',
+                        fontSize: '0.95rem',
+                        outline: 'none',
+                      }}
+                    />
+                    {signupErrors.confirmPassword && (
+                      <p style={{ color: 'var(--danger)', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                        {signupErrors.confirmPassword}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
             </>
+          )}
+
+          {/* Success message for Google signup */}
+          {successMessage && (
+            <p style={{ color: '#006644', background: 'rgba(0, 150, 80, 0.1)', padding: '0.75rem 1rem', borderRadius: '8px', margin: '0.25rem 0 0.1rem' }}>{successMessage}</p>
           )}
 
           {error && (
@@ -824,10 +1054,14 @@ function AuthPage() {
             {loading
               ? mode === 'signup'
                 ? 'Creating account…'
-                : 'Signing in…'
+                : mode === 'forgot'
+                  ? 'Sending…'
+                  : 'Signing in…'
               : mode === 'signup'
-              ? 'Create account'
-              : 'Sign in'}
+                ? 'Create account'
+                : mode === 'forgot'
+                  ? (resetSent ? 'Email Sent!' : 'Send Reset Link')
+                  : 'Sign in'}
           </button>
         </form>
 
@@ -879,7 +1113,7 @@ function AuthPage() {
           </button>
         </p>
       </div>
-    </main>
+    </main >
   )
 }
 

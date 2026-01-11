@@ -3,6 +3,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const path = require('path')
 const fs = require('fs')
+const crypto = require('crypto')
 const multer = require('multer')
 const connectDB = require('./config/db')
 const { GoogleGenAI } = require('@google/genai')
@@ -13,6 +14,10 @@ const DisabledSlot = require('./models/DisabledSlot')
 const Contact = require('./models/Contact')
 const CorporateRequest = require('./models/CorporateRequest')
 const User = require('./models/User')
+const Admin = require('./models/Admin')
+
+// Services
+const { sendPasswordResetEmail } = require('./services/emailService')
 
 // Middleware
 const firebaseAuth = require('./middleware/firebaseAuth')
@@ -82,43 +87,312 @@ const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 app.use(express.json())
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, Postman, curl)
+      if (!origin) return callback(null, true)
+
+      const allowedOrigins = [
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
+      ]
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+      return callback(new Error('Not allowed by CORS'))
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 )
 
 // Serve uploaded profile images
 app.use('/uploads', express.static(uploadsDir))
 
-// ================= SIMPLE ADMIN AUTH (STATIC) =================
-// NOTE: This is a very basic, hard-coded admin login as requested.
-// Username: admin, Password: asdfghjkl123
-// It returns a static token that the frontend can store and use.
+// ================= ADMIN AUTH =================
+// Admin credentials stored in database with hashed passwords
+// Default admin will be created on first run if none exists
 
-const ADMIN_USERNAME = 'admin'
-const ADMIN_PASSWORD = 'asdfghjkl123'
-const ADMIN_TOKEN = 'mindsettler-admin-static-token'
+const ADMIN_TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || 'mindsettler-admin-secret-key'
 
-app.post('/api/admin/login', (req, res) => {
-  const { username, password } = req.body || {}
+// Generate a simple token for admin session
+function generateAdminToken(adminId) {
+  const payload = `${adminId}:${Date.now()}`
+  return Buffer.from(payload).toString('base64')
+}
 
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-    return res.json({ token: ADMIN_TOKEN })
+// Verify admin token
+function verifyAdminToken(token) {
+  try {
+    const decoded = Buffer.from(token, 'base64').toString('utf8')
+    const [adminId] = decoded.split(':')
+    return adminId
+  } catch {
+    return null
   }
+}
 
-  return res.status(401).json({ message: 'Invalid credentials' })
+// Initialize default admin if none exists
+async function initializeDefaultAdmin() {
+  try {
+    const adminCount = await Admin.countDocuments()
+    if (adminCount === 0) {
+      await Admin.create({
+        username: 'admin',
+        email: process.env.ADMIN_EMAIL || 'admin@mindsettler.com',
+        password: 'asdfghjkl123',
+      })
+      console.log('✅ Default admin created (username: admin, password: asdfghjkl123)')
+    }
+  } catch (err) {
+    console.error('Failed to initialize default admin:', err.message)
+  }
+}
+
+// Call after DB connection
+setTimeout(initializeDefaultAdmin, 2000)
+
+// Admin login
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body || {}
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' })
+    }
+
+    const admin = await Admin.findOne({ username: username.toLowerCase() })
+
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid credentials' })
+    }
+
+    const isMatch = await admin.comparePassword(password)
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' })
+    }
+
+    const token = generateAdminToken(admin._id.toString())
+    return res.json({ token, admin: { username: admin.username, email: admin.email } })
+  } catch (err) {
+    console.error('Admin login failed:', err)
+    return res.status(500).json({ message: 'Login failed' })
+  }
 })
 
-// Optional simple middleware for any future protected admin routes
+// Admin forgot password
+app.post('/api/admin/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body || {}
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' })
+    }
+
+    const admin = await Admin.findOne({ email: email.toLowerCase() })
+
+    if (!admin) {
+      // Don't reveal if email exists
+      return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 hour
+
+    admin.resetToken = resetToken
+    admin.resetTokenExpiry = resetTokenExpiry
+    await admin.save()
+
+    // Send email
+    const resetUrl = `${process.env.ADMIN_FRONTEND_URL || 'http://localhost:5174'}/reset-password?token=${resetToken}`
+
+    await sendPasswordResetEmail(admin.email, resetUrl, admin.username, true)
+
+    return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+  } catch (err) {
+    console.error('Forgot password failed:', err)
+    return res.status(500).json({ message: 'Failed to process request' })
+  }
+})
+
+// Admin reset password
+app.post('/api/admin/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body || {}
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and new password are required' })
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' })
+    }
+
+    const admin = await Admin.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() },
+    })
+
+    if (!admin) {
+      console.log('Reset Password Failed: Token invalid or expired')
+      console.log('Received Token:', token)
+      console.log('Current Time:', new Date())
+      // Check if token exists at all without expiry check for debugging
+      const debugAdmin = await Admin.findOne({ resetToken: token })
+      if (debugAdmin) {
+        console.log('Token exists but expired/mismatch. Expiry:', debugAdmin.resetTokenExpiry)
+      } else {
+        console.log('Token not found in DB')
+      }
+      return res.status(400).json({ message: 'Invalid or expired reset token' })
+    }
+
+    admin.password = newPassword
+    admin.resetToken = undefined
+    admin.resetTokenExpiry = undefined
+    await admin.save()
+
+    return res.json({ message: 'Password reset successful. You can now login with your new password.' })
+  } catch (err) {
+    console.error('Reset password failed:', err)
+    return res.status(500).json({ message: 'Failed to reset password' })
+  }
+})
+
+// Admin change password (when logged in)
+app.post('/api/admin/change-password', async (req, res) => {
+  try {
+    const auth = req.headers['authorization'] || ''
+    const token = auth.replace('Bearer ', '')
+    const adminId = verifyAdminToken(token)
+
+    if (!adminId) {
+      return res.status(401).json({ message: 'Unauthorized' })
+    }
+
+    const { currentPassword, newPassword } = req.body || {}
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' })
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters' })
+    }
+
+    const admin = await Admin.findById(adminId)
+
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' })
+    }
+
+    const isMatch = await admin.comparePassword(currentPassword)
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' })
+    }
+
+    admin.password = newPassword
+    await admin.save()
+
+    return res.json({ message: 'Password changed successfully' })
+  } catch (err) {
+    console.error('Change password failed:', err)
+    return res.status(500).json({ message: 'Failed to change password' })
+  }
+})
+
+// Middleware to require admin authentication
 function requireAdmin(req, res, next) {
   const auth = req.headers['authorization'] || ''
   const token = auth.replace('Bearer ', '')
+  const adminId = verifyAdminToken(token)
 
-  if (token === ADMIN_TOKEN) {
+  if (adminId) {
+    req.adminId = adminId
     return next()
   }
 
   return res.status(401).json({ message: 'Unauthorized' })
 }
+
+// ================= USER PASSWORD RESET =================
+
+// User forgot password (for email/password users)
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body || {}
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+
+    if (!user) {
+      // Don't reveal if email exists
+      return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 hour
+
+    user.resetToken = resetToken
+    user.resetTokenExpiry = resetTokenExpiry
+    await user.save()
+
+    // Send email
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`
+
+    await sendPasswordResetEmail(user.email, resetUrl, user.name || user.username, false)
+
+    return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+  } catch (err) {
+    console.error('User forgot password failed:', err)
+    return res.status(500).json({ message: 'Failed to process request' })
+  }
+})
+
+// User reset password
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body || {}
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and new password are required' })
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' })
+    }
+
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() },
+    })
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' })
+    }
+
+    user.password = newPassword
+    user.resetToken = undefined
+    user.resetTokenExpiry = undefined
+    await user.save()
+
+    return res.json({ message: 'Password reset successful. You can now login with your new password.' })
+  } catch (err) {
+    console.error('User reset password failed:', err)
+    return res.status(500).json({ message: 'Failed to reset password' })
+  }
+})
+
 
 // Fixed daily slots
 const DAILY_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00']
@@ -161,6 +435,9 @@ app.get('/api/health', (_req, res) => {
 
 // Authenticated route: returns Firebase user + Mongo user document
 app.get('/api/me', firebaseAuth, (req, res) => {
+  if (!req.user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
   res.json({
     firebaseUser: req.firebaseUser,
     user: req.user,
@@ -203,7 +480,8 @@ app.patch('/api/me', firebaseAuth, async (req, res) => {
 
     return res.json({ user })
   } catch (err) {
-    console.error('Failed to update profile', err)
+    console.error('Failed to update profile:', err.message)
+    console.error(err.stack)
 
     // Handle duplicate username/email errors
     if (err.code === 11000) {
