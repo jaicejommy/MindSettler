@@ -17,7 +17,7 @@ const User = require('./models/User')
 const Admin = require('./models/Admin')
 
 // Services
-const { sendPasswordResetEmail } = require('./services/emailService')
+const { sendPasswordResetEmail, sendBookingConfirmationEmail } = require('./services/emailService')
 
 // Middleware
 const firebaseAuth = require('./middleware/firebaseAuth')
@@ -697,6 +697,16 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
 
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' })
+    }
+
+    // Send confirmation email if status is confirmed
+    if (status === 'confirmed' && booking.email) {
+      try {
+        await sendBookingConfirmationEmail(booking.email, booking)
+      } catch (emailErr) {
+        console.error('Failed to send confirmation email:', emailErr)
+        // Don't fail the request if email fails
+      }
     }
 
     res.json({ message: 'Status updated', booking })
