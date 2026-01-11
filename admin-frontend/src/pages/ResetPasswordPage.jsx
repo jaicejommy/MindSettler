@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-import API_BASE_URL from '../api'
+import { confirmReset } from '../firebase'
 
 function ResetPasswordPage() {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
-    const token = searchParams.get('token')
+    const code = searchParams.get('oobCode') || searchParams.get('token')
 
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -15,10 +15,10 @@ function ResetPasswordPage() {
     const [success, setSuccess] = useState(false)
 
     useEffect(() => {
-        if (!token) {
+        if (!code) {
             setError('Invalid reset link. Please request a new password reset.')
         }
-    }, [token])
+    }, [code])
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -38,25 +38,16 @@ function ResetPasswordPage() {
         setLoading(true)
 
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/reset-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, newPassword }),
-            })
+            await confirmReset(code, newPassword)
 
-            const data = await res.json()
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Failed to reset password')
-            }
-
-            setMessage(data.message)
+            setMessage('Password reset successful. You can now login.')
             setSuccess(true)
 
             // Redirect to login after 3 seconds
             setTimeout(() => navigate('/'), 3000)
         } catch (err) {
-            setError(err.message)
+            console.error(err)
+            setError(err.message || 'Failed to reset password')
         } finally {
             setLoading(false)
         }
@@ -89,7 +80,7 @@ function ResetPasswordPage() {
                                 autoComplete="new-password"
                                 required
                                 placeholder="Minimum 8 characters"
-                                disabled={!token}
+                                disabled={!code}
                             />
                         </div>
 
@@ -103,13 +94,13 @@ function ResetPasswordPage() {
                                 autoComplete="new-password"
                                 required
                                 placeholder="Re-enter your password"
-                                disabled={!token}
+                                disabled={!code}
                             />
                         </div>
 
                         {error && <p className="error-message">{error}</p>}
 
-                        <button type="submit" className="btn-primary" disabled={loading || !token}>
+                        <button type="submit" className="btn-primary" disabled={loading || !code}>
                             {loading ? 'Resetting...' : 'Reset Password'}
                         </button>
                     </form>

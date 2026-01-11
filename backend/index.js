@@ -185,7 +185,7 @@ app.post('/api/admin/login', async (req, res) => {
   }
 })
 
-// Admin forgot password
+// Admin forgot password (Custom Email Flow)
 app.post('/api/admin/forgot-password', async (req, res) => {
   try {
     const { email } = req.body || {}
@@ -194,25 +194,29 @@ app.post('/api/admin/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'Email is required' })
     }
 
-    const admin = await Admin.findOne({ email: email.toLowerCase() })
-
-    if (!admin) {
-      // Don't reveal if email exists
-      return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+    // Verify user exists in Firebase (optional but good for debugging)
+    try {
+      await admin.auth().getUserByEmail(email)
+    } catch (err) {
+      if (err.code === 'auth/user-not-found') {
+        // Return success to prevent enumeration, or error depending on policy
+        // User asked for "Stylish Email", implies they want it to work. 
+        // We'll return success message but log it.
+        console.log('Forgot Password: User not found in Firebase')
+        return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
+      }
+      throw err
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex')
-    const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 hour
+    const actionCodeSettings = {
+      url: `${process.env.ADMIN_FRONTEND_URL || 'http://localhost:5174'}/reset-password`,
+      handleCodeInApp: false,
+    }
 
-    admin.resetToken = resetToken
-    admin.resetTokenExpiry = resetTokenExpiry
-    await admin.save()
+    const resetLink = await admin.auth().generatePasswordResetLink(email, actionCodeSettings)
 
-    // Send email
-    const resetUrl = `${process.env.ADMIN_FRONTEND_URL || 'http://localhost:5174'}/reset-password?token=${resetToken}`
-
-    await sendPasswordResetEmail(admin.email, resetUrl, admin.username, true)
+    // Send stylish email
+    await sendPasswordResetEmail(email, resetLink, 'Admin', true)
 
     return res.json({ message: 'If an account with this email exists, a reset link has been sent.' })
   } catch (err) {

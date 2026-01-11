@@ -16,7 +16,8 @@ function ForgotPasswordPage() {
         setLoading(true)
 
         try {
-            await sendPasswordReset(email)
+            // Pass current origin (Admin URL) as redirect target
+            await sendPasswordReset(email, window.location.origin)
             setMessage('If an account exists with this email, a reset link has been sent.')
             setSent(true)
         } catch (err) {

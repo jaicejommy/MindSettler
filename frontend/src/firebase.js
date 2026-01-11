@@ -11,6 +11,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  confirmPasswordReset,
 } from 'firebase/auth'
 
 // TODO: replace these placeholder values with your actual Firebase project config
@@ -56,3 +57,7 @@ export async function sendPasswordReset(email) {
   await firebaseSendPasswordResetEmail(auth, email)
 }
 
+
+export async function confirmReset(oobCode, newPassword) {
+  await confirmPasswordReset(auth, oobCode, newPassword)
+}
