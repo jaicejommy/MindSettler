@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import './overrides.css'
 
@@ -16,8 +16,6 @@ import BookingPage from './pages/BookingPage'
 import CorporatePage from './pages/CorporatePage'
 import FAQsPage from './pages/FAQsPage'
 import ContactPage from './pages/ContactPage'
-import AdminLoginPage from './pages/AdminLoginPage'
-import AdminDashboardPage from './pages/AdminDashboardPage'
 import PrivacyPage from './pages/PrivacyPage'
 import NonRefundPage from './pages/NonRefundPage'
 import ConfidentialityPage from './pages/ConfidentialityPage'
@@ -29,8 +27,6 @@ function App() {
   useEffect(() => {
     setIsReady(true)
   }, [])
-
-  const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
 
   return (
     <div className={`app-root ${isReady ? 'app-ready' : ''}`}>
@@ -47,15 +43,7 @@ function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/non-refund" element={<NonRefundPage />} />
           <Route path="/confidentiality" element={<ConfidentialityPage />} />
-
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route
-            path="/admin"
-            element={
-              isAdminAuthed ? <AdminDashboardPage /> : <Navigate to="/admin/login" />
-            }
-          />
         </Routes>
       </Layout>
     </div>

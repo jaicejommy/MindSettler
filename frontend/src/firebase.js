@@ -10,6 +10,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
 } from 'firebase/auth'
 
 // TODO: replace these placeholder values with your actual Firebase project config
@@ -49,3 +50,9 @@ export async function signInWithGoogle() {
 export async function logout() {
   await signOut(auth)
 }
+
+// Password reset using Firebase Auth
+export async function sendPasswordReset(email) {
+  await firebaseSendPasswordResetEmail(auth, email)
+}
+

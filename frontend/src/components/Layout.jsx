@@ -140,8 +140,6 @@ function Header() {
   const [firebaseUser, setFirebaseUser] = useState(null)
   const [accountUser, setAccountUser] = useState(null)
 
-  const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
-
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (user) => {
       setFirebaseUser(user)
@@ -172,17 +170,6 @@ function Header() {
   }, [])
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false)
-
-  const handleAdminClick = () => {
-    navigate('/admin')
-    closeMobileMenu()
-  }
-
-  const handleAdminLogout = () => {
-    localStorage.removeItem('mindsettler_admin_token')
-    navigate('/admin/login')
-    closeMobileMenu()
-  }
 
   return (
     <header className="top-nav">
@@ -284,20 +271,12 @@ function Header() {
             </a>
           )}
 
-          {/* Admin login / dashboard */}
-          {isAdminAuthed ? (
-            <a href="/admin" onClick={closeMobileMenu}>
-              <button type="button" className="nav-admin-btn">
-                Dashboard
-              </button>
-            </a>
-          ) : (
-            <a href="/admin/login" onClick={closeMobileMenu}>
-              <button type="button" className="nav-admin-btn">
-                Login
-              </button>
-            </a>
-          )}
+          {/* Admin Portal Link */}
+          <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>
+            <button type="button" className="nav-admin-btn">
+              Admin
+            </button>
+          </a>
         </nav>
       </div>
     </header>
