@@ -305,6 +305,12 @@ function AuthPage() {
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [isEditingProfile, setIsEditingProfile] = useState(false)
 
+  // Messages state
+  const [messages, setMessages] = useState([])
+  const [messagesLoading, setMessagesLoading] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+
 
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
@@ -315,17 +321,24 @@ function AuthPage() {
 
       setBookings([])
       setBookingsLoading(false)
+      setMessages([])
+      setMessagesLoading(false)
+      setUnreadCount(0)
 
-      // When a Firebase user logs in, call /api/me to sync into MongoDB and load their bookings
+      // When a Firebase user logs in, call /api/me to sync into MongoDB and load their bookings and messages
       if (firebaseUser) {
         try {
           setBookingsLoading(true)
-          const [meRes, bookingsRes] = await Promise.all([
+          setMessagesLoading(true)
+          const [meRes, bookingsRes, messagesRes] = await Promise.all([
             authedApi.get('/me'),
             authedApi.get('/me/bookings'),
+            authedApi.get('/me/messages'),
           ])
           setBackendUser(meRes.data.user || null)
           setBookings(bookingsRes.data.bookings || [])
+          setMessages(messagesRes.data.messages || [])
+          setUnreadCount(messagesRes.data.unreadCount || 0)
         } catch (err) {
           console.error('Failed to sync user with backend (probably new user):', err)
           setBackendUser(null) // Ensure backendUser is null if not found
@@ -344,6 +357,7 @@ function AuthPage() {
           }
         } finally {
           setBookingsLoading(false)
+          setMessagesLoading(false)
         }
       } else {
         setBackendUser(null)

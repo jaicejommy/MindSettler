@@ -15,6 +15,7 @@ const Contact = require('./models/Contact')
 const CorporateRequest = require('./models/CorporateRequest')
 const User = require('./models/User')
 const Admin = require('./models/Admin')
+const Message = require('./models/Message')
 
 // Services
 const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail } = require('./services/emailService')
@@ -609,6 +610,79 @@ app.get('/api/me/bookings', firebaseAuth, async (req, res) => {
   }
 })
 
+// Get authenticated user's messages
+app.get('/api/me/messages', firebaseAuth, async (req, res) => {
+  try {
+    const email = (req.user && req.user.email) || (req.firebaseUser && req.firebaseUser.email)
+
+    if (!email) {
+      return res.status(400).json({ message: 'No email associated with this user' })
+    }
+
+    const messages = await Message.find({ email: email.toLowerCase() })
+      .sort({ createdAt: -1 })
+      .limit(50)
+
+    const unreadCount = await Message.countDocuments({
+      email: email.toLowerCase(),
+      isRead: false
+    })
+
+    return res.json({ messages, unreadCount })
+  } catch (err) {
+    console.error('Failed to fetch user messages', err)
+    return res.status(500).json({ message: 'Failed to fetch user messages' })
+  }
+})
+
+// Mark a message as read
+app.patch('/api/me/messages/:id/read', firebaseAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+    const email = (req.user && req.user.email) || (req.firebaseUser && req.firebaseUser.email)
+
+    if (!email) {
+      return res.status(400).json({ message: 'No email associated with this user' })
+    }
+
+    const message = await Message.findOneAndUpdate(
+      { _id: id, email: email.toLowerCase() },
+      { isRead: true },
+      { new: true }
+    )
+
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' })
+    }
+
+    return res.json({ message })
+  } catch (err) {
+    console.error('Failed to mark message as read', err)
+    return res.status(500).json({ message: 'Failed to update message' })
+  }
+})
+
+// Mark all messages as read
+app.patch('/api/me/messages/read-all', firebaseAuth, async (req, res) => {
+  try {
+    const email = (req.user && req.user.email) || (req.firebaseUser && req.firebaseUser.email)
+
+    if (!email) {
+      return res.status(400).json({ message: 'No email associated with this user' })
+    }
+
+    await Message.updateMany(
+      { email: email.toLowerCase(), isRead: false },
+      { isRead: true }
+    )
+
+    return res.json({ message: 'All messages marked as read' })
+  } catch (err) {
+    console.error('Failed to mark all messages as read', err)
+    return res.status(500).json({ message: 'Failed to update messages' })
+  }
+})
+
 // Create booking
 app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'), async (req, res) => {
   try {
@@ -707,6 +781,27 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
       } catch (emailErr) {
         console.error('Failed to send confirmation email:', emailErr)
       }
+
+      // Create in-app message for confirmation
+      try {
+        const user = await User.findOne({ email: booking.email.toLowerCase() })
+        await Message.create({
+          email: booking.email.toLowerCase(),
+          firebaseUID: user?.firebaseUID || null,
+          type: 'booking_confirmed',
+          title: 'Session Confirmed! 🎉',
+          content: `Great news! Your counseling session on ${booking.date} at ${booking.time} has been confirmed. We look forward to seeing you!`,
+          bookingId: booking._id,
+          metadata: {
+            date: booking.date,
+            time: booking.time,
+            mode: booking.mode,
+            sessionType: booking.sessionType,
+          },
+        })
+      } catch (msgErr) {
+        console.error('Failed to create confirmation message:', msgErr)
+      }
     }
 
     // Send rejection email if status is rejected
@@ -715,6 +810,26 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
         await sendBookingRejectionEmail(booking.email, booking, reason)
       } catch (emailErr) {
         console.error('Failed to send rejection email:', emailErr)
+      }
+
+      // Create in-app message for rejection
+      try {
+        const user = await User.findOne({ email: booking.email.toLowerCase() })
+        await Message.create({
+          email: booking.email.toLowerCase(),
+          firebaseUID: user?.firebaseUID || null,
+          type: 'booking_rejected',
+          title: 'Session Update',
+          content: `We regret to inform you that your session request for ${booking.date} at ${booking.time} could not be confirmed.${reason ? ` Reason: ${reason}` : ''} Please feel free to book another slot.`,
+          bookingId: booking._id,
+          metadata: {
+            date: booking.date,
+            time: booking.time,
+            reason: reason || '',
+          },
+        })
+      } catch (msgErr) {
+        console.error('Failed to create rejection message:', msgErr)
       }
     }
 
@@ -729,7 +844,7 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
 app.post('/api/bookings/:id/reschedule', firebaseAdminAuth, async (req, res) => {
   try {
     const { id } = req.params
-    const { newDate, newTime, message } = req.body || {}
+    const { newDate, newTime, message: adminMessage } = req.body || {}
 
     if (!newDate || !newTime) {
       return res.status(400).json({ message: 'newDate and newTime are required' })
@@ -739,6 +854,9 @@ app.post('/api/bookings/:id/reschedule', firebaseAdminAuth, async (req, res) => 
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' })
     }
+
+    const originalDate = booking.date
+    const originalTime = booking.time
 
     // Update the booking with new date/time
     booking.date = newDate
@@ -751,11 +869,33 @@ app.post('/api/bookings/:id/reschedule', firebaseAdminAuth, async (req, res) => 
       try {
         await sendRescheduleEmail(booking.email, {
           name: booking.name,
-          date: req.body.originalDate || 'Previous date',
-          time: req.body.originalTime || 'Previous time'
-        }, newDate, newTime, message)
+          date: originalDate,
+          time: originalTime
+        }, newDate, newTime, adminMessage)
       } catch (emailErr) {
         console.error('Failed to send reschedule email:', emailErr)
+      }
+
+      // Create in-app message for reschedule
+      try {
+        const user = await User.findOne({ email: booking.email.toLowerCase() })
+        await Message.create({
+          email: booking.email.toLowerCase(),
+          firebaseUID: user?.firebaseUID || null,
+          type: 'booking_rescheduled',
+          title: 'Session Rescheduled 📅',
+          content: `Your session has been rescheduled from ${originalDate} at ${originalTime} to ${newDate} at ${newTime}.${adminMessage ? ` Message from MindSettler: "${adminMessage}"` : ''} Please note the new timing.`,
+          bookingId: booking._id,
+          metadata: {
+            originalDate,
+            originalTime,
+            newDate,
+            newTime,
+            adminMessage: adminMessage || '',
+          },
+        })
+      } catch (msgErr) {
+        console.error('Failed to create reschedule message:', msgErr)
       }
     }
 
