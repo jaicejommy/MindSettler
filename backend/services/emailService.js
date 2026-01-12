@@ -404,3 +404,4 @@ module.exports = {
   sendBookingConfirmationEmail,
   sendBookingRejectionEmail,
 };
+

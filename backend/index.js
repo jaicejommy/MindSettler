@@ -18,6 +18,7 @@ const Admin = require('./models/Admin')
 
 // Services
 const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail } = require('./services/emailService')
+const { sendRescheduleEmail } = require('./services/rescheduleEmail')
 
 // Middleware
 const firebaseAuth = require('./middleware/firebaseAuth')
@@ -721,6 +722,47 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to update status' })
+  }
+})
+
+// Reschedule booking (admin)
+app.post('/api/bookings/:id/reschedule', firebaseAdminAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+    const { newDate, newTime, message } = req.body || {}
+
+    if (!newDate || !newTime) {
+      return res.status(400).json({ message: 'newDate and newTime are required' })
+    }
+
+    const booking = await Booking.findById(id)
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' })
+    }
+
+    // Update the booking with new date/time
+    booking.date = newDate
+    booking.time = newTime
+    booking.status = 'confirmed'
+    await booking.save()
+
+    // Send reschedule email
+    if (booking.email) {
+      try {
+        await sendRescheduleEmail(booking.email, {
+          name: booking.name,
+          date: req.body.originalDate || 'Previous date',
+          time: req.body.originalTime || 'Previous time'
+        }, newDate, newTime, message)
+      } catch (emailErr) {
+        console.error('Failed to send reschedule email:', emailErr)
+      }
+    }
+
+    res.json({ message: 'Booking rescheduled', booking })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to reschedule booking' })
   }
 })
 

@@ -10,6 +10,10 @@ function AdminDashboardPage() {
     const [error, setError] = useState('')
     const [rejectModal, setRejectModal] = useState({ open: false, bookingId: null })
     const [rejectReason, setRejectReason] = useState('')
+    const [rescheduleModal, setRescheduleModal] = useState({ open: false, booking: null })
+    const [rescheduleData, setRescheduleData] = useState({ date: '', time: '', message: '' })
+    const [availableSlots, setAvailableSlots] = useState([])
+    const [loadingSlots, setLoadingSlots] = useState(false)
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -87,6 +91,64 @@ function AdminDashboardPage() {
         if (rejectModal.bookingId) {
             await updateBookingStatus(rejectModal.bookingId, 'rejected', rejectReason)
             closeRejectModal()
+        }
+    }
+
+    async function openRescheduleModal(booking) {
+        setRescheduleModal({ open: true, booking })
+        setRescheduleData({ date: '', time: '', message: '' })
+        setAvailableSlots([])
+    }
+
+    function closeRescheduleModal() {
+        setRescheduleModal({ open: false, booking: null })
+        setRescheduleData({ date: '', time: '', message: '' })
+        setAvailableSlots([])
+    }
+
+    async function fetchSlotsForDate(date) {
+        if (!date) return
+        setLoadingSlots(true)
+        try {
+            const res = await fetch(`${API_BASE_URL}/slots?date=${date}`)
+            const data = await res.json()
+            setAvailableSlots(data.slots?.filter(s => s.isAvailable) || [])
+        } catch (err) {
+            console.error('Failed to fetch slots:', err)
+            setAvailableSlots([])
+        } finally {
+            setLoadingSlots(false)
+        }
+    }
+
+    async function handleReschedule() {
+        if (!rescheduleModal.booking || !rescheduleData.date || !rescheduleData.time) return
+        const booking = rescheduleModal.booking
+        try {
+            const res = await fetch(`${API_BASE_URL}/bookings/${booking._id}/reschedule`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    newDate: rescheduleData.date,
+                    newTime: rescheduleData.time,
+                    message: rescheduleData.message,
+                    originalDate: booking.date,
+                    originalTime: booking.time,
+                }),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                setBookings(prev => prev.map(b => b._id === booking._id ? data.booking : b))
+                closeRescheduleModal()
+            } else {
+                alert(data.message || 'Failed to reschedule')
+            }
+        } catch (err) {
+            console.error('Reschedule failed:', err)
+            alert('Failed to reschedule booking')
         }
     }
 
@@ -180,6 +242,12 @@ function AdminDashboardPage() {
                                                                 onClick={() => openRejectModal(b._id)}
                                                             >
                                                                 ✕ Reject
+                                                            </button>
+                                                            <button
+                                                                className="btn-small btn-reschedule"
+                                                                onClick={() => openRescheduleModal(b)}
+                                                            >
+                                                                📅 Reschedule
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -293,6 +361,110 @@ function AdminDashboardPage() {
                                 style={{ padding: '0.5rem 1rem' }}
                             >
                                 Reject Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reschedule Modal */}
+            {rescheduleModal.open && (
+                <div className="modal-overlay" onClick={closeRescheduleModal}>
+                    <div className="modal-content modal-lg" onClick={e => e.stopPropagation()}>
+                        <h3>Reschedule Session</h3>
+                        {rescheduleModal.booking && (
+                            <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+                                Current: <strong>{rescheduleModal.booking.date}</strong> at <strong>{rescheduleModal.booking.time}</strong>
+                            </p>
+                        )}
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>New Date</label>
+                            <input
+                                type="date"
+                                value={rescheduleData.date}
+                                min={new Date().toISOString().split('T')[0]}
+                                onChange={e => {
+                                    setRescheduleData(prev => ({ ...prev, date: e.target.value, time: '' }))
+                                    fetchSlotsForDate(e.target.value)
+                                }}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--border)',
+                                    background: 'var(--bg-secondary)',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '0.95rem',
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>New Time</label>
+                            <select
+                                value={rescheduleData.time}
+                                onChange={e => setRescheduleData(prev => ({ ...prev, time: e.target.value }))}
+                                disabled={!rescheduleData.date || loadingSlots}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--border)',
+                                    background: 'var(--bg-secondary)',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '0.95rem',
+                                }}
+                            >
+                                <option value="">
+                                    {!rescheduleData.date ? 'Select date first' : loadingSlots ? 'Loading...' : 'Select time'}
+                                </option>
+                                {availableSlots.map(slot => (
+                                    <option key={slot.time} value={slot.time}>{slot.time}</option>
+                                ))}
+                            </select>
+                            {rescheduleData.date && !loadingSlots && availableSlots.length === 0 && (
+                                <p style={{ color: 'var(--warning)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                                    No available slots for this date
+                                </p>
+                            )}
+                        </div>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Message to Client (optional)</label>
+                            <textarea
+                                value={rescheduleData.message}
+                                onChange={e => setRescheduleData(prev => ({ ...prev, message: e.target.value }))}
+                                placeholder="e.g., Due to scheduling conflicts, we need to move your session..."
+                                rows={3}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--border)',
+                                    background: 'var(--bg-secondary)',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '0.95rem',
+                                    resize: 'vertical',
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                            <button
+                                className="btn-outline"
+                                onClick={closeRescheduleModal}
+                                style={{ padding: '0.5rem 1rem' }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn-small btn-reschedule"
+                                onClick={handleReschedule}
+                                disabled={!rescheduleData.date || !rescheduleData.time}
+                                style={{ padding: '0.5rem 1rem' }}
+                            >
+                                Send Reschedule
                             </button>
                         </div>
                     </div>

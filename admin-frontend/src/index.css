@@ -586,3 +586,24 @@ body {
   outline: none;
   border-color: var(--primary);
 }
+
+/* Reschedule Button */
+.btn-reschedule {
+  background: linear-gradient(135deg, var(--warning), #d97706);
+  color: white;
+  border: none;
+}
+
+.btn-reschedule:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+.btn-reschedule:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Larger Modal */
+.modal-lg {
+  max-width: 560px;
+}
