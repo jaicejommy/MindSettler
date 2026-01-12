@@ -10,10 +10,17 @@ import {
 } from '../firebase'
 import authedApi from '../authedApi'
 
-function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setError, setLoading }) {
+function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setError, setLoading, isEditing, setIsEditing }) {
   const [username, setUsername] = useState(backendUser?.username || '')
   const [name, setName] = useState(backendUser?.name || firebaseUser?.displayName || '')
   const [phone, setPhone] = useState(backendUser?.phone || '')
+
+  // Sync state when backendUser changes
+  useEffect(() => {
+    setUsername(backendUser?.username || '')
+    setName(backendUser?.name || firebaseUser?.displayName || '')
+    setPhone(backendUser?.phone || '')
+  }, [backendUser, firebaseUser])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -33,6 +40,7 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
       })
       const updatedUser = data.user || null
       setBackendUser(updatedUser)
+      setIsEditing(false)
       window.dispatchEvent(
         new CustomEvent('mindsettler-profile-updated', { detail: { user: updatedUser } }),
       )
@@ -48,8 +56,109 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
     }
   }
 
+  // Display mode - show profile info nicely
+  if (!isEditing) {
+    return (
+      <div
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(241, 237, 255, 0.9))',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          border: '1px solid rgba(63, 41, 101, 0.1)',
+          boxShadow: '0 4px 20px rgba(63, 41, 101, 0.08)',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                background: 'rgba(63, 41, 101, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#3f2965',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-soft)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Name</p>
+              <p style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#1a1a2e' }}>{backendUser?.name || '—'}</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                background: 'rgba(63, 41, 101, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#3f2965',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+              </svg>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-soft)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Username</p>
+              <p style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#1a1a2e' }}>@{backendUser?.username || '—'}</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                background: 'rgba(63, 41, 101, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#3f2965',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-soft)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</p>
+              <p style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#1a1a2e' }}>{backendUser?.phone || 'Not provided'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Edit mode - show form
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(241, 237, 255, 0.9))',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        border: '1px solid rgba(63, 41, 101, 0.1)',
+        boxShadow: '0 4px 20px rgba(63, 41, 101, 0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+      }}
+    >
       <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
         Update your profile details.
       </p>
@@ -128,18 +237,36 @@ function ProfileCompletionForm({ backendUser, firebaseUser, setBackendUser, setE
         />
       </div>
 
-      <button
-        type="submit"
-        className="btn btn-secondary"
-        style={{
-          marginTop: '0.5rem',
-          height: '2.6rem',
-          borderRadius: '999px',
-          fontSize: '0.85rem',
-        }}
-      >
-        Save profile
-      </button>
+      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+        <button
+          type="button"
+          onClick={() => setIsEditing(false)}
+          style={{
+            flex: 1,
+            height: '2.6rem',
+            borderRadius: '999px',
+            fontSize: '0.85rem',
+            background: 'transparent',
+            border: '1px solid rgba(63, 41, 101, 0.2)',
+            color: '#3f2965',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="btn btn-secondary"
+          style={{
+            flex: 1,
+            height: '2.6rem',
+            borderRadius: '999px',
+            fontSize: '0.85rem',
+          }}
+        >
+          Save changes
+        </button>
+      </div>
     </form>
   )
 }
@@ -176,7 +303,8 @@ function AuthPage() {
 
   const [bookings, setBookings] = useState([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
-  const [uploadingPic, setUploadingPic] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
+
 
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (firebaseUser) => {
@@ -345,38 +473,7 @@ function AuthPage() {
     }
   }
 
-  async function handleProfilePicChange(e) {
-    const file = e.target.files && e.target.files[0]
-    if (!file) return
 
-    setError('')
-    try {
-      setUploadingPic(true)
-      const formData = new FormData()
-      formData.append('profilePic', file)
-
-      const { data } = await authedApi.post('/me/profile-pic', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-
-      const updatedUser = data.user || backendUser
-      setBackendUser(updatedUser)
-      window.dispatchEvent(
-        new CustomEvent('mindsettler-profile-updated', { detail: { user: updatedUser } }),
-      )
-    } catch (err) {
-      console.error('Failed to upload profile picture', err)
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message)
-      } else {
-        setError('Failed to upload profile picture')
-      }
-    } finally {
-      setUploadingPic(false)
-    }
-  }
 
   async function handleGoogleSignIn() {
     setError('')
@@ -481,72 +578,106 @@ function AuthPage() {
     return (
       <main className="page auth-page">
         <div className="container" style={{ maxWidth: 640, margin: '4rem auto' }}>
-          <h1 style={{ marginBottom: '0.5rem' }}>Your profile</h1>
-          <p style={{ marginBottom: '0.75rem', color: 'var(--text-soft)' }}>
-            Signed in as <strong>{user.email}</strong>
-          </p>
-
+          {/* Profile Header with Avatar */}
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '1.25rem',
-              marginBottom: '1.5rem',
-              flexWrap: 'wrap',
+              marginBottom: '2rem',
+              textAlign: 'center',
             }}
           >
+            {/* Avatar with Edit Icon */}
             <div
               style={{
-                width: 72,
-                height: 72,
-                borderRadius: '50%',
-                overflow: 'hidden',
-                background: 'rgba(63, 41, 101, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 600,
-                fontSize: '1.6rem',
-                color: '#3f2965',
+                position: 'relative',
+                marginBottom: '1rem',
               }}
             >
-              {hasProfilePic ? (
-                <img
-                  src={backendUser.profilePic}
-                  alt="Profile"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                avatarLetter.toUpperCase()
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="profile-photo"
-                style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, marginBottom: '0.35rem' }}
+              <div
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  background: 'linear-gradient(135deg, rgba(63, 41, 101, 0.15), rgba(107, 91, 149, 0.2))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 600,
+                  fontSize: '2.2rem',
+                  color: '#3f2965',
+                  boxShadow: '0 8px 32px rgba(63, 41, 101, 0.2)',
+                  border: '3px solid rgba(255, 255, 255, 0.8)',
+                }}
               >
-                Profile photo
-              </label>
-              <input
-                id="profile-photo"
-                type="file"
-                accept="image/*"
-                onChange={handleProfilePicChange}
-                disabled={uploadingPic}
-              />
-              <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'var(--text-soft)' }}>
-                JPG or PNG, up to 5 MB.
-                {uploadingPic && ' Uploading…'}
-              </p>
+                {hasProfilePic ? (
+                  <img
+                    src={backendUser.profilePic}
+                    alt="Profile"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  avatarLetter.toUpperCase()
+                )}
+              </div>
+              {/* Edit Icon Button */}
+              <button
+                type="button"
+                onClick={() => setIsEditingProfile(!isEditingProfile)}
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: isEditingProfile
+                    ? 'linear-gradient(135deg, #e74c3c, #c0392b)'
+                    : 'linear-gradient(135deg, #3f2965, #6b5b95)',
+                  border: '2px solid white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(63, 41, 101, 0.3)',
+                  transition: 'all 0.2s ease',
+                }}
+                title={isEditingProfile ? 'Cancel editing' : 'Edit profile'}
+              >
+                {isEditingProfile ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                )}
+              </button>
             </div>
+
+            {/* Name and Email */}
+            <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 600, color: '#1a1a2e' }}>
+              {backendUser?.name || 'User'}
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', color: 'var(--text-soft)', fontSize: '0.9rem' }}>
+              {user.email}
+            </p>
           </div>
 
+          {/* Profile Info / Edit Form */}
           <ProfileCompletionForm
             backendUser={backendUser}
             firebaseUser={user}
             setBackendUser={setBackendUser}
             setError={setError}
             setLoading={setLoading}
+            isEditing={isEditingProfile}
+            setIsEditing={setIsEditingProfile}
           />
 
           {error && (
