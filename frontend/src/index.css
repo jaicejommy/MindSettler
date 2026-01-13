@@ -226,18 +226,13 @@ main {
 
 .brand-logo-img {
   display: block;
-  height: 44px;
-  /* layout height: keeps navbar compact */
+  height: 50px;
   width: auto;
-  /* Big visual size, nudged a bit more left and down */
-  transform: scale(5.8) translate(-4px, 3px);
-  transform-origin: left center;
 }
 
 @media (max-width: 640px) {
   .brand-logo-img {
-    height: 32px;
-    transform: scale(3.4) translate(-3px, 2px);
+    height: 36px;
   }
 }
 
