@@ -19,6 +19,7 @@ export default function BookingPage() {
     paymentScreenshot: null,
   })
   const [touched, setTouched] = useState({})
+  const [acceptPrivacyPolicy, setAcceptPrivacyPolicy] = useState(false)
   const [slots, setSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -74,6 +75,13 @@ export default function BookingPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Validate privacy policy acceptance for first-time sessions
+    if (form.isFirstSession && !acceptPrivacyPolicy) {
+      setError('You must accept the Privacy Policy to book your first session.')
+      return
+    }
+    
     setSubmitting(true)
     setError('')
     setResult(null)
@@ -102,6 +110,7 @@ export default function BookingPage() {
         paymentScreenshot: null,
       })
       setTouched({})
+      setAcceptPrivacyPolicy(false)
     } catch (err) {
       console.error(err)
       console.error(err)
@@ -254,6 +263,31 @@ export default function BookingPage() {
                     This is my first session with MindSettler
                   </label>
                 </div>
+
+                {form.isFirstSession && (
+                  <div className="field field-checkbox" style={{ marginTop: '0.5rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <input
+                        type="checkbox"
+                        checked={acceptPrivacyPolicy}
+                        onChange={(e) => setAcceptPrivacyPolicy(e.target.checked)}
+                        style={{ marginTop: '0.2rem' }}
+                      />
+                      <span>
+                        I have read and accept the{' '}
+                        <Link
+                          to="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                        >
+                          Privacy Policy
+                        </Link>
+                        {' '}*
+                      </span>
+                    </label>
+                  </div>
+                )}
               </div>
 
               <h3>Pick a slot</h3>
