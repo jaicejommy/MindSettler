@@ -259,10 +259,19 @@ main {
 }
 
 .nav-links button:hover {
-  border-color: rgba(221, 23, 100, 0.3);
   background: rgba(221, 23, 100, 0.08);
   color: var(--text);
   transform: translateY(-1px);
+}
+
+/* Ensure notification anchor shows underline properly */
+.nav-links .notif-dropdown-container {
+  display: flex;
+}
+
+.nav-links .notif-dropdown-container a {
+  display: block;
+  position: relative;
 }
 
 /* Nav icon buttons (notification & profile) */
@@ -327,6 +336,21 @@ main {
   text-align: center;
   line-height: 1.2;
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Mobile header actions - hidden on desktop */
+.mobile-header-actions {
+  display: none;
+}
+
+/* Nav toggle - hidden on desktop */
+.nav-toggle {
+  display: none;
+}
+
+/* Desktop only nav items - visible by default */
+.desktop-only-nav-item {
+  display: contents;
 }
 
 .nav-admin-status {
@@ -1747,6 +1771,42 @@ textarea {
 
   .nav-links.nav-links-open {
     display: flex;
+  }
+
+  /* Mobile header actions - Profile and Notification buttons visible on mobile */
+  .mobile-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    margin-right: 0.75rem;
+  }
+
+  .mobile-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(63, 41, 101, 0.2);
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 200ms ease;
+    padding: 0;
+    position: relative;
+  }
+
+  .mobile-action-btn:hover {
+    border-color: rgba(221, 23, 100, 0.3);
+    color: var(--accent);
+    background: rgba(255, 255, 255, 1);
+  }
+
+  /* Hide desktop-only nav items on mobile */
+  .desktop-only-nav-item {
+    display: none;
   }
 }
 
