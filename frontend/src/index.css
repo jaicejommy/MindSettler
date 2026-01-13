@@ -1,4 +1,5 @@
 @import './stats-layout.css';
+@import './components/ChatBot.css';
 
 :root {
   --bg: #FFFFFF;
@@ -1614,7 +1615,7 @@ textarea {
   position: fixed;
   right: 1.2rem;
   bottom: 1.2rem;
-  z-index: 30;
+  z-index: 9999;
   animation: fadeInUp 0.5s ease-out;
 }
 

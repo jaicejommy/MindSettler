@@ -813,11 +813,12 @@ function Footer() {
 
 export default function Layout({ children }) {
   return (
-    <div className="app-root app-ready">
-      <Header />
-      {children}
-      <Footer />
-      <ChatBot />
-    </div>
+    <>
+      <div className="app-root app-ready">
+        <Header />
+        {children}
+        <Footer />
+      </div>
+    </>
   )
 }
