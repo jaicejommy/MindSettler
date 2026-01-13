@@ -25,8 +25,60 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+  const [currentStep, setCurrentStep] = useState(1)
 
   const { user, loading: authLoading } = useAuth()
+
+  // Step validation
+  const isStep1Valid = () => {
+    const hasValidName = form.name.trim().length > 0
+    const hasValidEmail = isValidEmail(form.email)
+    const hasValidPhone = isValidPhone(form.phone)
+    const hasPrivacyAccepted = !form.isFirstSession || acceptPrivacyPolicy
+    return hasValidName && hasValidEmail && hasValidPhone && hasPrivacyAccepted
+  }
+
+  const isStep2Valid = () => {
+    return form.date && form.time
+  }
+
+  const handleNext = () => {
+    setError('')
+    if (currentStep === 1) {
+      if (!form.name.trim()) {
+        setError('Please enter your full name.')
+        return
+      }
+      if (!isValidEmail(form.email)) {
+        setError('Please enter a valid email address.')
+        return
+      }
+      if (form.phone && !isValidPhone(form.phone)) {
+        setError('Please enter a valid phone number.')
+        return
+      }
+      if (form.isFirstSession && !acceptPrivacyPolicy) {
+        setError('You must accept the Privacy Policy to continue.')
+        return
+      }
+    }
+    if (currentStep === 2) {
+      if (!form.date) {
+        setError('Please select a date.')
+        return
+      }
+      if (!form.time) {
+        setError('Please select a time slot.')
+        return
+      }
+    }
+    setCurrentStep((prev) => Math.min(prev + 1, 3))
+  }
+
+  const handleBack = () => {
+    setError('')
+    setCurrentStep((prev) => Math.max(prev - 1, 1))
+  }
 
   useEffect(() => {
     async function fetchSlots() {
@@ -81,6 +133,12 @@ export default function BookingPage() {
       setError('You must accept the Privacy Policy to book your first session.')
       return
     }
+
+    // Validate payment screenshot
+    if (!form.paymentScreenshot) {
+      setError('Please upload a payment screenshot.')
+      return
+    }
     
     setSubmitting(true)
     setError('')
@@ -111,6 +169,7 @@ export default function BookingPage() {
       })
       setTouched({})
       setAcceptPrivacyPolicy(false)
+      setCurrentStep(1)
     } catch (err) {
       console.error(err)
       console.error(err)
@@ -167,206 +226,298 @@ export default function BookingPage() {
         ) : (
           <div className="booking-grid">
             <form className="card booking-form" onSubmit={handleSubmit}>
-              <h3>Your details</h3>
-              <div className="field-grid">
-                <div className="field">
-                  <label htmlFor="name">Full Name *</label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className={form.name && touched.name ? 'success' : ''}
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="email">Email *</label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
-                  />
-                  {touched.email && !isValidEmail(form.email) && form.email && (
-                    <span className="form-error">Please enter a valid email address</span>
-                  )}
-                </div>
-                <div className="field">
-                  <label htmlFor="phone">Phone (WhatsApp preferred)</label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className={form.phone && touched.phone ? (isValidPhone(form.phone) ? 'success' : '') : ''}
-                  />
-                  {touched.phone && form.phone && !isValidPhone(form.phone) && (
-                    <span className="form-error">Please enter a valid phone number</span>
-                  )}
-                </div>
+              {/* Step Progress Indicator */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative' }}>
+                {/* Progress Line */}
+                <div style={{ position: 'absolute', top: '50%', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
+                <div style={{ position: 'absolute', top: '50%', left: '15%', height: '2px', background: 'var(--primary)', zIndex: 1, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
+                
+                {[1, 2, 3].map((step) => (
+                  <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, flex: 1 }}>
+                    <div
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        background: currentStep >= step ? 'var(--primary)' : '#e0e0e0',
+                        color: currentStep >= step ? 'white' : '#666',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {currentStep > step ? '✓' : step}
+                    </div>
+                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: currentStep >= step ? 'var(--primary)' : '#666', fontWeight: currentStep === step ? 600 : 400 }}>
+                      {step === 1 ? 'Details' : step === 2 ? 'Schedule' : 'Payment'}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              <h3>Session preferences</h3>
-              <div className="field-grid">
-                <div className="field">
-                  <label>Mode</label>
-                  <div className="pill-group">
-                    <button
-                      type="button"
-                      className={form.mode === 'online' ? 'pill active' : 'pill'}
-                      onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
-                    >
-                      Online
-                    </button>
-                    <button
-                      type="button"
-                      className={form.mode === 'offline' ? 'pill active' : 'pill'}
-                      onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
-                    >
-                      Offline Studio
-                    </button>
+              {/* Step 1: Your Details & Session Preferences */}
+              {currentStep === 1 && (
+                <>
+                  <h3>Your details</h3>
+                  <div className="field-grid">
+                    <div className="field">
+                      <label htmlFor="name">Full Name *</label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        required
+                        value={form.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={form.name && touched.name ? 'success' : ''}
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="email">Email *</label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        value={form.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
+                      />
+                      {touched.email && !isValidEmail(form.email) && form.email && (
+                        <span className="form-error">Please enter a valid email address</span>
+                      )}
+                    </div>
+                    <div className="field">
+                      <label htmlFor="phone">Phone (WhatsApp preferred)</label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={form.phone}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={form.phone && touched.phone ? (isValidPhone(form.phone) ? 'success' : '') : ''}
+                      />
+                      {touched.phone && form.phone && !isValidPhone(form.phone) && (
+                        <span className="form-error">Please enter a valid phone number</span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="field">
-                  <label htmlFor="sessionType">Session focus</label>
-                  <select
-                    id="sessionType"
-                    name="sessionType"
-                    value={form.sessionType}
-                    onChange={handleChange}
-                  >
-                    <option value="individual">Individual psycho-education</option>
-                    <option value="relationship">Relationships & family</option>
-                    <option value="career">Career & performance</option>
-                    <option value="stress">Stress, burnout & anxiety</option>
-                  </select>
-                </div>
+                  <h3>Session preferences</h3>
+                  <div className="field-grid">
+                    <div className="field">
+                      <label>Mode</label>
+                      <div className="pill-group">
+                        <button
+                          type="button"
+                          className={form.mode === 'online' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+                        >
+                          Online
+                        </button>
+                        <button
+                          type="button"
+                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                        >
+                          Offline Studio
+                        </button>
+                      </div>
+                    </div>
 
-                <div className="field field-checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="isFirstSession"
-                      checked={form.isFirstSession}
+                    <div className="field">
+                      <label htmlFor="sessionType">Session focus</label>
+                      <select
+                        id="sessionType"
+                        name="sessionType"
+                        value={form.sessionType}
+                        onChange={handleChange}
+                      >
+                        <option value="individual">Individual psycho-education</option>
+                        <option value="relationship">Relationships & family</option>
+                        <option value="career">Career & performance</option>
+                        <option value="stress">Stress, burnout & anxiety</option>
+                      </select>
+                    </div>
+
+                    <div className="field field-checkbox">
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="isFirstSession"
+                          checked={form.isFirstSession}
+                          onChange={handleChange}
+                        />
+                        This is my first session with MindSettler
+                      </label>
+                    </div>
+
+                    {form.isFirstSession && (
+                      <div className="field field-checkbox" style={{ marginTop: '0.5rem' }}>
+                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                          <input
+                            type="checkbox"
+                            checked={acceptPrivacyPolicy}
+                            onChange={(e) => setAcceptPrivacyPolicy(e.target.checked)}
+                            style={{ marginTop: '0.2rem' }}
+                          />
+                          <span>
+                            I have read and accept the{' '}
+                            <Link
+                              to="/privacy"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                            >
+                              Privacy Policy
+                            </Link>
+                            {' '}*
+                          </span>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Step 2: Pick a Slot */}
+              {currentStep === 2 && (
+                <>
+                  <h3>Pick a slot</h3>
+                  <div className="field-grid">
+                    <div className="field">
+                      <label htmlFor="date">Preferred date *</label>
+                      <input
+                        id="date"
+                        name="date"
+                        type="date"
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                        value={form.date}
+                        onChange={(e) => {
+                          setForm((prev) => ({ ...prev, date: e.target.value, time: '' }))
+                        }}
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="time">Available time slots *</label>
+                      <select
+                        id="time"
+                        name="time"
+                        required
+                        value={form.time}
+                        onChange={handleChange}
+                        disabled={!form.date || loadingSlots}
+                      >
+                        <option value="">
+                          {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
+                        </option>
+                        {slots
+                          .filter((s) => s.isAvailable)
+                          .map((slot) => (
+                            <option key={slot.time} value={slot.time}>
+                              {slot.time}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <label htmlFor="notes">Anything you would like us to know before we meet?</label>
+                    <textarea
+                      id="notes"
+                      name="notes"
+                      rows={4}
+                      value={form.notes}
                       onChange={handleChange}
                     />
-                    This is my first session with MindSettler
-                  </label>
-                </div>
-
-                {form.isFirstSession && (
-                  <div className="field field-checkbox" style={{ marginTop: '0.5rem' }}>
-                    <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                      <input
-                        type="checkbox"
-                        checked={acceptPrivacyPolicy}
-                        onChange={(e) => setAcceptPrivacyPolicy(e.target.checked)}
-                        style={{ marginTop: '0.2rem' }}
-                      />
-                      <span>
-                        I have read and accept the{' '}
-                        <Link
-                          to="/privacy"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: 'var(--primary)', textDecoration: 'underline' }}
-                        >
-                          Privacy Policy
-                        </Link>
-                        {' '}*
-                      </span>
-                    </label>
                   </div>
+
+                  {/* Summary of selections */}
+                  <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
+                      <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {/* Step 3: Complete Payment */}
+              {currentStep === 3 && (
+                <>
+                  <div className="card booking-payment" style={{ padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                    <h3>Complete Payment</h3>
+                    <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
+                    <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+                      <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
+                      <input
+                        id="paymentScreenshot"
+                        name="paymentScreenshot"
+                        type="file"
+                        accept="image/*"
+                        required
+                        onChange={handleChange}
+                        className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
+                      />
+                      {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
+                    </div>
+                  </div>
+
+                  {/* Booking Summary */}
+                  <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
+                    <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Booking Summary</h4>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--text-soft)', lineHeight: '1.6' }}>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Name:</strong> {form.name}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Email:</strong> {form.email}</p>
+                      {form.phone && <p style={{ margin: '0.25rem 0' }}><strong>Phone:</strong> {form.phone}</p>}
+                      <p style={{ margin: '0.25rem 0' }}><strong>Date:</strong> {form.date}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Time:</strong> {form.time}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Mode:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {error && <p className="form-error" style={{ marginTop: '1rem' }}>{error}</p>}
+
+              {/* Navigation Buttons */}
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={handleBack}
+                    style={{ flex: 1 }}
+                  >
+                    Back
+                  </button>
+                )}
+                {currentStep < 3 ? (
+                  <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={handleNext}
+                    style={{ flex: 1 }}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button type="submit" className="primary-btn" disabled={submitting} style={{ flex: 1 }}>
+                    {submitting ? 'Submitting…' : 'Book session'}
+                  </button>
                 )}
               </div>
-
-              <h3>Pick a slot</h3>
-              <div className="field-grid">
-                <div className="field">
-                  <label htmlFor="date">Preferred date *</label>
-                  <input
-                    id="date"
-                    name="date"
-                    type="date"
-                    required
-                    min={new Date().toISOString().split('T')[0]}
-                    value={form.date}
-                    onChange={(e) => {
-                      setForm((prev) => ({ ...prev, date: e.target.value, time: '' }))
-                    }}
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="time">Available time slots *</label>
-                  <select
-                    id="time"
-                    name="time"
-                    required
-                    value={form.time}
-                    onChange={handleChange}
-                    disabled={!form.date || loadingSlots}
-                  >
-                    <option value="">
-                      {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
-                    </option>
-                    {slots
-                      .filter((s) => s.isAvailable)
-                      .map((slot) => (
-                        <option key={slot.time} value={slot.time}>
-                          {slot.time}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="field">
-                <label htmlFor="notes">Anything you would like us to know before we meet?</label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows={4}
-                  value={form.notes}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="card booking-payment" style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                <h3>Complete Payment</h3>
-                <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
-                <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
-                  <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                </div>
-                <div className="field">
-                  <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
-                  <input
-                    id="paymentScreenshot"
-                    name="paymentScreenshot"
-                    type="file"
-                    accept="image/*"
-                    required
-                    onChange={handleChange}
-                    className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
-                  />
-                  {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
-                </div>
-              </div>
-
-              {error && <p className="form-error">{error}</p>}
-
-              <button type="submit" className="primary-btn" disabled={submitting}>
-                {submitting ? 'Submitting…' : 'Book session'}
-              </button>
             </form>
 
             {result && (
