@@ -1,0 +1,186 @@
+/* ===========================================
+   IntroAnimation Styles
+   A sophisticated 4-phase intro sequence
+   =========================================== */
+
+/* Main overlay container */
+.intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* Video element - covers full viewport */
+.intro-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+/* Centered logo during hold phase - sized to match video end frame */
+.intro-logo-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(900px, 90vw);
+  height: auto;
+  object-fit: contain;
+  z-index: 10;
+}
+
+/* Floating logo during transition */
+.intro-logo-floating {
+  position: fixed;
+  z-index: 100001;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  will-change: transform, width, left, top;
+  transform: translate(-50%, -50%);
+}
+
+/* Skip button */
+.intro-skip-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3f2965;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 2px solid #3f2965;
+  border-radius: 30px;
+  cursor: pointer;
+  z-index: 100002;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(63, 41, 101, 0.15);
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.intro-skip-btn:hover {
+  background-color: #3f2965;
+  color: #ffffff;
+  box-shadow: 0 6px 25px rgba(63, 41, 101, 0.25);
+}
+
+.intro-skip-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(63, 41, 101, 0.3), 0 4px 20px rgba(63, 41, 101, 0.15);
+}
+
+.intro-skip-btn:active {
+  transform: scale(0.98);
+}
+
+/* Loading fallback - shows while video loads */
+.intro-loading-fallback {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: fadeInLoading 1s ease 2s forwards;
+}
+
+.intro-loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(63, 41, 101, 0.1);
+  border-top-color: #3f2965;
+  border-radius: 50%;
+}
+
+@keyframes fadeInLoading {
+  to {
+    opacity: 0.6;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .intro-skip-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 22px;
+    font-size: 0.9rem;
+  }
+
+  .intro-logo-centered {
+    width: min(650px, 85vw);
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-skip-btn {
+    bottom: 16px;
+    right: 16px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+  }
+
+  .intro-logo-centered {
+    width: min(450px, 90vw);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay,
+  .intro-logo-floating,
+  .intro-logo-centered {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .intro-skip-btn {
+    border-width: 3px;
+  }
+}
+
+/* Hide header logo during intro animation */
+body.intro-playing .brand-logo-img {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Ensure smooth appearance when intro completes */
+.brand-logo-img {
+  transition: opacity 0.3s ease;
+}
+
+/* Page transition styles */
+.app-root {
+  min-height: 100vh;
+}
+
+/* Smooth entry animation for content coming from intro */
+@keyframes pageReveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.from-intro-animate {
+  animation: pageReveal 0.6s ease-out forwards;
+}

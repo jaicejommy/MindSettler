@@ -8,6 +8,7 @@ import './no-step-labels.css'
 import './fix-interactions.css'
 import './carousel-reset.css'
 import Layout from './components/Layout'
+import IntroPage from './pages/IntroPage'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import PsychoEducationPage from './pages/PsychoEducationPage'
@@ -32,25 +33,33 @@ function App() {
 
   return (
     <>
-      <div className={`app-root ${isReady ? 'app-ready' : ''}`}>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/psycho-education" element={<PsychoEducationPage />} />
-            <Route path="/journey" element={<JourneyPage />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/corporate" element={<CorporatePage />} />
-            <Route path="/faqs" element={<FAQsPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/non-refund" element={<NonRefundPage />} />
-            <Route path="/confidentiality" element={<ConfidentialityPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-          </Routes>
-        </Layout>
-      </div>
+      <Routes>
+        {/* Intro page - standalone without Layout */}
+        <Route path="/intro" element={<IntroPage />} />
+        
+        {/* Main app with Layout */}
+        <Route path="/*" element={
+          <div className={`app-root ${isReady ? 'app-ready' : ''}`}>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/psycho-education" element={<PsychoEducationPage />} />
+                <Route path="/journey" element={<JourneyPage />} />
+                <Route path="/booking" element={<BookingPage />} />
+                <Route path="/corporate" element={<CorporatePage />} />
+                <Route path="/faqs" element={<FAQsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/non-refund" element={<NonRefundPage />} />
+                <Route path="/confidentiality" element={<ConfidentialityPage />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+              </Routes>
+            </Layout>
+          </div>
+        } />
+      </Routes>
       <ChatBot />
     </>
   )
