@@ -27,6 +27,19 @@ const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
 const googleProvider = new GoogleAuthProvider()
+// Add Google Calendar scope for automatic calendar integration
+googleProvider.addScope('https://www.googleapis.com/auth/calendar.events')
+
+// Store Google access token for Calendar API
+let googleAccessToken = null
+
+export function getGoogleAccessToken() {
+  return googleAccessToken
+}
+
+export function setGoogleAccessToken(token) {
+  googleAccessToken = token
+}
 
 export function listenToAuthChanges(callback) {
   // Small helper to subscribe to auth state changes and clean up
@@ -45,10 +58,16 @@ export async function signInWithEmailPassword(email, password) {
 
 export async function signInWithGoogle() {
   const cred = await signInWithPopup(auth, googleProvider)
+  // Store the Google access token for Calendar API
+  const credential = GoogleAuthProvider.credentialFromResult(cred)
+  if (credential?.accessToken) {
+    googleAccessToken = credential.accessToken
+  }
   return cred.user
 }
 
 export async function logout() {
+  googleAccessToken = null
   await signOut(auth)
 }
 

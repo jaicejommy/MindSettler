@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { getGoogleAccessToken } from '../firebase'
 import authedApi from '../authedApi'
 import API_BASE_URL from '../api'
 
@@ -8,10 +9,9 @@ import API_BASE_URL from '../api'
 export default function BookingPage() {
   const [form, setForm] = useState({
     name: '',
-    email: '',
     phone: '',
     mode: 'online',
-    sessionType: 'individual',
+    sessionType: '',
     isFirstSession: true,
     date: '',
     time: '',
@@ -19,11 +19,13 @@ export default function BookingPage() {
     paymentScreenshot: null,
   })
   const [touched, setTouched] = useState({})
-  const [acceptPrivacyPolicy, setAcceptPrivacyPolicy] = useState(false)
+  const [acceptPolicies, setAcceptPolicies] = useState(false)
+  const [paymentOption, setPaymentOption] = useState('online') // 'online' or 'studio'
   const [slots, setSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
+  const [calendarAdded, setCalendarAdded] = useState(false)
   const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
 
@@ -32,10 +34,10 @@ export default function BookingPage() {
   // Step validation
   const isStep1Valid = () => {
     const hasValidName = form.name.trim().length > 0
-    const hasValidEmail = isValidEmail(form.email)
     const hasValidPhone = isValidPhone(form.phone)
-    const hasPrivacyAccepted = !form.isFirstSession || acceptPrivacyPolicy
-    return hasValidName && hasValidEmail && hasValidPhone && hasPrivacyAccepted
+    const hasSessionType = form.sessionType !== ''
+    const hasPoliciesAccepted = !form.isFirstSession || acceptPolicies
+    return hasValidName && hasValidPhone && hasSessionType && hasPoliciesAccepted
   }
 
   const isStep2Valid = () => {
@@ -49,16 +51,16 @@ export default function BookingPage() {
         setError('Please enter your full name.')
         return
       }
-      if (!isValidEmail(form.email)) {
-        setError('Please enter a valid email address.')
-        return
-      }
       if (form.phone && !isValidPhone(form.phone)) {
         setError('Please enter a valid phone number.')
         return
       }
-      if (form.isFirstSession && !acceptPrivacyPolicy) {
-        setError('You must accept the Privacy Policy to continue.')
+      if (!form.sessionType) {
+        setError('Please select a session focus.')
+        return
+      }
+      if (form.isFirstSession && !acceptPolicies) {
+        setError('You must accept the policies to continue.')
         return
       }
     }
@@ -128,14 +130,15 @@ export default function BookingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validate privacy policy acceptance for first-time sessions
-    if (form.isFirstSession && !acceptPrivacyPolicy) {
-      setError('You must accept the Privacy Policy to book your first session.')
+    // Validate policy acceptance for first-time sessions
+    if (form.isFirstSession && !acceptPolicies) {
+      setError('You must accept the policies to book your first session.')
       return
     }
 
-    // Validate payment screenshot
-    if (!form.paymentScreenshot) {
+    // Validate payment screenshot (only required for online payment)
+    const requiresPaymentScreenshot = form.mode === 'online' || paymentOption === 'online'
+    if (requiresPaymentScreenshot && !form.paymentScreenshot) {
       setError('Please upload a payment screenshot.')
       return
     }
@@ -154,13 +157,61 @@ export default function BookingPage() {
       const res = await authedApi.post('/bookings', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      setResult(res.data.booking)
+      const booking = res.data.booking
+      setResult(booking)
+
+      // Automatically add to Google Calendar if user signed in with Google
+      const accessToken = getGoogleAccessToken()
+      if (accessToken) {
+        try {
+          const startDateTime = `${booking.date}T${booking.time}:00`
+          const endDate = new Date(startDateTime)
+          endDate.setMinutes(endDate.getMinutes() + 60)
+          const endDateTime = endDate.toISOString()
+
+          const calendarEvent = {
+            summary: 'MindSettler Session',
+            description: `MindSettler psycho-education and counselling session.\n\nMode: ${booking.mode === 'offline' ? 'In-person at studio' : 'Online'}\n\nThis is not a crisis service. For emergencies, please contact your local emergency helpline.`,
+            location: booking.mode === 'offline' ? 'MindSettler Studio' : 'Online (details from MindSettler)',
+            start: {
+              dateTime: startDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            },
+            end: {
+              dateTime: endDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            },
+            reminders: {
+              useDefault: false,
+              overrides: [
+                { method: 'email', minutes: 24 * 60 },
+                { method: 'popup', minutes: 30 },
+              ],
+            },
+          }
+
+          const calendarRes = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(calendarEvent),
+          })
+          if (calendarRes.ok) {
+            setCalendarAdded(true)
+          }
+        } catch (calendarError) {
+          console.error('Failed to add to Google Calendar:', calendarError)
+          // Don't show error to user - booking was still successful
+        }
+      }
+
       setForm({
         name: '',
-        email: '',
         phone: '',
         mode: 'online',
-        sessionType: 'individual',
+        sessionType: '',
         isFirstSession: true,
         date: '',
         time: '',
@@ -168,7 +219,8 @@ export default function BookingPage() {
         paymentScreenshot: null,
       })
       setTouched({})
-      setAcceptPrivacyPolicy(false)
+      setAcceptPolicies(false)
+      setPaymentOption('online')
       setCurrentStep(1)
     } catch (err) {
       console.error(err)
@@ -223,14 +275,42 @@ export default function BookingPage() {
               </Link>
             </div>
           </div>
+        ) : result ? (
+          <div className="booking-grid">
+            <div className="card booking-highlight">
+              <h3>Booking Request Sent!</h3>
+              <p>
+                Thank you, <strong>{result.name}</strong>! We're excited to connect with you. Your booking request has been received and we can't wait to support you on your journey. Once approved, a confirmation email will be sent to you.
+              </p>
+              <div className="info-pill">
+                <p>
+                  <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
+                </p>
+              </div>
+              {calendarAdded ? (
+                <p className="muted" style={{ color: 'var(--primary)' }}>
+                  ✓ This session has been automatically added to your Google Calendar.
+                </p>
+              ) : (
+                <>
+                  <p className="muted">
+                    You can add this to your calendar in advance:
+                  </p>
+                  <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
+                    Add to Google Calendar
+                  </a>
+                </>
+              )}
+            </div>
+          </div>
         ) : (
           <div className="booking-grid">
             <form className="card booking-form" onSubmit={handleSubmit}>
               {/* Step Progress Indicator */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative' }}>
                 {/* Progress Line */}
-                <div style={{ position: 'absolute', top: '50%', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
-                <div style={{ position: 'absolute', top: '50%', left: '15%', height: '2px', background: 'var(--primary)', zIndex: 1, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
+                <div style={{ position: 'absolute', top: '18px', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
+                <div style={{ position: 'absolute', top: '18px', left: '15%', height: '2px', background: '#7c3aed', zIndex: 0, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
                 
                 {[1, 2, 3].map((step) => (
                   <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, flex: 1 }}>
@@ -239,17 +319,19 @@ export default function BookingPage() {
                         width: '36px',
                         height: '36px',
                         borderRadius: '50%',
-                        background: currentStep >= step ? 'var(--primary)' : '#e0e0e0',
-                        color: currentStep >= step ? 'white' : '#666',
+                        backgroundColor: currentStep >= step ? '#7c3aed' : '#ffffff',
+                        color: currentStep >= step ? '#ffffff' : '#666666',
+                        border: currentStep >= step ? '2px solid #7c3aed' : '2px solid #e0e0e0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontWeight: 600,
-                        fontSize: '0.9rem',
-                        transition: 'all 0.3s ease',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        lineHeight: 1,
+                        boxSizing: 'border-box',
                       }}
                     >
-                      {currentStep > step ? '✓' : step}
+                      <span>{step}</span>
                     </div>
                     <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: currentStep >= step ? 'var(--primary)' : '#666', fontWeight: currentStep === step ? 600 : 400 }}>
                       {step === 1 ? 'Details' : step === 2 ? 'Schedule' : 'Payment'}
@@ -275,22 +357,6 @@ export default function BookingPage() {
                         onBlur={handleBlur}
                         className={form.name && touched.name ? 'success' : ''}
                       />
-                    </div>
-                    <div className="field">
-                      <label htmlFor="email">Email *</label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
-                      />
-                      {touched.email && !isValidEmail(form.email) && form.email && (
-                        <span className="form-error">Please enter a valid email address</span>
-                      )}
                     </div>
                     <div className="field">
                       <label htmlFor="phone">Phone (WhatsApp preferred)</label>
@@ -339,10 +405,15 @@ export default function BookingPage() {
                         value={form.sessionType}
                         onChange={handleChange}
                       >
-                        <option value="individual">Individual psycho-education</option>
-                        <option value="relationship">Relationships & family</option>
-                        <option value="career">Career & performance</option>
-                        <option value="stress">Stress, burnout & anxiety</option>
+                        <option value="" disabled>Choose your focus</option>
+                        <option value="cbt">Cognitive Behavioural Therapy (CBT)</option>
+                        <option value="dbt">Dialectical Behavioural Therapy (DBT)</option>
+                        <option value="act">Acceptance & Commitment Therapy (ACT)</option>
+                        <option value="schema">Schema Therapy</option>
+                        <option value="eft">Emotion-Focused Therapy (EFT)</option>
+                        <option value="efct">Emotion-Focused Couples Therapy</option>
+                        <option value="mbct">Mindfulness-Based Cognitive Therapy</option>
+                        <option value="cct">Client-Centred Therapy</option>
                       </select>
                     </div>
 
@@ -363,8 +434,8 @@ export default function BookingPage() {
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                           <input
                             type="checkbox"
-                            checked={acceptPrivacyPolicy}
-                            onChange={(e) => setAcceptPrivacyPolicy(e.target.checked)}
+                            checked={acceptPolicies}
+                            onChange={(e) => setAcceptPolicies(e.target.checked)}
                             style={{ marginTop: '0.2rem' }}
                           />
                           <span>
@@ -376,6 +447,24 @@ export default function BookingPage() {
                               style={{ color: 'var(--primary)', textDecoration: 'underline' }}
                             >
                               Privacy Policy
+                            </Link>
+                            ,{' '}
+                            <Link
+                              to="/non-refund"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                            >
+                              Non-Refund Policy
+                            </Link>
+                            , and{' '}
+                            <Link
+                              to="/confidentiality"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                            >
+                              Confidentiality Policy
                             </Link>
                             {' '}*
                           </span>
@@ -419,7 +508,19 @@ export default function BookingPage() {
                           {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
                         </option>
                         {slots
-                          .filter((s) => s.isAvailable)
+                          .filter((s) => {
+                            if (!s.isAvailable) return false
+                            // If selected date is today, filter out past times
+                            const today = new Date().toISOString().split('T')[0]
+                            if (form.date === today) {
+                              const now = new Date()
+                              const [hours, minutes] = s.time.split(':').map(Number)
+                              const slotTime = new Date()
+                              slotTime.setHours(hours, minutes, 0, 0)
+                              return slotTime > now
+                            }
+                            return true
+                          })
                           .map((slot) => (
                             <option key={slot.time} value={slot.time}>
                               {slot.time}
@@ -443,7 +544,16 @@ export default function BookingPage() {
                   {/* Summary of selections */}
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
-                      <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}
+                      <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {{
+                        'cbt': 'Cognitive Behavioural Therapy (CBT)',
+                        'dbt': 'Dialectical Behavioural Therapy (DBT)',
+                        'act': 'Acceptance & Commitment Therapy (ACT)',
+                        'schema': 'Schema Therapy',
+                        'eft': 'Emotion-Focused Therapy (EFT)',
+                        'efct': 'Emotion-Focused Couples Therapy',
+                        'mbct': 'Mindfulness-Based Cognitive Therapy',
+                        'cct': 'Client-Centred Therapy'
+                      }[form.sessionType] || form.sessionType}
                     </p>
                   </div>
                 </>
@@ -454,23 +564,60 @@ export default function BookingPage() {
                 <>
                   <div className="card booking-payment" style={{ padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
                     <h3>Complete Payment</h3>
-                    <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
-                    <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
-                      <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                    </div>
-                    <div className="field">
-                      <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
-                      <input
-                        id="paymentScreenshot"
-                        name="paymentScreenshot"
-                        type="file"
-                        accept="image/*"
-                        required
-                        onChange={handleChange}
-                        className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
-                      />
-                      {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
-                    </div>
+                    
+                    {/* Payment option selection for offline bookings */}
+                    {form.mode === 'offline' && (
+                      <div style={{ marginBottom: '1.5rem' }}>
+                        <p style={{ marginBottom: '1rem' }}>Choose your payment method:</p>
+                        <div className="pill-group">
+                          <button
+                            type="button"
+                            className={paymentOption === 'online' ? 'pill active' : 'pill'}
+                            onClick={() => setPaymentOption('online')}
+                          >
+                            Pay Now (Scan QR)
+                          </button>
+                          <button
+                            type="button"
+                            className={paymentOption === 'studio' ? 'pill active' : 'pill'}
+                            onClick={() => setPaymentOption('studio')}
+                          >
+                            Pay Later at Studio
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show QR payment for online mode OR if offline user chooses to pay now */}
+                    {(form.mode === 'online' || paymentOption === 'online') && (
+                      <>
+                        <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
+                        <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+                          <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                        </div>
+                        <div className="field">
+                          <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
+                          <input
+                            id="paymentScreenshot"
+                            name="paymentScreenshot"
+                            type="file"
+                            accept="image/*"
+                            required
+                            onChange={handleChange}
+                            className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
+                          />
+                          {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Show pay at studio message */}
+                    {form.mode === 'offline' && paymentOption === 'studio' && (
+                      <div style={{ textAlign: 'center', padding: '1rem' }}>
+                        <p style={{ fontSize: '1.1rem', color: 'var(--text)' }}>You can pay at the studio before your session begins.</p>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-soft)', marginTop: '0.5rem' }}>Please arrive 10 minutes early to complete the payment.</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Booking Summary */}
@@ -478,12 +625,21 @@ export default function BookingPage() {
                     <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Booking Summary</h4>
                     <div style={{ fontSize: '0.9rem', color: 'var(--text-soft)', lineHeight: '1.6' }}>
                       <p style={{ margin: '0.25rem 0' }}><strong>Name:</strong> {form.name}</p>
-                      <p style={{ margin: '0.25rem 0' }}><strong>Email:</strong> {form.email}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Email:</strong> {user?.email}</p>
                       {form.phone && <p style={{ margin: '0.25rem 0' }}><strong>Phone:</strong> {form.phone}</p>}
                       <p style={{ margin: '0.25rem 0' }}><strong>Date:</strong> {form.date}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Time:</strong> {form.time}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Mode:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'}</p>
-                      <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {{
+                        'cbt': 'Cognitive Behavioural Therapy (CBT)',
+                        'dbt': 'Dialectical Behavioural Therapy (DBT)',
+                        'act': 'Acceptance & Commitment Therapy (ACT)',
+                        'schema': 'Schema Therapy',
+                        'eft': 'Emotion-Focused Therapy (EFT)',
+                        'efct': 'Emotion-Focused Couples Therapy',
+                        'mbct': 'Mindfulness-Based Cognitive Therapy',
+                        'cct': 'Client-Centred Therapy'
+                      }[form.sessionType] || form.sessionType}</p>
                     </div>
                   </div>
                 </>
@@ -519,31 +675,6 @@ export default function BookingPage() {
                 )}
               </div>
             </form>
-
-            {result && (
-              <div className="card booking-highlight">
-                <h3>Session confirmed</h3>
-                <p>
-                  <strong>{result.name}</strong>, your booking has been marked as pending. You will receive a
-                  confirmation email or WhatsApp message within 24 hours.
-                </p>
-                <div className="info-pill">
-                  <p>
-                    <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
-                  </p>
-                </div>
-                <p className="muted">
-                  Once confirmed, you will receive payment details and a final message with the meeting link (for
-                  online) or studio address (for offline).
-                </p>
-                <p className="muted">
-                  In the meantime, you can add this to your calendar:
-                </p>
-                <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
-                  Add to Google Calendar
-                </a>
-              </div>
-            )}
           </div>
         )}
       </section>
