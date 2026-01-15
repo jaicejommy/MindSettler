@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ChatBot from './ChatBot'
 import authedApi from '../authedApi'
-import { listenToAuthChanges } from '../firebase'
+import { listenToAuthChanges, logout } from '../firebase'
 
 function ChatbotWidget() {
   const [open, setOpen] = useState(false)
@@ -135,6 +135,7 @@ function ChatbotWidget() {
 
 function Header() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const [firebaseUser, setFirebaseUser] = useState(null)
@@ -194,6 +195,21 @@ function Header() {
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false)
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      setFirebaseUser(null)
+      setAccountUser(null)
+      closeMobileMenu()
+      navigate('/')
+    } catch (err) {
+      console.error('Logout failed:', err)
+    }
+  }
+
+  // Check if current path is active
+  const isActive = (path) => location.pathname === path
+
   const markAsRead = async (msgId) => {
     try {
       await authedApi.patch(`/me/messages/${msgId}/read`)
@@ -236,9 +252,9 @@ function Header() {
                 onClick={() => setNotifOpen(!notifOpen)}
                 style={{ position: 'relative' }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3F2965" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#DD1764"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#3F2965"></path>
                 </svg>
                 {unreadCount > 0 && (
                   <span className="notif-badge">
@@ -461,9 +477,9 @@ function Header() {
               closeMobileMenu()
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#3F2965"></path>
+              <circle cx="12" cy="7" r="4" stroke="#DD1764"></circle>
             </svg>
           </button>
         </div>
@@ -478,7 +494,123 @@ function Header() {
           <span className="nav-toggle-bar" />
         </button>
 
-        <nav className={`nav-links ${isMobileMenuOpen ? 'nav-links-open' : ''}`}>
+        {/* Mobile Navigation Overlay */}
+        {isMobileMenuOpen && (
+          <div className="mobile-nav-overlay" onClick={closeMobileMenu}>
+            <nav className="mobile-nav-drawer" onClick={(e) => e.stopPropagation()}>
+              {/* Mobile Nav Header */}
+              <div className="mobile-nav-header">
+                <img
+                  src="/Mindsettler_logo_Final-Photoroom.png"
+                  alt="MindSettler"
+                  className="mobile-nav-logo"
+                />
+                <button type="button" className="mobile-nav-close" onClick={closeMobileMenu}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Mobile Nav Links */}
+              <div className="mobile-nav-links">
+                <a href="/" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Home</span>
+                </a>
+
+                <a href="/about" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/about') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">About</span>
+                </a>
+
+                <a href="/psycho-education" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/psycho-education') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Awareness</span>
+                </a>
+
+                <a href="/booking" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/booking') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Services</span>
+                </a>
+
+                <a href="/faqs" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/faqs') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="4" y1="21" x2="4" y2="14"></line>
+                      <line x1="4" y1="10" x2="4" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12" y2="3"></line>
+                      <line x1="20" y1="21" x2="20" y2="16"></line>
+                      <line x1="20" y1="12" x2="20" y2="3"></line>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Resources</span>
+                </a>
+
+                <a href="/contact" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/contact') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Contact</span>
+                </a>
+              </div>
+
+              {/* Mobile Nav Auth Buttons */}
+              <div className="mobile-nav-auth">
+                {firebaseUser ? (
+                  <>
+                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
+                      Profile
+                    </a>
+                    <button type="button" onClick={handleLogout} className="mobile-nav-btn-primary">
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
+                      Login
+                    </a>
+                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-primary">
+                      Sign Up Now
+                    </a>
+                  </>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
+
+        {/* Desktop Navigation */}
+        <nav className="nav-links desktop-nav">
           <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
           </a>
@@ -501,59 +633,56 @@ function Header() {
             <button type="button">Contact</button>
           </a>
 
-          {/* User profile / auth - Desktop only, hidden on mobile */}
-          <span className="desktop-only-nav-item">
-            {firebaseUser ? (
+          {/* User profile / auth */}
+          {firebaseUser ? (
+            <>
               <a
                 href="/auth"
                 onClick={(e) => {
                   e.preventDefault()
                   navigate('/auth')
-                  closeMobileMenu()
                 }}
               >
                 <button type="button">Profile</button>
               </a>
-            ) : (
-              <a href="/auth" onClick={closeMobileMenu}>
-                <button type="button">Sign in</button>
-              </a>
-            )}
-          </span>
+              <button type="button" onClick={handleLogout} className="nav-logout-btn">
+                Logout
+              </button>
+            </>
+          ) : (
+            <a href="/auth">
+              <button type="button">Sign in</button>
+            </a>
+          )}
 
           {/* Admin Portal Link */}
-          <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>
+          <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer">
             <button type="button" className="nav-admin-btn">
               Admin
             </button>
           </a>
 
-          {/* Notification Bell - Desktop only, hidden on mobile */}
-          <span className="desktop-only-nav-item">
-            {firebaseUser && (
-              <div className="notif-dropdown-container" style={{ position: 'relative' }}>
-                <a
-                  href="/auth"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setNotifOpen(!notifOpen)
-                  }}
-                >
-                  <button type="button" style={{ position: 'relative' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    {unreadCount > 0 && (
-                      <span className="notif-badge">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                </a>
+          {/* Notification Bell */}
+          {firebaseUser && (
+            <div className="notif-dropdown-container" style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setNotifOpen(!notifOpen)}
+                style={{ position: 'relative' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#DD1764"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#3F2965"></path>
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="notif-badge">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
 
-                {/* Notification Dropdown */}
-                {notifOpen && (
+              {/* Notification Dropdown */}
+              {notifOpen && (
                   <div
                     style={{
                       position: 'absolute',
@@ -755,7 +884,6 @@ function Header() {
                 )}
               </div>
             )}
-          </span>
         </nav>
       </div>
     </header>
