@@ -224,6 +224,26 @@ export default function BookingPage() {
               </Link>
             </div>
           </div>
+        ) : result ? (
+          <div className="booking-grid">
+            <div className="card booking-highlight">
+              <h3>Booking Request Sent!</h3>
+              <p>
+                Thank you, <strong>{result.name}</strong>! We're excited to connect with you. Your booking request has been received and we can't wait to support you on your journey. Once approved, a confirmation email will be sent to you.
+              </p>
+              <div className="info-pill">
+                <p>
+                  <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
+                </p>
+              </div>
+              <p className="muted">
+                You can add this to your calendar in advance:
+              </p>
+              <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
+                Add to Google Calendar
+              </a>
+            </div>
+          </div>
         ) : (
           <div className="booking-grid">
             <form className="card booking-form" onSubmit={handleSubmit}>
@@ -596,31 +616,6 @@ export default function BookingPage() {
                 )}
               </div>
             </form>
-
-            {result && (
-              <div className="card booking-highlight">
-                <h3>Session confirmed</h3>
-                <p>
-                  <strong>{result.name}</strong>, your booking has been marked as pending. You will receive a
-                  confirmation email or WhatsApp message within 24 hours.
-                </p>
-                <div className="info-pill">
-                  <p>
-                    <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
-                  </p>
-                </div>
-                <p className="muted">
-                  Once confirmed, you will receive payment details and a final message with the meeting link (for
-                  online) or studio address (for offline).
-                </p>
-                <p className="muted">
-                  In the meantime, you can add this to your calendar:
-                </p>
-                <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
-                  Add to Google Calendar
-                </a>
-              </div>
-            )}
           </div>
         )}
       </section>
