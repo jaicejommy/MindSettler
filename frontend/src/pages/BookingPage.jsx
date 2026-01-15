@@ -324,33 +324,17 @@ export default function BookingPage() {
           <div className="booking-grid">
             <form className="card booking-form" onSubmit={handleSubmit}>
               {/* Step Progress Indicator */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative' }}>
+              <div className="step-indicator">
                 {/* Progress Line */}
-                <div style={{ position: 'absolute', top: '18px', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
-                <div style={{ position: 'absolute', top: '18px', left: '15%', height: '2px', background: '#7c3aed', zIndex: 0, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
+                <div className="step-progress-bg" />
+                <div className="step-progress-fill" style={{ width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%' }} />
                 
                 {[1, 2, 3].map((step) => (
-                  <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, flex: 1 }}>
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '50%',
-                        backgroundColor: currentStep >= step ? '#7c3aed' : '#ffffff',
-                        color: currentStep >= step ? '#ffffff' : '#666666',
-                        border: currentStep >= step ? '2px solid #7c3aed' : '2px solid #e0e0e0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 700,
-                        fontSize: '1rem',
-                        lineHeight: 1,
-                        boxSizing: 'border-box',
-                      }}
-                    >
+                  <div key={step} className="step-item">
+                    <div className={`step-circle ${currentStep >= step ? 'active' : ''}`}>
                       <span>{step}</span>
                     </div>
-                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: currentStep >= step ? 'var(--primary)' : '#666', fontWeight: currentStep === step ? 600 : 400 }}>
+                    <span className={`step-label ${currentStep >= step ? 'active' : ''} ${currentStep === step ? 'current' : ''}`}>
                       {step === 1 ? 'Details' : step === 2 ? 'Schedule' : 'Payment'}
                     </span>
                   </div>

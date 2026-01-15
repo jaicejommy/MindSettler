@@ -965,8 +965,8 @@ function Footer() {
 export default function Layout({ children }) {
   return (
     <>
+      <Header />
       <div className="app-root app-ready">
-        <Header />
         {children}
         <Footer />
       </div>
