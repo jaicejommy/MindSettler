@@ -19,6 +19,7 @@ export default function BookingPage() {
   })
   const [touched, setTouched] = useState({})
   const [acceptPolicies, setAcceptPolicies] = useState(false)
+  const [paymentOption, setPaymentOption] = useState('online') // 'online' or 'studio'
   const [slots, setSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -32,8 +33,9 @@ export default function BookingPage() {
   const isStep1Valid = () => {
     const hasValidName = form.name.trim().length > 0
     const hasValidPhone = isValidPhone(form.phone)
+    const hasSessionType = form.sessionType !== ''
     const hasPoliciesAccepted = !form.isFirstSession || acceptPolicies
-    return hasValidName && hasValidPhone && hasPoliciesAccepted
+    return hasValidName && hasValidPhone && hasSessionType && hasPoliciesAccepted
   }
 
   const isStep2Valid = () => {
@@ -49,6 +51,10 @@ export default function BookingPage() {
       }
       if (form.phone && !isValidPhone(form.phone)) {
         setError('Please enter a valid phone number.')
+        return
+      }
+      if (!form.sessionType) {
+        setError('Please select a session focus.')
         return
       }
       if (form.isFirstSession && !acceptPolicies) {
@@ -128,8 +134,9 @@ export default function BookingPage() {
       return
     }
 
-    // Validate payment screenshot
-    if (!form.paymentScreenshot) {
+    // Validate payment screenshot (only required for online payment)
+    const requiresPaymentScreenshot = form.mode === 'online' || paymentOption === 'online'
+    if (requiresPaymentScreenshot && !form.paymentScreenshot) {
       setError('Please upload a payment screenshot.')
       return
     }
@@ -162,6 +169,7 @@ export default function BookingPage() {
       })
       setTouched({})
       setAcceptPolicies(false)
+      setPaymentOption('online')
       setCurrentStep(1)
     } catch (err) {
       console.error(err)
@@ -421,7 +429,19 @@ export default function BookingPage() {
                           {form.date ? (loadingSlots ? 'Loading slots…' : 'Select a slot') : 'Choose a date first'}
                         </option>
                         {slots
-                          .filter((s) => s.isAvailable)
+                          .filter((s) => {
+                            if (!s.isAvailable) return false
+                            // If selected date is today, filter out past times
+                            const today = new Date().toISOString().split('T')[0]
+                            if (form.date === today) {
+                              const now = new Date()
+                              const [hours, minutes] = s.time.split(':').map(Number)
+                              const slotTime = new Date()
+                              slotTime.setHours(hours, minutes, 0, 0)
+                              return slotTime > now
+                            }
+                            return true
+                          })
                           .map((slot) => (
                             <option key={slot.time} value={slot.time}>
                               {slot.time}
@@ -445,7 +465,16 @@ export default function BookingPage() {
                   {/* Summary of selections */}
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
-                      <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}
+                      <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {{
+                        'cbt': 'Cognitive Behavioural Therapy (CBT)',
+                        'dbt': 'Dialectical Behavioural Therapy (DBT)',
+                        'act': 'Acceptance & Commitment Therapy (ACT)',
+                        'schema': 'Schema Therapy',
+                        'eft': 'Emotion-Focused Therapy (EFT)',
+                        'efct': 'Emotion-Focused Couples Therapy',
+                        'mbct': 'Mindfulness-Based Cognitive Therapy',
+                        'cct': 'Client-Centred Therapy'
+                      }[form.sessionType] || form.sessionType}
                     </p>
                   </div>
                 </>
@@ -456,23 +485,60 @@ export default function BookingPage() {
                 <>
                   <div className="card booking-payment" style={{ padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
                     <h3>Complete Payment</h3>
-                    <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
-                    <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
-                      <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                    </div>
-                    <div className="field">
-                      <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
-                      <input
-                        id="paymentScreenshot"
-                        name="paymentScreenshot"
-                        type="file"
-                        accept="image/*"
-                        required
-                        onChange={handleChange}
-                        className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
-                      />
-                      {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
-                    </div>
+                    
+                    {/* Payment option selection for offline bookings */}
+                    {form.mode === 'offline' && (
+                      <div style={{ marginBottom: '1.5rem' }}>
+                        <p style={{ marginBottom: '1rem' }}>Choose your payment method:</p>
+                        <div className="pill-group">
+                          <button
+                            type="button"
+                            className={paymentOption === 'online' ? 'pill active' : 'pill'}
+                            onClick={() => setPaymentOption('online')}
+                          >
+                            Pay Now (Scan QR)
+                          </button>
+                          <button
+                            type="button"
+                            className={paymentOption === 'studio' ? 'pill active' : 'pill'}
+                            onClick={() => setPaymentOption('studio')}
+                          >
+                            Pay Later at Studio
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show QR payment for online mode OR if offline user chooses to pay now */}
+                    {(form.mode === 'online' || paymentOption === 'online') && (
+                      <>
+                        <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
+                        <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+                          <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                        </div>
+                        <div className="field">
+                          <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
+                          <input
+                            id="paymentScreenshot"
+                            name="paymentScreenshot"
+                            type="file"
+                            accept="image/*"
+                            required
+                            onChange={handleChange}
+                            className={touched.paymentScreenshot && !form.paymentScreenshot ? 'error' : ''}
+                          />
+                          {touched.paymentScreenshot && !form.paymentScreenshot && <p className="form-error">Payment screenshot is required</p>}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Show pay at studio message */}
+                    {form.mode === 'offline' && paymentOption === 'studio' && (
+                      <div style={{ textAlign: 'center', padding: '1rem' }}>
+                        <p style={{ fontSize: '1.1rem', color: 'var(--text)' }}>You can pay at the studio before your session begins.</p>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-soft)', marginTop: '0.5rem' }}>Please arrive 10 minutes early to complete the payment.</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Booking Summary */}
@@ -480,12 +546,21 @@ export default function BookingPage() {
                     <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Booking Summary</h4>
                     <div style={{ fontSize: '0.9rem', color: 'var(--text-soft)', lineHeight: '1.6' }}>
                       <p style={{ margin: '0.25rem 0' }}><strong>Name:</strong> {form.name}</p>
-                      <p style={{ margin: '0.25rem 0' }}><strong>Email:</strong> {form.email}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Email:</strong> {user?.email}</p>
                       {form.phone && <p style={{ margin: '0.25rem 0' }}><strong>Phone:</strong> {form.phone}</p>}
                       <p style={{ margin: '0.25rem 0' }}><strong>Date:</strong> {form.date}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Time:</strong> {form.time}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Mode:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'}</p>
-                      <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {form.sessionType === 'individual' ? 'Individual psycho-education' : form.sessionType === 'relationship' ? 'Relationships & family' : form.sessionType === 'career' ? 'Career & performance' : 'Stress, burnout & anxiety'}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {{
+                        'cbt': 'Cognitive Behavioural Therapy (CBT)',
+                        'dbt': 'Dialectical Behavioural Therapy (DBT)',
+                        'act': 'Acceptance & Commitment Therapy (ACT)',
+                        'schema': 'Schema Therapy',
+                        'eft': 'Emotion-Focused Therapy (EFT)',
+                        'efct': 'Emotion-Focused Couples Therapy',
+                        'mbct': 'Mindfulness-Based Cognitive Therapy',
+                        'cct': 'Client-Centred Therapy'
+                      }[form.sessionType] || form.sessionType}</p>
                     </div>
                   </div>
                 </>

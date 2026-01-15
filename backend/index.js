@@ -688,7 +688,6 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
   try {
     const {
       name,
-      email,
       phone,
       mode,
       sessionType,
@@ -698,10 +697,13 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
       notes,
     } = req.body || {}
 
+    // Get email from authenticated user
+    const email = req.user?.email
+
     if (!name || !email || !date || !time) {
       return res
         .status(400)
-        .json({ message: 'name, email, date and time are required' })
+        .json({ message: 'name, date and time are required' })
     }
 
     if (isPastDate(date)) {
