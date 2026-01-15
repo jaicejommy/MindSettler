@@ -8,7 +8,6 @@ import API_BASE_URL from '../api'
 export default function BookingPage() {
   const [form, setForm] = useState({
     name: '',
-    email: '',
     phone: '',
     mode: 'online',
     sessionType: 'individual',
@@ -19,7 +18,7 @@ export default function BookingPage() {
     paymentScreenshot: null,
   })
   const [touched, setTouched] = useState({})
-  const [acceptPrivacyPolicy, setAcceptPrivacyPolicy] = useState(false)
+  const [acceptPolicies, setAcceptPolicies] = useState(false)
   const [slots, setSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -32,10 +31,9 @@ export default function BookingPage() {
   // Step validation
   const isStep1Valid = () => {
     const hasValidName = form.name.trim().length > 0
-    const hasValidEmail = isValidEmail(form.email)
     const hasValidPhone = isValidPhone(form.phone)
-    const hasPrivacyAccepted = !form.isFirstSession || acceptPrivacyPolicy
-    return hasValidName && hasValidEmail && hasValidPhone && hasPrivacyAccepted
+    const hasPoliciesAccepted = !form.isFirstSession || acceptPolicies
+    return hasValidName && hasValidPhone && hasPoliciesAccepted
   }
 
   const isStep2Valid = () => {
@@ -49,16 +47,12 @@ export default function BookingPage() {
         setError('Please enter your full name.')
         return
       }
-      if (!isValidEmail(form.email)) {
-        setError('Please enter a valid email address.')
-        return
-      }
       if (form.phone && !isValidPhone(form.phone)) {
         setError('Please enter a valid phone number.')
         return
       }
-      if (form.isFirstSession && !acceptPrivacyPolicy) {
-        setError('You must accept the Privacy Policy to continue.')
+      if (form.isFirstSession && !acceptPolicies) {
+        setError('You must accept the policies to continue.')
         return
       }
     }
@@ -128,9 +122,9 @@ export default function BookingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validate privacy policy acceptance for first-time sessions
-    if (form.isFirstSession && !acceptPrivacyPolicy) {
-      setError('You must accept the Privacy Policy to book your first session.')
+    // Validate policy acceptance for first-time sessions
+    if (form.isFirstSession && !acceptPolicies) {
+      setError('You must accept the policies to book your first session.')
       return
     }
 
@@ -157,7 +151,6 @@ export default function BookingPage() {
       setResult(res.data.booking)
       setForm({
         name: '',
-        email: '',
         phone: '',
         mode: 'online',
         sessionType: 'individual',
@@ -168,7 +161,7 @@ export default function BookingPage() {
         paymentScreenshot: null,
       })
       setTouched({})
-      setAcceptPrivacyPolicy(false)
+      setAcceptPolicies(false)
       setCurrentStep(1)
     } catch (err) {
       console.error(err)
@@ -229,8 +222,8 @@ export default function BookingPage() {
               {/* Step Progress Indicator */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative' }}>
                 {/* Progress Line */}
-                <div style={{ position: 'absolute', top: '50%', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
-                <div style={{ position: 'absolute', top: '50%', left: '15%', height: '2px', background: 'var(--primary)', zIndex: 1, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
+                <div style={{ position: 'absolute', top: '18px', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
+                <div style={{ position: 'absolute', top: '18px', left: '15%', height: '2px', background: '#7c3aed', zIndex: 0, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
                 
                 {[1, 2, 3].map((step) => (
                   <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, flex: 1 }}>
@@ -239,17 +232,19 @@ export default function BookingPage() {
                         width: '36px',
                         height: '36px',
                         borderRadius: '50%',
-                        background: currentStep >= step ? 'var(--primary)' : '#e0e0e0',
-                        color: currentStep >= step ? 'white' : '#666',
+                        backgroundColor: currentStep >= step ? '#7c3aed' : '#ffffff',
+                        color: currentStep >= step ? '#ffffff' : '#666666',
+                        border: currentStep >= step ? '2px solid #7c3aed' : '2px solid #e0e0e0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontWeight: 600,
-                        fontSize: '0.9rem',
-                        transition: 'all 0.3s ease',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        lineHeight: 1,
+                        boxSizing: 'border-box',
                       }}
                     >
-                      {currentStep > step ? '✓' : step}
+                      <span>{step}</span>
                     </div>
                     <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: currentStep >= step ? 'var(--primary)' : '#666', fontWeight: currentStep === step ? 600 : 400 }}>
                       {step === 1 ? 'Details' : step === 2 ? 'Schedule' : 'Payment'}
@@ -275,22 +270,6 @@ export default function BookingPage() {
                         onBlur={handleBlur}
                         className={form.name && touched.name ? 'success' : ''}
                       />
-                    </div>
-                    <div className="field">
-                      <label htmlFor="email">Email *</label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        className={touched.email ? (isValidEmail(form.email) ? 'success' : '') : ''}
-                      />
-                      {touched.email && !isValidEmail(form.email) && form.email && (
-                        <span className="form-error">Please enter a valid email address</span>
-                      )}
                     </div>
                     <div className="field">
                       <label htmlFor="phone">Phone (WhatsApp preferred)</label>
@@ -363,8 +342,8 @@ export default function BookingPage() {
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                           <input
                             type="checkbox"
-                            checked={acceptPrivacyPolicy}
-                            onChange={(e) => setAcceptPrivacyPolicy(e.target.checked)}
+                            checked={acceptPolicies}
+                            onChange={(e) => setAcceptPolicies(e.target.checked)}
                             style={{ marginTop: '0.2rem' }}
                           />
                           <span>
@@ -376,6 +355,24 @@ export default function BookingPage() {
                               style={{ color: 'var(--primary)', textDecoration: 'underline' }}
                             >
                               Privacy Policy
+                            </Link>
+                            ,{' '}
+                            <Link
+                              to="/non-refund"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                            >
+                              Non-Refund Policy
+                            </Link>
+                            , and{' '}
+                            <Link
+                              to="/confidentiality"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                            >
+                              Confidentiality Policy
                             </Link>
                             {' '}*
                           </span>
