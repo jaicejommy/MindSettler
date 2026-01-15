@@ -1,0 +1,84 @@
+<svg
+  viewBox="0 0 400 400"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="Progressive awareness brain"
+>
+  <!-- =========================
+       Brain Outline (Always Visible)
+       ========================= -->
+  <path
+    id="brain-outline"
+    d="M120 80
+       C80 80, 60 120, 70 160
+       C40 180, 50 240, 100 250
+       C110 290, 170 310, 200 280
+       C230 310, 290 290, 300 250
+       C350 240, 360 180, 330 160
+       C340 120, 320 80, 280 80
+       C260 50, 200 50, 200 80
+       C200 50, 140 50, 120 80Z"
+    fill="none"
+    stroke="#6a4c93"
+    stroke-width="4"
+    opacity="0.08"
+  />
+
+  <!-- =========================
+       Brain Regions (Activated on Scroll)
+       ========================= -->
+
+  <!-- Awareness / Arrival -->
+  <path
+    class="brain-region"
+    data-region="awareness"
+    d="M120 80
+       C90 90, 80 120, 90 140
+       C120 150, 150 130, 150 110
+       C150 90, 135 80, 120 80Z"
+    fill="none"
+    stroke="#e85c9a"
+    stroke-width="4"
+    opacity="0"
+  />
+
+  <!-- Emotion / Understanding -->
+  <path
+    class="brain-region"
+    data-region="emotion"
+    d="M90 160
+       C60 180, 70 230, 110 240
+       C150 240, 150 200, 120 180
+       C110 170, 100 165, 90 160Z"
+    fill="none"
+    stroke="#e85c9a"
+    stroke-width="4"
+    opacity="0"
+  />
+
+  <!-- Patterns / Insight -->
+  <path
+    class="brain-region"
+    data-region="patterns"
+    d="M200 90
+       C180 120, 180 170, 200 200
+       C220 170, 220 120, 200 90Z"
+    fill="none"
+    stroke="#e85c9a"
+    stroke-width="4"
+    opacity="0"
+  />
+
+  <!-- Choice / Action -->
+  <path
+    class="brain-region"
+    data-region="choice"
+    d="M250 160
+       C260 170, 290 180, 300 250
+       C260 260, 230 240, 230 200
+       C230 180, 240 170, 250 160Z"
+    fill="none"
+    stroke="#e85c9a"
+    stroke-width="4"
+    opacity="0"
+  />
+</svg>

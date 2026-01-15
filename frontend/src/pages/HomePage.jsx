@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useInView } from '../hooks/useInView'
 import DesiGallery from '../components/DesiGallery'
+import ParticleDivider from '../components/ParticleDivider'
+import HeroParticleBackground from '../components/HeroParticleBackground'
 
 function scrollToSection(id) {
   const el = document.getElementById(id)
@@ -134,37 +136,54 @@ export default function HomePage() {
         ease: 'easeOut'
       }}
     >
-      <section className={`hero fade-in-section ${heroInView ? 'in-view' : ''}`} ref={heroRef}>
-        <div className="hero-inner">
-          <div className="hero-text">
-            <p className="eyebrow">Online psycho-education &amp; counselling</p>
-            <h1>Settle your inner world, one session at a time.</h1>
-            <p className="hero-subtitle">
-              MindSettler is a gentle, structured space to understand your emotions, patterns, and life
-              questions – and to navigate them with clarity and care.
-            </p>
-            <div className="hero-actions">
-              <a href="/booking" className="primary-btn">
-                Book your first session
+      <section className="hero-new" ref={heroRef}>
+        <HeroParticleBackground />
+        <div className="hero-content">
+          <motion.div
+            className="hero-text-new"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.8, duration: 0.8, ease: 'easeOut' }}
+          >
+            <motion.h1
+              className="hero-heading"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 3.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Settle the Noise.
+              <br />
+              Find Your Direction.
+            </motion.h1>
+            
+            <motion.p
+              className="hero-description"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.6, duration: 0.5, ease: 'easeOut' }}
+            >
+              A gentle, structured space to understand your patterns, navigate emotions,
+              and grow with clarity — one session at a time.
+            </motion.p>
+            
+            <motion.div
+              className="hero-cta"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.9, duration: 0.5, ease: 'easeOut' }}
+            >
+              <a href="/booking" className="hero-btn-primary">
+                Start Your Journey
               </a>
-              <a href="/psycho-education" className="secondary-btn">
-                Explore psycho-education
-              </a>
-            </div>
-            <p className="fine-print">
-              Safe, confidential, human. Available online and at the MindSettler Studio.
-            </p>
-          </div>
-          <div className="hero-visual">
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <div style={{ width: '100%', maxWidth: 520, borderRadius: 18, overflow: 'hidden', boxShadow: '0 20px 60px rgba(63,41,101,0.15)' }}>
-                <video src={encodeURI('therapist.mp4')} controls playsInline preload="metadata" style={{ width: '100%', border: 'solid', minHeight: 450, borderRadius: 12 }} />
-              </div>
-            </div>
-          </div>
-
+              <p className="hero-fine-print">
+                Safe, confidential, human. Available online and in-studio.
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
+
+      <ParticleDivider id="divider-hero-stats" />
 
       <section
         id="stats"
@@ -196,6 +215,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ParticleDivider id="divider-stats-about" />
 
       <section id="about" className={`section-about-minimal fade-in-section ${aboutInView ? 'in-view' : ''}`} ref={aboutRef}>
         <div className="section-header-minimal">
@@ -236,6 +257,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ParticleDivider id="divider-about-story" />
 
       <section id="mindsettler-story" className={`section section-alt fade-in-section ${storyInView ? 'in-view' : ''}`} ref={storyRef}>
         <div className="section-header">
@@ -291,6 +314,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <ParticleDivider id="divider-story-services" />
+
       <section id="services" className={`section section-alt fade-in-section ${servicesInView ? 'in-view' : ''}`} ref={servicesRef}>
         <div className="section-header">
           <p className="eyebrow">Services we offer</p>
@@ -324,6 +349,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ParticleDivider id="divider-services-how" />
 
       <section id="how-it-works" className={`section fade-in-section ${howInView ? 'in-view' : ''}`} ref={howRef}>
         <div className="section-header">
@@ -379,6 +406,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ParticleDivider id="divider-how-difference" />
 
       <section id="difference" className={`section fade-in-section ${diffInView ? 'in-view' : ''}`} ref={diffRef}>
         <div className="section-header">

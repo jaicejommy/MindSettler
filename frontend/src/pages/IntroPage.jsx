@@ -15,7 +15,6 @@ import '../components/IntroAnimation.css'
 
 const PHASES = {
   VIDEO_PLAYING: 'video_playing',
-  LOGO_HOLD: 'logo_hold',
   FADE_OUT: 'fade_out',
   COMPLETE: 'complete'
 }
@@ -25,30 +24,18 @@ export default function IntroPage() {
   const [phase, setPhase] = useState(PHASES.VIDEO_PLAYING)
   const videoRef = useRef(null)
 
-  // Phase 1 -> Phase 2: Video ends, swap to static logo
+  // Video ends -> Start fade out
   const handleVideoEnd = () => {
-    setPhase(PHASES.LOGO_HOLD)
+    setPhase(PHASES.FADE_OUT)
   }
 
-  // Phase 2 -> Phase 3: After hold delay, start fade out
-  useEffect(() => {
-    if (phase === PHASES.LOGO_HOLD) {
-      const holdTimer = setTimeout(() => {
-        setPhase(PHASES.FADE_OUT)
-      }, 800)
-
-      return () => clearTimeout(holdTimer)
-    }
-  }, [phase])
-
-  // Phase 3 -> Navigate: After fade out, go to home
+  // After fade out, go to home
   useEffect(() => {
     if (phase === PHASES.FADE_OUT) {
       const fadeTimer = setTimeout(() => {
-        // Navigate to home page
         sessionStorage.setItem('justFromIntro', 'true')
         navigate('/', { replace: true })
-      }, 1000) // Match the fade duration
+      }, 800)
 
       return () => clearTimeout(fadeTimer)
     }
@@ -63,9 +50,6 @@ export default function IntroPage() {
     navigate('/', { replace: true })
   }
 
-  // Calculate center position for logo
-  const startWidth = typeof window !== 'undefined' ? Math.min(900, window.innerWidth * 0.9) : 900
-
   return (
     <motion.div 
       className="intro-overlay"
@@ -74,41 +58,25 @@ export default function IntroPage() {
         opacity: phase === PHASES.FADE_OUT ? 0 : 1 
       }}
       transition={{ 
-        duration: 1.0,
-        ease: [0.4, 0, 0.2, 1]
+        duration: 0.8,
+        ease: 'easeInOut'
       }}
     >
-      {/* Phase 1: Video */}
+      {/* Video */}
       <AnimatePresence mode="wait">
         {phase === PHASES.VIDEO_PLAYING && (
           <motion.video
             key="intro-video"
             ref={videoRef}
             className="intro-video"
-            src="/intro.mp4"
+            src="/Video%20Project%201.mp4"
             autoPlay
             muted
             playsInline
             onEnded={handleVideoEnd}
             initial={{ opacity: 1 }}
-            exit={{ opacity: 1 }} // No fade, instant swap
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Phase 2 & 3: Static Logo during hold and fade */}
-      <AnimatePresence>
-        {(phase === PHASES.LOGO_HOLD || phase === PHASES.FADE_OUT) && (
-          <motion.img
-            key="logo-hold"
-            src="/Mindsettler_logo.jpg"
-            alt="MindSettler Logo"
-            className="intro-logo-centered"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0 }}
-            style={{ width: startWidth }}
+            transition={{ duration: 0.5 }}
           />
         )}
       </AnimatePresence>
