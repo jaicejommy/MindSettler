@@ -31,11 +31,8 @@ function ForgotPasswordPage() {
         <main className="admin-login-page">
             <div className="login-container">
                 <header className="login-header">
-                    <div className="logo">
-                        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                            <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="none" />
-                            <path d="M20 10 L20 30 M13 17 L20 10 L27 17" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                    <div className="logo" style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '12px', borderRadius: '12px' }}>
+                        <img src="/Mindsettler_logo_rmbg.png" alt="MindSettler" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                     </div>
                     <p className="eyebrow">MindSettler Console</p>
                     <h1>Reset Password</h1>
@@ -56,9 +53,9 @@ function ForgotPasswordPage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    autoComplete="email"
+                                    autoComplete="off"
                                     required
-                                    placeholder="admin@mindsettler.com"
+                                    placeholder="Enter your email"
                                     className="has-icon"
                                 />
                             </div>
