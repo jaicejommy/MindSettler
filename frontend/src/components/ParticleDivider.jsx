@@ -44,7 +44,7 @@ export default function ParticleDivider({
     function setSize() {
       const { width } = el.getBoundingClientRect()
       canvas.width = width
-      canvas.height = 170
+      canvas.height = 100
     }
 
     function createParticles() {
