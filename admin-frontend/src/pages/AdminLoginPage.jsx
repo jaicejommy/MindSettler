@@ -31,8 +31,8 @@ function AdminLoginPage() {
         <main className="admin-login-page">
             <div className="login-container">
                 <header className="login-header">
-                    <div className="logo" style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '12px', borderRadius: '12px' }}>
-                        <img src="/Mindsettler_logo_rmbg.png" alt="MindSettler" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+                    <div className="logo">
+                        <img src="/Mindsettler_logo_rmbg.png" alt="MindSettler" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
                     </div>
                     <p className="eyebrow">MindSettler Console</p>
                     <h1>Welcome Back</h1>

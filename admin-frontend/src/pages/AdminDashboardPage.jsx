@@ -104,6 +104,13 @@ const Icons = {
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
     ),
+    Menu: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+    ),
 }
 
 function AdminDashboardPage() {
@@ -119,6 +126,7 @@ function AdminDashboardPage() {
     const [availableSlots, setAvailableSlots] = useState([])
     const [loadingSlots, setLoadingSlots] = useState(false)
     const [activeTab, setActiveTab] = useState('dashboard')
+    const [sidebarOpen, setSidebarOpen] = useState(false)
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -287,14 +295,16 @@ function AdminDashboardPage() {
     return (
         <main className="admin-dashboard-page">
             <div className="admin-layout">
+                {/* Mobile Overlay */}
+                {sidebarOpen && (
+                    <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+                )}
+
                 {/* Sidebar */}
-                <aside className="admin-sidebar">
+                <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
                     <div className="sidebar-header">
                         <div className="sidebar-logo">
-                            <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
-                                <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="2.5" fill="none" />
-                                <path d="M20 10 L20 30 M13 17 L20 10 L27 17" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            <img src="/Mindsettler_logo_rmbg.png" alt="MindSettler" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                         </div>
                         <div className="sidebar-brand">
                             <h1>MindSettler</h1>
@@ -348,20 +358,30 @@ function AdminDashboardPage() {
                     {/* Top Bar */}
                     <header className="admin-topbar">
                         <div className="topbar-left">
-                            <h1>
-                                {activeTab === 'dashboard' && 'Dashboard'}
-                                {activeTab === 'appointments' && 'Appointments'}
-                                {activeTab === 'messages' && 'Messages'}
-                            </h1>
-                            <p>{getCurrentDate()}</p>
-                        </div>
-                        <div className="topbar-right">
-                            <button className="icon-btn">
-                                <Icons.Bell />
-                                {pending.length > 0 && <span className="notification-dot"></span>}
+                            <button className="mobile-menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                                <Icons.Menu />
                             </button>
                         </div>
+                        <div className="topbar-right">
+                            <div className="mobile-admin-profile">
+                                <div className="user-avatar">AD</div>
+                            </div>
+                            <div className="user-details">
+                                <div className="name">Admin</div>
+                                <div className="role">Administrator</div>
+                            </div>
+                        </div>
                     </header>
+
+                    {/* Page Header */}
+                    <div className="page-header">
+                        <h1>
+                            {activeTab === 'dashboard' && 'Dashboard'}
+                            {activeTab === 'appointments' && 'Appointments'}
+                            {activeTab === 'messages' && 'Messages'}
+                        </h1>
+                        <p>{getCurrentDate()}</p>
+                    </div>
 
                     {loading ? (
                         <div className="loading-state">
