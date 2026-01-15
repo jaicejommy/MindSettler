@@ -10,7 +10,7 @@ export default function BookingPage() {
     name: '',
     phone: '',
     mode: 'online',
-    sessionType: 'individual',
+    sessionType: '',
     isFirstSession: true,
     date: '',
     time: '',
@@ -153,7 +153,7 @@ export default function BookingPage() {
         name: '',
         phone: '',
         mode: 'online',
-        sessionType: 'individual',
+        sessionType: '',
         isFirstSession: true,
         date: '',
         time: '',
@@ -318,10 +318,15 @@ export default function BookingPage() {
                         value={form.sessionType}
                         onChange={handleChange}
                       >
-                        <option value="individual">Individual psycho-education</option>
-                        <option value="relationship">Relationships & family</option>
-                        <option value="career">Career & performance</option>
-                        <option value="stress">Stress, burnout & anxiety</option>
+                        <option value="" disabled>Choose your focus</option>
+                        <option value="cbt">Cognitive Behavioural Therapy (CBT)</option>
+                        <option value="dbt">Dialectical Behavioural Therapy (DBT)</option>
+                        <option value="act">Acceptance & Commitment Therapy (ACT)</option>
+                        <option value="schema">Schema Therapy</option>
+                        <option value="eft">Emotion-Focused Therapy (EFT)</option>
+                        <option value="efct">Emotion-Focused Couples Therapy</option>
+                        <option value="mbct">Mindfulness-Based Cognitive Therapy</option>
+                        <option value="cct">Client-Centred Therapy</option>
                       </select>
                     </div>
 
