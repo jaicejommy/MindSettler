@@ -1110,6 +1110,93 @@ Important: You provide general information and support, but you are not a substi
   }
 })
 
+// ================= QR CODE MANAGEMENT =================
+// QR code storage
+const qrStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir)
+  },
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '') || '.png'
+    cb(null, `payment-qr${ext}`)
+  },
+})
+
+const qrUpload = multer({
+  storage: qrStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'))
+    }
+    return cb(null, true)
+  },
+})
+
+// Get current QR code
+app.get('/api/settings/qr', (req, res) => {
+  const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+  let qrFile = null
+  
+  for (const ext of possibleExtensions) {
+    const filePath = path.join(uploadsDir, `payment-qr${ext}`)
+    if (fs.existsSync(filePath)) {
+      qrFile = `payment-qr${ext}`
+      break
+    }
+  }
+  
+  if (qrFile) {
+    res.json({ qrUrl: `/uploads/${qrFile}?t=${Date.now()}` })
+  } else {
+    res.json({ qrUrl: null })
+  }
+})
+
+// Upload new QR code (admin only)
+app.post('/api/settings/qr', (req, res) => {
+  // Verify admin token
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  
+  const token = authHeader.split(' ')[1]
+  const adminId = verifyAdminToken(token)
+  
+  if (!adminId) {
+    return res.status(401).json({ message: 'Invalid admin token' })
+  }
+  
+  // Delete existing QR files before upload
+  const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+  for (const ext of possibleExtensions) {
+    const filePath = path.join(uploadsDir, `payment-qr${ext}`)
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath)
+      } catch (e) {
+        console.error('Failed to delete old QR:', e)
+      }
+    }
+  }
+  
+  qrUpload.single('qr')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message })
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' })
+    }
+    
+    res.json({ 
+      message: 'QR code updated successfully',
+      qrUrl: `/uploads/${req.file.filename}?t=${Date.now()}`
+    })
+  })
+})
+
 // 404 fallback
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })

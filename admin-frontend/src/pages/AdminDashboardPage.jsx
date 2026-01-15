@@ -111,6 +111,19 @@ const Icons = {
             <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
     ),
+    Settings: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+    ),
+    Upload: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+    ),
 }
 
 function AdminDashboardPage() {
@@ -127,6 +140,11 @@ function AdminDashboardPage() {
     const [loadingSlots, setLoadingSlots] = useState(false)
     const [activeTab, setActiveTab] = useState('dashboard')
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    
+    // QR Code management state
+    const [currentQr, setCurrentQr] = useState(null)
+    const [qrUploading, setQrUploading] = useState(false)
+    const [qrMessage, setQrMessage] = useState('')
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -141,26 +159,31 @@ function AdminDashboardPage() {
                 setLoading(true)
                 setError('')
 
-                const [bRes, cRes] = await Promise.all([
+                const [bRes, cRes, qrRes] = await Promise.all([
                     fetch(`${API_BASE_URL}/bookings`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                     fetch(`${API_BASE_URL}/contact`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
+                    fetch(`${API_BASE_URL}/settings/qr`),
                 ])
 
                 if (!bRes.ok || !cRes.ok) {
                     throw new Error('Failed to load admin data')
                 }
 
-                const [bData, cData] = await Promise.all([
+                const [bData, cData, qrData] = await Promise.all([
                     bRes.json(),
                     cRes.json(),
+                    qrRes.json(),
                 ])
 
                 setBookings(bData.bookings || [])
                 setContacts(cData.contacts || [])
+                if (qrData.qrUrl) {
+                    setCurrentQr(`${API_BASE_URL.replace('/api', '')}${qrData.qrUrl}`)
+                }
             } catch (err) {
                 setError(err.message)
             } finally {
@@ -270,6 +293,44 @@ function AdminDashboardPage() {
         navigate('/')
     }
 
+    // QR Code upload handler
+    async function handleQrUpload(e) {
+        const file = e.target.files?.[0]
+        if (!file) return
+        
+        setQrUploading(true)
+        setQrMessage('')
+        
+        try {
+            const formData = new FormData()
+            formData.append('qr', file)
+            
+            const res = await fetch(`${API_BASE_URL}/settings/qr`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            })
+            
+            const data = await res.json()
+            
+            if (res.ok) {
+                setCurrentQr(`${API_BASE_URL.replace('/api', '')}${data.qrUrl}`)
+                setQrMessage('QR code updated successfully!')
+            } else {
+                setQrMessage(data.message || 'Failed to upload QR code')
+            }
+        } catch (err) {
+            console.error('QR upload failed:', err)
+            setQrMessage('Failed to upload QR code')
+        } finally {
+            setQrUploading(false)
+            // Clear message after 3 seconds
+            setTimeout(() => setQrMessage(''), 3000)
+        }
+    }
+
     function getInitials(name) {
         return name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
     }
@@ -336,6 +397,13 @@ function AdminDashboardPage() {
                             Messages
                             {contacts.length > 0 && <span className="badge-count">{contacts.length}</span>}
                         </button>
+                        <button
+                            className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('settings')}
+                        >
+                            <span className="icon"><Icons.Settings /></span>
+                            Settings
+                        </button>
                     </nav>
 
                     <div className="sidebar-footer">
@@ -379,6 +447,7 @@ function AdminDashboardPage() {
                             {activeTab === 'dashboard' && 'Dashboard'}
                             {activeTab === 'appointments' && 'Appointments'}
                             {activeTab === 'messages' && 'Messages'}
+                            {activeTab === 'settings' && 'Settings'}
                         </h1>
                         <p>{getCurrentDate()}</p>
                     </div>
@@ -725,6 +794,117 @@ function AdminDashboardPage() {
                                                     ))}
                                                 </div>
                                             )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Settings View */}
+                            {activeTab === 'settings' && (
+                                <div className="content-grid full">
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Payment QR Code</h2>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body">
+                                            <div className="settings-section">
+                                                <p style={{ marginBottom: '1rem', color: '#666' }}>
+                                                    Upload or change the QR code displayed on the booking page for payment.
+                                                </p>
+                                                
+                                                <div className="qr-preview" style={{ 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    alignItems: 'center', 
+                                                    gap: '1.5rem',
+                                                    padding: '2rem',
+                                                    background: '#f8f9fa',
+                                                    borderRadius: '12px',
+                                                    marginBottom: '1.5rem'
+                                                }}>
+                                                    {currentQr ? (
+                                                        <img 
+                                                            src={currentQr} 
+                                                            alt="Current Payment QR" 
+                                                            style={{ 
+                                                                maxWidth: '250px', 
+                                                                borderRadius: '8px',
+                                                                border: '1px solid #ddd',
+                                                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                                            }} 
+                                                        />
+                                                    ) : (
+                                                        <div style={{ 
+                                                            width: '200px', 
+                                                            height: '200px', 
+                                                            background: '#e9ecef',
+                                                            borderRadius: '8px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            color: '#6c757d',
+                                                            flexDirection: 'column',
+                                                            gap: '0.5rem'
+                                                        }}>
+                                                            <Icons.Upload />
+                                                            <span>No QR uploaded</span>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div style={{ textAlign: 'center' }}>
+                                                        <label 
+                                                            htmlFor="qr-upload" 
+                                                            className="btn-modal-action"
+                                                            style={{ 
+                                                                cursor: 'pointer',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '0.5rem',
+                                                                padding: '0.75rem 1.5rem',
+                                                                background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                                color: 'white',
+                                                                borderRadius: '8px',
+                                                                fontWeight: '600',
+                                                                opacity: qrUploading ? 0.7 : 1
+                                                            }}
+                                                        >
+                                                            <Icons.Upload />
+                                                            {qrUploading ? 'Uploading...' : (currentQr ? 'Change QR Code' : 'Upload QR Code')}
+                                                        </label>
+                                                        <input
+                                                            id="qr-upload"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleQrUpload}
+                                                            disabled={qrUploading}
+                                                            style={{ display: 'none' }}
+                                                        />
+                                                        
+                                                        {qrMessage && (
+                                                            <p style={{ 
+                                                                marginTop: '1rem', 
+                                                                color: qrMessage.includes('success') ? '#28a745' : '#dc3545',
+                                                                fontWeight: '500'
+                                                            }}>
+                                                                {qrMessage}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style={{ 
+                                                    padding: '1rem', 
+                                                    background: '#fff3cd', 
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #ffc107'
+                                                }}>
+                                                    <p style={{ margin: 0, color: '#856404', fontSize: '0.9rem' }}>
+                                                        <strong>Note:</strong> This QR code will be shown to users when they book a session and need to make a payment. Make sure it's a valid UPI payment QR code.
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

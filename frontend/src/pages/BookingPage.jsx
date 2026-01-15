@@ -28,8 +28,25 @@ export default function BookingPage() {
   const [calendarAdded, setCalendarAdded] = useState(false)
   const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
+  const [paymentQrUrl, setPaymentQrUrl] = useState('/payment-qr.png') // Default fallback
 
   const { user, loading: authLoading } = useAuth()
+
+  // Fetch payment QR URL from backend
+  useEffect(() => {
+    async function fetchQr() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/settings/qr`)
+        const data = await res.json()
+        if (data.qrUrl) {
+          setPaymentQrUrl(`${API_BASE_URL.replace('/api', '')}${data.qrUrl}`)
+        }
+      } catch (e) {
+        console.log('Using default QR')
+      }
+    }
+    fetchQr()
+  }, [])
 
   // Step validation
   const isStep1Valid = () => {
@@ -593,7 +610,7 @@ export default function BookingPage() {
                       <>
                         <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
                         <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
-                          <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                          <img src={paymentQrUrl} alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
                         </div>
                         <div className="field">
                           <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
