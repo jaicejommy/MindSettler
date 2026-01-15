@@ -140,15 +140,7 @@ export default function HomePage() {
         <HeroParticleBackground />
         <div className="hero-content">
           <div className="hero-text-new">
-            <motion.h1 
-              className="hero-heading"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 1.0, 
-                ease: [0.16, 1, 0.3, 1]
-              }}
-            >
+            <h1 className="hero-heading">
               <span className="hero-heading-line">
                 <span className="hero-word">Making sense</span>
               </span>
@@ -156,55 +148,20 @@ export default function HomePage() {
                 <span className="hero-word">of what you</span>{' '}
                 <span className="hero-word hero-accent">feel.</span>
               </span>
-            </motion.h1>
+            </h1>
             
-            <motion.p 
-              className="hero-description"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ 
-                duration: 1.0,
-                delay: 0.4,
-                ease: [0.16, 1, 0.3, 1]
-              }}
-            >
+            <p className="hero-description">
               A calm space to pause, understand yourself better, and move forward—gently, at your own pace.
-            </motion.p>
+            </p>
             
-            <motion.div 
-              className="hero-cta"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ 
-                duration: 1.0,
-                delay: 0.7,
-                ease: [0.16, 1, 0.3, 1]
-              }}
-            >
+            <div className="hero-cta">
               <a href="/booking" className="hero-btn-primary">
                 Start when you're ready
               </a>
               <p className="hero-fine-print">
                 Private and judgment-free · Move at your own pace
               </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Normalize Section - gently validating, no clinical tone */}
-      <section className="section-normalize" id="normalize">
-        <div className="section-normalize-inner">
-          <h2 className="normalize-heading">
-            It’s okay to feel lost sometimes.
-          </h2>
-          <p className="normalize-description">
-            Life can get noisy, and emotions can feel overwhelming. If you’re confused, tired, or unsure where to begin, you’re not alone—these feelings are a natural part of being human.
-          </p>
-          <div className="normalize-facts">
-            <div className="normalize-fact">• Most people feel stuck or uncertain at times.</div>
-            <div className="normalize-fact">• Feeling overwhelmed doesn’t mean you’re failing.</div>
-            <div className="normalize-fact">• You’re allowed to take things one step at a time.</div>
+            </div>
           </div>
         </div>
       </section>
