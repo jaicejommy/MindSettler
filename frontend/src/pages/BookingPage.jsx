@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { getGoogleAccessToken } from '../firebase'
 import authedApi from '../authedApi'
 import API_BASE_URL from '../api'
 
@@ -24,6 +25,7 @@ export default function BookingPage() {
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
+  const [calendarAdded, setCalendarAdded] = useState(false)
   const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
 
@@ -155,7 +157,56 @@ export default function BookingPage() {
       const res = await authedApi.post('/bookings', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      setResult(res.data.booking)
+      const booking = res.data.booking
+      setResult(booking)
+
+      // Automatically add to Google Calendar if user signed in with Google
+      const accessToken = getGoogleAccessToken()
+      if (accessToken) {
+        try {
+          const startDateTime = `${booking.date}T${booking.time}:00`
+          const endDate = new Date(startDateTime)
+          endDate.setMinutes(endDate.getMinutes() + 60)
+          const endDateTime = endDate.toISOString()
+
+          const calendarEvent = {
+            summary: 'MindSettler Session',
+            description: `MindSettler psycho-education and counselling session.\n\nMode: ${booking.mode === 'offline' ? 'In-person at studio' : 'Online'}\n\nThis is not a crisis service. For emergencies, please contact your local emergency helpline.`,
+            location: booking.mode === 'offline' ? 'MindSettler Studio' : 'Online (details from MindSettler)',
+            start: {
+              dateTime: startDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            },
+            end: {
+              dateTime: endDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            },
+            reminders: {
+              useDefault: false,
+              overrides: [
+                { method: 'email', minutes: 24 * 60 },
+                { method: 'popup', minutes: 30 },
+              ],
+            },
+          }
+
+          const calendarRes = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(calendarEvent),
+          })
+          if (calendarRes.ok) {
+            setCalendarAdded(true)
+          }
+        } catch (calendarError) {
+          console.error('Failed to add to Google Calendar:', calendarError)
+          // Don't show error to user - booking was still successful
+        }
+      }
+
       setForm({
         name: '',
         phone: '',
@@ -236,12 +287,20 @@ export default function BookingPage() {
                   <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
                 </p>
               </div>
-              <p className="muted">
-                You can add this to your calendar in advance:
-              </p>
-              <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
-                Add to Google Calendar
-              </a>
+              {calendarAdded ? (
+                <p className="muted" style={{ color: 'var(--primary)' }}>
+                  ✓ This session has been automatically added to your Google Calendar.
+                </p>
+              ) : (
+                <>
+                  <p className="muted">
+                    You can add this to your calendar in advance:
+                  </p>
+                  <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
+                    Add to Google Calendar
+                  </a>
+                </>
+              )}
             </div>
           </div>
         ) : (
