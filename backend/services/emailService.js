@@ -403,5 +403,151 @@ module.exports = {
   sendPasswordResetEmail,
   sendBookingConfirmationEmail,
   sendBookingRejectionEmail,
+  sendWelcomeEmail,
 };
+
+/**
+ * Send welcome email to new users after signup
+ * @param {string} to - Recipient email
+ * @param {string} name - User's name
+ */
+async function sendWelcomeEmail(to, name = 'there') {
+  const transporter = createTransporter();
+
+  const subject = 'Welcome to MindSettler 🌿';
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to MindSettler</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+      <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td align="center" style="padding: 40px 0;">
+            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
+              <!-- Header -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #3F2965 0%, #DD1764 100%); padding: 50px 30px; text-align: center;">
+                  <div style="font-size: 48px; margin-bottom: 16px;">🌿</div>
+                  <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">Welcome to MindSettler</h1>
+                  <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0; font-size: 16px;">A calm space to make sense of what you're feeling</p>
+                </td>
+              </tr>
+              
+              <!-- Content -->
+              <tr>
+                <td style="padding: 40px 30px;">
+                  <h2 style="color: #3F2965; margin: 0 0 20px; font-size: 24px;">Hi ${name},</h2>
+                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.7;">
+                    Thank you for joining MindSettler. We're glad you're here.
+                  </p>
+                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.7;">
+                    This is a space where you can slow down, reflect, and understand yourself a little better—at your own pace, without pressure or judgment.
+                  </p>
+                  
+                  <!-- What to expect -->
+                  <table role="presentation" style="width: 100%; background: linear-gradient(135deg, rgba(63,41,101,0.04) 0%, rgba(221,23,100,0.04) 100%); border-radius: 12px; margin: 28px 0;">
+                    <tr>
+                      <td style="padding: 28px;">
+                        <p style="color: #3F2965; font-weight: 700; margin: 0 0 16px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">What you can do here</p>
+                        <table role="presentation" style="width: 100%;">
+                          <tr>
+                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
+                              <span style="color: #DD1764; margin-right: 10px;">•</span> Book a session when you're ready
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
+                              <span style="color: #DD1764; margin-right: 10px;">•</span> Take things at your own pace
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
+                              <span style="color: #DD1764; margin-right: 10px;">•</span> Explore resources on mental wellness
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
+                              <span style="color: #DD1764; margin-right: 10px;">•</span> Reach out whenever you need support
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <p style="color: #64748b; margin: 24px 0; font-size: 16px; line-height: 1.7;">
+                    There's no rush. No pressure. Just a gentle space waiting when you need it.
+                  </p>
+                  
+                  <p style="color: #64748b; margin: 0; font-size: 16px; line-height: 1.7;">
+                    Take care,<br>
+                    <span style="color: #3F2965; font-weight: 600;">The MindSettler Team</span>
+                  </p>
+                </td>
+              </tr>
+              
+              <!-- Footer -->
+              <tr>
+                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                  <p style="color: #94a3b8; margin: 0 0 8px; font-size: 13px;">
+                    Questions? Simply reply to this email or visit our website.
+                  </p>
+                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
+                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const text = `
+    Welcome to MindSettler 🌿
+
+    Hi ${name},
+
+    Thank you for joining MindSettler. We're glad you're here.
+
+    This is a space where you can slow down, reflect, and understand yourself a little better—at your own pace, without pressure or judgment.
+
+    What you can do here:
+    • Book a session when you're ready
+    • Take things at your own pace
+    • Explore resources on mental wellness
+    • Reach out whenever you need support
+
+    There's no rush. No pressure. Just a gentle space waiting when you need it.
+
+    Take care,
+    The MindSettler Team
+
+    © ${new Date().getFullYear()} MindSettler. All rights reserved.
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    console.log(`Welcome email sent to ${to}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send welcome email:', error);
+    // Don't throw - welcome email failure shouldn't break signup
+    return false;
+  }
+}
 

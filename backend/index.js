@@ -18,7 +18,7 @@ const Admin = require('./models/Admin')
 const Message = require('./models/Message')
 
 // Services
-const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail } = require('./services/emailService')
+const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail, sendWelcomeEmail } = require('./services/emailService')
 const { sendRescheduleEmail } = require('./services/rescheduleEmail')
 
 // Middleware
@@ -483,6 +483,11 @@ app.patch('/api/me', firebaseAuth, async (req, res) => {
         phone: updates.phone || req.firebaseUser.phone_number || '',
         onboardingCompleted: true,
       })
+
+      // Send welcome email to new user (don't await to avoid blocking response)
+      sendWelcomeEmail(user.email, user.name).catch(err => {
+        console.error('Failed to send welcome email:', err.message)
+      })
     }
 
     return res.json({ user })
@@ -532,6 +537,11 @@ app.post('/api/me/profile-pic', firebaseAuth, upload.single('profilePic'), async
         phone: req.firebaseUser.phone_number || '',
         profilePic: relativePath,
         onboardingCompleted: true,
+      })
+
+      // Send welcome email to new user (don't await to avoid blocking response)
+      sendWelcomeEmail(user.email, user.name).catch(err => {
+        console.error('Failed to send welcome email:', err.message)
       })
     }
 
