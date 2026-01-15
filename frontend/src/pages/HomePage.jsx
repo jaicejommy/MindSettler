@@ -5,6 +5,8 @@ import { useInView } from '../hooks/useInView'
 import DesiGallery from '../components/DesiGallery'
 import ParticleDivider from '../components/ParticleDivider'
 import HeroParticleBackground from '../components/HeroParticleBackground'
+import JourneySection from '../components/JourneySection'
+import '../components/JourneySection.css'
 
 function scrollToSection(id) {
   const el = document.getElementById(id)
@@ -48,7 +50,6 @@ export default function HomePage() {
   const [heroRef, heroInView] = useInView({ threshold: 0.1 })
   const [servicesRef, servicesInView] = useInView()
   const [storyRef, storyInView] = useInView()
-  const [journeyRef, journeyInView] = useInView()
 
   const [counts, setCounts] = useState({ reach: 0, help: 0, youth: 0 })
   const [imageIndex, setImageIndex] = useState(0)
@@ -254,80 +255,8 @@ export default function HomePage() {
 
       <ParticleDivider id="divider-why-journey" />
 
-      {/* Section 4: Your Journey */}
-      <section id="your-journey" className={`section-journey fade-in-section ${journeyInView ? 'in-view' : ''}`} ref={journeyRef}>
-        <div className="journey-container">
-          <header className="journey-header">
-            <p className="journey-eyebrow">At your own pace</p>
-            <h2 className="journey-headline">What the journey might look like</h2>
-            <p className="journey-intro">
-              There's no fixed path here. Every journey is shaped by what you need, when you need it. 
-              These are simply the kinds of moments that often unfold—gently, and only when you're ready.
-            </p>
-          </header>
-
-          <div className="journey-steps">
-            <div className="journey-step">
-              <div className="journey-step-marker" aria-hidden="true"></div>
-              <div className="journey-step-content">
-                <h3 className="journey-step-title">Sharing what's on your mind</h3>
-                <p className="journey-step-text">
-                  You begin wherever feels right—what's been weighing on you, what brought you here, 
-                  or simply what's present today. There's no script to follow.
-                </p>
-              </div>
-            </div>
-
-            <div className="journey-step">
-              <div className="journey-step-marker" aria-hidden="true"></div>
-              <div className="journey-step-content">
-                <h3 className="journey-step-title">Slowing down together</h3>
-                <p className="journey-step-text">
-                  We take time to sit with what you've shared. Patterns often become clearer 
-                  when we're not rushing to fix them.
-                </p>
-              </div>
-            </div>
-
-            <div className="journey-step">
-              <div className="journey-step-marker" aria-hidden="true"></div>
-              <div className="journey-step-content">
-                <h3 className="journey-step-title">Making sense of patterns</h3>
-                <p className="journey-step-text">
-                  Together, we explore what keeps showing up—not to judge, but to understand. 
-                  Sometimes naming something is the first step toward easing it.
-                </p>
-              </div>
-            </div>
-
-            <div className="journey-step">
-              <div className="journey-step-marker" aria-hidden="true"></div>
-              <div className="journey-step-content">
-                <h3 className="journey-step-title">Finding your ground</h3>
-                <p className="journey-step-text">
-                  Each session ends with a moment of grounding—a way to leave feeling a little more 
-                  settled than when you arrived.
-                </p>
-              </div>
-            </div>
-
-            <div className="journey-step">
-              <div className="journey-step-marker" aria-hidden="true"></div>
-              <div className="journey-step-content">
-                <h3 className="journey-step-title">Deciding what comes next</h3>
-                <p className="journey-step-text">
-                  Continuing is always a choice. Whether you return for another session or take time 
-                  to process on your own, the door stays open.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <p className="journey-closing">
-            You won't be rushed. You won't be pushed. This space moves at your pace.
-          </p>
-        </div>
-      </section>
+      {/* Section 4: Your Journey - Animated Connected Flow */}
+      <JourneySection />
 
       <ParticleDivider id="divider-journey-story" />
 

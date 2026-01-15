@@ -1,0 +1,429 @@
+/* ========================================
+   JOURNEY SECTION - Animated Connected Flow
+   ======================================== */
+
+.journey-section {
+  padding: 5rem 1.5rem 6rem;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(63, 41, 101, 0.02) 20%,
+    rgba(221, 23, 100, 0.015) 50%,
+    rgba(63, 41, 101, 0.02) 80%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  overflow: hidden;
+  position: relative;
+}
+
+.journey-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Header Styles */
+.journey-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.journey-section.in-view .journey-header {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.journey-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #DD1764;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.journey-headline {
+  font-family: 'Nunito', 'Poppins', system-ui, sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 1.25rem;
+  color: #3F2965;
+}
+
+.journey-intro {
+  font-size: 1.05rem;
+  color: #6b5b7f;
+  line-height: 1.65;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Flow Container */
+.journey-flow-container {
+  position: relative;
+  min-height: 1100px;
+}
+
+/* SVG Paths */
+.journey-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.journey-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 0.1s ease-out;
+}
+
+.journey-path-group.hovered .journey-path {
+  filter: url(#journeyGlow) brightness(1.2);
+}
+
+/* Pulse Animation */
+.journey-pulse {
+  opacity: 0;
+}
+
+.journey-pulse.animate-pulse {
+  opacity: 1;
+  animation: pulseFade 1.5s ease-out forwards;
+}
+
+@keyframes pulseFade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* Journey Cards Container */
+.journey-cards {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+/* Individual Card */
+.journey-card {
+  width: 45%;
+  max-width: 420px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 
+    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.journey-section.in-view .journey-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.journey-card.card-left {
+  align-self: flex-start;
+  margin-left: 3%;
+}
+
+.journey-card.card-right {
+  align-self: flex-end;
+  margin-right: 3%;
+}
+
+/* Card Content */
+.journey-card-content {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem 2rem 1.75rem;
+  box-shadow: 
+    0 4px 24px rgba(63, 41, 101, 0.06),
+    0 1px 3px rgba(63, 41, 101, 0.04);
+  transition: 
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.journey-card.is-hovered .journey-card-content {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 16px 48px rgba(63, 41, 101, 0.12),
+    0 6px 16px rgba(221, 23, 100, 0.08);
+}
+
+/* Step Number */
+.journey-card-number {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #DD1764;
+  background: linear-gradient(135deg, rgba(221, 23, 100, 0.1) 0%, rgba(63, 41, 101, 0.05) 100%);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+
+/* Card Icon */
+.journey-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(63, 41, 101, 0.06) 0%, rgba(221, 23, 100, 0.04) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  color: #3F2965;
+  transition: 
+    background 0.4s ease,
+    transform 0.4s ease,
+    color 0.4s ease;
+}
+
+.journey-card.is-hovered .journey-card-icon {
+  background: linear-gradient(135deg, rgba(221, 23, 100, 0.12) 0%, rgba(63, 41, 101, 0.08) 100%);
+  transform: scale(1.08);
+  color: #DD1764;
+}
+
+.journey-card-icon svg {
+  transition: stroke 0.4s ease, filter 0.4s ease;
+}
+
+.journey-card.is-hovered .journey-card-icon svg {
+  stroke: #DD1764;
+  filter: drop-shadow(0 0 6px rgba(221, 23, 100, 0.35));
+}
+
+/* Card Title */
+.journey-card-title {
+  font-family: 'Nunito', 'Poppins', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #3F2965;
+  margin: 0 0 0.6rem;
+  line-height: 1.3;
+  transition: color 0.4s ease;
+}
+
+.journey-card.is-hovered .journey-card-title {
+  color: #2d1f4a;
+}
+
+/* Card Description */
+.journey-card-description {
+  font-size: 0.95rem;
+  color: #6b5b7f;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Closing Text */
+.journey-closing {
+  text-align: center;
+  margin-top: 4rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3F2965;
+  font-style: italic;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s;
+}
+
+.journey-section.in-view .journey-closing {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE - Tablet
+   ======================================== */
+@media (max-width: 900px) {
+  .journey-card {
+    width: 48%;
+  }
+
+  .journey-card.card-left {
+    margin-left: 0;
+  }
+
+  .journey-card.card-right {
+    margin-right: 0;
+  }
+
+  .journey-flow-container {
+    min-height: 1000px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Mobile
+   ======================================== */
+@media (max-width: 768px) {
+  .journey-section {
+    padding: 3.5rem 1rem 4rem;
+  }
+
+  .journey-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .journey-headline {
+    font-size: 1.6rem;
+  }
+
+  .journey-intro {
+    font-size: 0.95rem;
+  }
+
+  .journey-flow-container {
+    min-height: auto;
+    padding-left: 2.5rem;
+  }
+
+  .journey-svg {
+    left: 0;
+    transform: none;
+    width: 50px;
+    height: 100%;
+    max-width: none;
+  }
+
+  .journey-cards {
+    gap: 1.5rem;
+    padding: 0;
+  }
+
+  .journey-card {
+    width: 100%;
+    max-width: none;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    align-self: stretch !important;
+  }
+
+  .journey-card-content {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .journey-card-number {
+    top: -10px;
+    right: 16px;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .journey-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .journey-card-title {
+    font-size: 1.1rem;
+  }
+
+  .journey-card-description {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .journey-closing {
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+
+  /* Hide SVG lines on mobile - use simple vertical line instead */
+  .journey-svg {
+    display: none;
+  }
+
+  /* Mobile vertical connector line */
+  .journey-flow-container::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 40px;
+    bottom: 40px;
+    width: 3px;
+    background: linear-gradient(
+      180deg,
+      rgba(221, 23, 100, 0.3) 0%,
+      rgba(63, 41, 101, 0.4) 50%,
+      rgba(221, 23, 100, 0.3) 100%
+    );
+    border-radius: 2px;
+  }
+
+  /* Mobile card connector dots */
+  .journey-card::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 2rem;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #DD1764 0%, #3F2965 100%);
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(221, 23, 100, 0.3);
+    z-index: 2;
+  }
+
+  .journey-card.is-hovered::before {
+    transform: scale(1.2);
+    box-shadow: 0 2px 12px rgba(221, 23, 100, 0.5);
+  }
+}
+
+/* ========================================
+   Reduced Motion
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  .journey-card,
+  .journey-header,
+  .journey-closing {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .journey-path {
+    stroke-dashoffset: 0 !important;
+    transition: none;
+  }
+
+  .journey-pulse {
+    display: none;
+  }
+
+  .journey-card-content,
+  .journey-card-icon {
+    transition: none;
+  }
+}
