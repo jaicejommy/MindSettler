@@ -543,7 +543,17 @@ function Header() {
                       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                     </svg>
                   </span>
-                  <span className="mobile-nav-text">Awareness</span>
+                  <span className="mobile-nav-text">Psycho-education</span>
+                </a>
+
+                <a href="/journey" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/journey') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Journey</span>
                 </a>
 
                 <a href="/booking" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/booking') ? 'active' : ''}`}>
@@ -555,21 +565,34 @@ function Header() {
                       <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                   </span>
-                  <span className="mobile-nav-text">Services</span>
+                  <span className="mobile-nav-text">Book a session</span>
+                </a>
+
+                <a href="/corporate" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/corporate') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 21h18"></path>
+                      <path d="M9 8h1"></path>
+                      <path d="M9 12h1"></path>
+                      <path d="M9 16h1"></path>
+                      <path d="M14 8h1"></path>
+                      <path d="M14 12h1"></path>
+                      <path d="M14 16h1"></path>
+                      <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Corporate</span>
                 </a>
 
                 <a href="/faqs" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/faqs') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="4" y1="21" x2="4" y2="14"></line>
-                      <line x1="4" y1="10" x2="4" y2="3"></line>
-                      <line x1="12" y1="21" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12" y2="3"></line>
-                      <line x1="20" y1="21" x2="20" y2="16"></line>
-                      <line x1="20" y1="12" x2="20" y2="3"></line>
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
                   </span>
-                  <span className="mobile-nav-text">Resources</span>
+                  <span className="mobile-nav-text">FAQs</span>
                 </a>
 
                 <a href="/contact" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/contact') ? 'active' : ''}`}>
