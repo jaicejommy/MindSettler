@@ -432,7 +432,7 @@ main {
 .hero-heading {
   font-size: clamp(3rem, 7vw, 5.5rem);
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.15;
   letter-spacing: -0.028em;
   margin: 0;
   max-width: 900px;
@@ -441,7 +441,7 @@ main {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 0;
+  padding-bottom: 0.25em; /* prevent descenders like y/g from getting cut off */
 }
 
 .hero-heading-line {
@@ -849,6 +849,21 @@ main {
   color: var(--accent);
   text-align: center;
   line-height: 1.4;
+}
+
+/* Make headings across homepage sections larger and clearer */
+.section h2 {
+  font-size: clamp(2.4rem, 3.8vw, 3.2rem);
+  line-height: 1.15;
+  margin: 0.3rem 0 0.6rem;
+}
+
+.section h3 {
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0.4rem 0 0.6rem;
 }
 
 .two-column,

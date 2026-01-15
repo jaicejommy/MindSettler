@@ -48,6 +48,7 @@ export default function HomePage() {
   const [heroRef, heroInView] = useInView({ threshold: 0.1 })
   const [servicesRef, servicesInView] = useInView()
   const [storyRef, storyInView] = useInView()
+  const [journeyRef, journeyInView] = useInView()
 
   const [counts, setCounts] = useState({ reach: 0, help: 0, youth: 0 })
   const [imageIndex, setImageIndex] = useState(0)
@@ -201,47 +202,134 @@ export default function HomePage() {
 
       <ParticleDivider id="divider-stats-about" />
 
-      <section id="about" className={`section-about-minimal fade-in-section ${aboutInView ? 'in-view' : ''}`} ref={aboutRef}>
-        <div className="section-header-minimal">
-          <p className="eyebrow-minimal">About MindSettler</p>
-          <h2 className="heading-minimal">A psycho-education studio for everyday life</h2>
-          <p className="subheading-minimal">
-            Explore our approach designed to help you find clarity, understanding, and peace of mind.
-          </p>
-        </div>
-        
-        <div className="about-cards-grid">
-          <div className="about-card-minimal">
-            <div className="about-card-icon" style={{ background: 'rgba(230, 210, 255, 0.6)' }}>
-              💜
-            </div>
-            <h3>Why MindSettler exists</h3>
-            <p>
-              Many of us sense that something inside is unsettled – but we do not always have the language to
-              describe it. MindSettler exists to make mental health understandable, relatable, and workable.
+      {/* Section 3: Why MindSettler Exists */}
+      <section id="why-mindsettler" className={`section-why fade-in-section ${aboutInView ? 'in-view' : ''}`} ref={aboutRef}>
+        <div className="why-container">
+          <header className="why-header">
+            <h2 className="why-headline">A space to make sense of what you're feeling</h2>
+            <p className="why-subtext">
+              Not therapy. Not advice. Just a calm, structured place to slow down, reflect, and understand yourself a little better.
             </p>
-            <p>
-              Through structured conversations and simple frameworks, we help you see your patterns more clearly
-              so that you can make gentler, more intentional choices.
-            </p>
-          </div>
-          
-          <div className="about-card-minimal">
-            <div className="about-card-icon" style={{ background: 'rgba(255, 218, 185, 0.6)' }}>
-              🧠
+          </header>
+
+          <div className="why-grid">
+            {/* Left panel: Why this exists */}
+            <div className="why-panel">
+              <h3 className="why-panel-title">Why this space was created</h3>
+              <p className="why-panel-text">
+                Many of us carry feelings we can't quite name—restlessness, confusion, a quiet sense that something is off. 
+                But we don't always have the words, or the space, to figure it out.
+              </p>
+              <p className="why-panel-text">
+                MindSettler was created for those moments. It's a contained space where you can pause, 
+                make sense of your patterns, and move forward with a little more clarity—without pressure or judgment.
+              </p>
             </div>
-            <h3>How we work</h3>
-            <ul className="about-list-minimal">
-              <li>60-minute one-on-one or small group sessions</li>
-              <li>Blend of conversation, reflection, and psycho-education</li>
-              <li>Online or at a calm, contained physical studio</li>
-              <li>Clear boundaries around confidentiality and ethics</li>
-            </ul>
+
+            {/* Right panel: How we support you */}
+            <div className="why-panel">
+              <h3 className="why-panel-title">How we support you</h3>
+              <ul className="why-list">
+                <li>
+                  <span className="why-list-label">Conversation-based</span>
+                  <span className="why-list-desc">We talk through what's on your mind, at your pace.</span>
+                </li>
+                <li>
+                  <span className="why-list-label">Reflective and structured</span>
+                  <span className="why-list-desc">Each session has a gentle shape—check-in, exploration, grounding.</span>
+                </li>
+                <li>
+                  <span className="why-list-label">Psycho-education, simply</span>
+                  <span className="why-list-desc">We share frameworks that help you understand yourself—without jargon.</span>
+                </li>
+                <li>
+                  <span className="why-list-label">Clear boundaries</span>
+                  <span className="why-list-desc">Confidentiality and ethics are explained upfront, always.</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      <ParticleDivider id="divider-about-story" />
+      <ParticleDivider id="divider-why-journey" />
+
+      {/* Section 4: Your Journey */}
+      <section id="your-journey" className={`section-journey fade-in-section ${journeyInView ? 'in-view' : ''}`} ref={journeyRef}>
+        <div className="journey-container">
+          <header className="journey-header">
+            <p className="journey-eyebrow">At your own pace</p>
+            <h2 className="journey-headline">What the journey might look like</h2>
+            <p className="journey-intro">
+              There's no fixed path here. Every journey is shaped by what you need, when you need it. 
+              These are simply the kinds of moments that often unfold—gently, and only when you're ready.
+            </p>
+          </header>
+
+          <div className="journey-steps">
+            <div className="journey-step">
+              <div className="journey-step-marker" aria-hidden="true"></div>
+              <div className="journey-step-content">
+                <h3 className="journey-step-title">Sharing what's on your mind</h3>
+                <p className="journey-step-text">
+                  You begin wherever feels right—what's been weighing on you, what brought you here, 
+                  or simply what's present today. There's no script to follow.
+                </p>
+              </div>
+            </div>
+
+            <div className="journey-step">
+              <div className="journey-step-marker" aria-hidden="true"></div>
+              <div className="journey-step-content">
+                <h3 className="journey-step-title">Slowing down together</h3>
+                <p className="journey-step-text">
+                  We take time to sit with what you've shared. Patterns often become clearer 
+                  when we're not rushing to fix them.
+                </p>
+              </div>
+            </div>
+
+            <div className="journey-step">
+              <div className="journey-step-marker" aria-hidden="true"></div>
+              <div className="journey-step-content">
+                <h3 className="journey-step-title">Making sense of patterns</h3>
+                <p className="journey-step-text">
+                  Together, we explore what keeps showing up—not to judge, but to understand. 
+                  Sometimes naming something is the first step toward easing it.
+                </p>
+              </div>
+            </div>
+
+            <div className="journey-step">
+              <div className="journey-step-marker" aria-hidden="true"></div>
+              <div className="journey-step-content">
+                <h3 className="journey-step-title">Finding your ground</h3>
+                <p className="journey-step-text">
+                  Each session ends with a moment of grounding—a way to leave feeling a little more 
+                  settled than when you arrived.
+                </p>
+              </div>
+            </div>
+
+            <div className="journey-step">
+              <div className="journey-step-marker" aria-hidden="true"></div>
+              <div className="journey-step-content">
+                <h3 className="journey-step-title">Deciding what comes next</h3>
+                <p className="journey-step-text">
+                  Continuing is always a choice. Whether you return for another session or take time 
+                  to process on your own, the door stays open.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="journey-closing">
+            You won't be rushed. You won't be pushed. This space moves at your pace.
+          </p>
+        </div>
+      </section>
+
+      <ParticleDivider id="divider-journey-story" />
 
       <section id="mindsettler-story" className={`section section-alt fade-in-section ${storyInView ? 'in-view' : ''}`} ref={storyRef}>
         <div className="section-header">
