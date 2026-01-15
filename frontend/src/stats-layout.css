@@ -14,6 +14,21 @@
   text-align: center;
 }
 
+/* Stronger, section-specific heading rule to avoid being overridden */
+#stats .section-header h2 {
+  font-family: 'Nunito', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.18;
+  display: inline-block;
+  padding-bottom: 0.35rem; /* prevent descenders like g from getting cut off */
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent-strong) 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  overflow: visible;
+}
+
 /* Decorative curve at top */
 .stats-layout::before {
   content: '';
@@ -44,29 +59,30 @@
 }
 
 .stat-number-minimal {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-size: 5rem;
-  font-style: italic;
-  font-weight: 400;
-  color: #2d2d2d;
+  font-family: 'Nunito', 'Poppins', system-ui, sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #3F2965;
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
 .stat-label-minimal {
-  font-size: 1.05rem;
-  color: #666;
-  font-weight: 500;
+  font-family: 'Nunito', 'Poppins', system-ui, sans-serif;
+  font-size: 1rem;
+  color: #3F2965;
+  font-weight: 600;
   text-transform: capitalize;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .stat-desc-minimal {
-  font-size: 0.85rem;
-  color: #888;
-  max-width: 200px;
+  font-family: 'Nunito', 'Poppins', system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #6b6b7a;
+  max-width: 220px;
   line-height: 1.5;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 768px) {
@@ -76,7 +92,15 @@
   }
   
   .stat-number-minimal {
-    font-size: 3.5rem;
+    font-size: 2.75rem;
+  }
+  
+  .stat-label-minimal {
+    font-size: 0.95rem;
+  }
+  
+  .stat-desc-minimal {
+    font-size: 0.85rem;
   }
 }
 
