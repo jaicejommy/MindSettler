@@ -1,229 +1,159 @@
 import { motion } from 'framer-motion'
-import { Brain, Heart, Users, Sparkles, Shield, Target, Compass, Zap } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 
 const THERAPIES = [
   {
     id: 'cbt',
     name: 'Cognitive Behavioural Therapy (CBT)',
-    shortName: 'CBT',
-    icon: Brain,
-    color: 'primary',
-    description: 'CBT helps you identify and change negative thought patterns that affect your emotions and behaviors.',
+    image: '/therapies/cbt.png',
+    gradient: 'from-blue-100 via-purple-50 to-pink-50',
     benefits: [
-      'Challenge unhelpful thinking patterns',
-      'Develop practical coping strategies',
-      'Break cycles of anxiety and depression',
-      'Build problem-solving skills'
+      'Identify and change unhelpful thought patterns',
+      'Develop better coping skills and emotional regulation',
+      'Improve problem-solving in everyday life',
+      'Structured, goal-oriented approach'
     ],
-    bestFor: 'Anxiety, depression, phobias, stress management, and building resilience.',
   },
   {
     id: 'dbt',
     name: 'Dialectical Behavioural Therapy (DBT)',
-    shortName: 'DBT',
-    icon: Heart,
-    color: 'rose',
-    description: 'DBT combines cognitive-behavioral techniques with mindfulness to help you manage intense emotions.',
+    image: '/therapies/dbt.png',
+    gradient: 'from-purple-100 via-indigo-50 to-blue-50',
     benefits: [
-      'Regulate intense emotions',
-      'Improve interpersonal relationships',
-      'Develop distress tolerance skills',
-      'Practice mindfulness techniques'
+      'Build emotional regulation skills',
+      'Develop distress tolerance techniques',
+      'Improve interpersonal effectiveness',
+      'Practice mindfulness in daily life'
     ],
-    bestFor: 'Emotional dysregulation, borderline personality traits, self-harm urges, and relationship difficulties.',
   },
   {
     id: 'act',
     name: 'Acceptance & Commitment Therapy (ACT)',
-    shortName: 'ACT',
-    icon: Compass,
-    color: 'emerald',
-    description: 'ACT helps you accept difficult thoughts and feelings while committing to actions aligned with your values.',
+    image: '/therapies/act.png',
+    gradient: 'from-amber-50 via-orange-50 to-rose-50',
     benefits: [
-      'Increase psychological flexibility',
-      'Clarify personal values',
-      'Reduce struggle with difficult emotions',
-      'Take meaningful action despite challenges'
+      'Develop psychological flexibility',
+      'Learn to accept difficult thoughts and feelings',
+      'Commit to values-aligned actions',
+      'Focus on meaningful living'
     ],
-    bestFor: 'Chronic pain, anxiety, depression, and finding purpose and meaning in life.',
   },
   {
     id: 'schema',
     name: 'Schema Therapy',
-    shortName: 'Schema',
-    icon: Target,
-    color: 'amber',
-    description: 'Schema therapy addresses deep-rooted patterns developed in childhood that continue to affect adult life.',
+    image: '/therapies/schema.png',
+    gradient: 'from-emerald-50 via-teal-50 to-cyan-50',
     benefits: [
-      'Understand lifelong patterns',
-      'Heal emotional wounds from childhood',
-      'Develop healthier coping modes',
-      'Build a stronger sense of self'
+      'Explore deep-rooted patterns from early life',
+      'Understand long-standing emotional challenges',
+      'Create healthier ways of thinking and relating',
+      'Address core emotional needs'
     ],
-    bestFor: 'Long-standing emotional issues, personality patterns, chronic relationship problems, and childhood trauma effects.',
   },
   {
     id: 'eft',
     name: 'Emotion-Focused Therapy (EFT)',
-    shortName: 'EFT',
-    icon: Sparkles,
-    color: 'violet',
-    description: 'EFT helps you become more aware of your emotions, understand them, and use them as a guide for change.',
+    image: '/therapies/eft.png',
+    gradient: 'from-orange-100 via-amber-50 to-yellow-50',
     benefits: [
-      'Access and process core emotions',
-      'Transform painful emotional experiences',
-      'Develop emotional intelligence',
-      'Create new emotional responses'
+      'Understand and process emotions effectively',
+      'Build emotional awareness and resilience',
+      'Develop healthier responses to challenges',
+      'Create lasting emotional change'
     ],
-    bestFor: 'Depression, trauma, emotional blocks, and difficulty expressing or understanding emotions.',
   },
   {
     id: 'efct',
     name: 'Emotion-Focused Couples Therapy',
-    shortName: 'EFCT',
-    icon: Users,
-    color: 'pink',
-    description: 'EFCT helps couples understand and reshape their emotional responses to create stronger, more secure bonds.',
+    image: '/therapies/efct.png',
+    gradient: 'from-teal-50 via-emerald-50 to-green-50',
     benefits: [
-      'Improve emotional connection',
-      'Break negative interaction cycles',
-      'Build secure attachment',
-      'Enhance communication patterns'
+      'Strengthen emotional bonds between partners',
+      'Improve communication and rebuild trust',
+      'Create secure, supportive relationships',
+      'Structured, research-based approach'
     ],
-    bestFor: 'Couples experiencing disconnection, conflict, communication issues, or wanting to deepen their bond.',
   },
   {
     id: 'mbct',
-    name: 'Mindfulness-Based Cognitive Therapy',
-    shortName: 'MBCT',
-    icon: Zap,
-    color: 'teal',
-    description: 'MBCT combines mindfulness practices with cognitive therapy to prevent relapse and manage ongoing mental health.',
+    name: 'Mindfulness-Based Cognitive Therapy (MBCT)',
+    image: '/therapies/mbct.png',
+    gradient: 'from-violet-100 via-purple-50 to-fuchsia-50',
     benefits: [
-      'Develop present-moment awareness',
-      'Recognize early warning signs',
-      'Break rumination cycles',
-      'Cultivate self-compassion'
+      'Combine cognitive techniques with mindfulness',
+      'Increase awareness of thoughts and emotions',
+      'Reduce emotional reactivity',
+      'Promote mental balance and clarity'
     ],
-    bestFor: 'Preventing depression relapse, chronic anxiety, stress reduction, and building long-term mental wellness.',
   },
   {
     id: 'cct',
     name: 'Client-Centred Therapy',
-    shortName: 'CCT',
-    icon: Shield,
-    color: 'indigo',
-    description: 'A supportive approach where the therapist provides unconditional positive regard, helping you explore your feelings at your own pace.',
+    image: '/therapies/cct.png',
+    gradient: 'from-rose-50 via-pink-50 to-red-50',
     benefits: [
-      'Feel truly heard and accepted',
-      'Explore feelings safely',
-      'Develop self-understanding',
-      'Build self-acceptance'
+      'Person-centered therapeutic process',
+      'Emphasis on empathy and acceptance',
+      'Self-exploration at your own pace',
+      'Non-directive, compassionate approach'
     ],
-    bestFor: 'Anyone seeking a supportive space to explore their thoughts and feelings without judgment.',
+  },
+  {
+    id: 'custom',
+    name: 'Custom Therapy Plan',
+    image: '/therapies/custom.png',
+    gradient: 'from-green-50 via-emerald-50 to-teal-50',
+    benefits: [
+      'Personalized approach tailored to your unique needs',
+      'Combine multiple therapeutic techniques',
+      'Flexible scheduling based on your availability',
+      'Continuous adaptation to your progress',
+      'Holistic integration of mind, body, and spirit'
+    ],
   },
 ]
 
-const colorClasses = {
-  primary: {
-    bg: 'bg-primary-100',
-    text: 'text-primary-600',
-    border: 'border-primary-200',
-    gradient: 'from-primary-500 to-primary-600',
-    dot: 'bg-primary-500',
-  },
-  rose: {
-    bg: 'bg-rose-100',
-    text: 'text-rose-600',
-    border: 'border-rose-200',
-    gradient: 'from-rose-500 to-rose-600',
-    dot: 'bg-rose-500',
-  },
-  emerald: {
-    bg: 'bg-emerald-100',
-    text: 'text-emerald-600',
-    border: 'border-emerald-200',
-    gradient: 'from-emerald-500 to-emerald-600',
-    dot: 'bg-emerald-500',
-  },
-  amber: {
-    bg: 'bg-amber-100',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
-    gradient: 'from-amber-500 to-amber-600',
-    dot: 'bg-amber-500',
-  },
-  violet: {
-    bg: 'bg-violet-100',
-    text: 'text-violet-600',
-    border: 'border-violet-200',
-    gradient: 'from-violet-500 to-violet-600',
-    dot: 'bg-violet-500',
-  },
-  pink: {
-    bg: 'bg-pink-100',
-    text: 'text-pink-600',
-    border: 'border-pink-200',
-    gradient: 'from-pink-500 to-pink-600',
-    dot: 'bg-pink-500',
-  },
-  teal: {
-    bg: 'bg-teal-100',
-    text: 'text-teal-600',
-    border: 'border-teal-200',
-    gradient: 'from-teal-500 to-teal-600',
-    dot: 'bg-teal-500',
-  },
-  indigo: {
-    bg: 'bg-indigo-100',
-    text: 'text-indigo-600',
-    border: 'border-indigo-200',
-    gradient: 'from-indigo-500 to-indigo-600',
-    dot: 'bg-indigo-500',
-  },
-}
-
 function TherapyCard({ therapy, index }) {
-  const Icon = therapy.icon
-  const colors = colorClasses[therapy.color]
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
       className="group"
     >
-      <div className={`bg-white rounded-3xl p-8 h-full border ${colors.border} hover:shadow-xl hover:shadow-secondary-900/5 transition-all duration-500 hover:-translate-y-1`}>
-        {/* Header */}
-        <div className="flex items-start gap-4 mb-6">
-          <div className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center ${colors.text} group-hover:scale-110 transition-transform duration-300`}>
-            <Icon className="w-7 h-7" />
-          </div>
-          <div className="flex-1">
-            <span className={`text-xs font-bold uppercase tracking-wider ${colors.text}`}>{therapy.shortName}</span>
-            <h3 className="text-xl font-bold text-secondary-900 leading-tight">{therapy.name}</h3>
+      <div className="bg-white rounded-3xl overflow-hidden h-full shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-secondary-100/50">
+        {/* Image Area */}
+        <div className={`h-48 bg-gradient-to-br ${therapy.gradient} relative overflow-hidden`}>
+          <img 
+            src={therapy.image} 
+            alt={therapy.name}
+            className="w-full h-full object-cover object-center"
+            onError={(e) => {
+              e.target.style.display = 'none'
+            }}
+          />
+          {/* Fallback gradient decoration */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-30">
+            <div className="w-32 h-32 rounded-full bg-white/50 blur-2xl"></div>
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-secondary-600 mb-6 leading-relaxed">{therapy.description}</p>
+        {/* Content */}
+        <div className="p-6">
+          <h3 className="text-xl font-bold text-secondary-900 text-center mb-5 leading-tight min-h-[3.5rem] flex items-center justify-center">
+            {therapy.name}
+          </h3>
 
-        {/* Benefits */}
-        <div className="space-y-3 mb-6">
-          {therapy.benefits.map((benefit, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div className={`w-2 h-2 ${colors.dot} rounded-full mt-2 flex-shrink-0`}></div>
-              <span className="text-secondary-700 text-sm">{benefit}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Best For */}
-        <div className={`${colors.bg} rounded-xl p-4`}>
-          <p className="text-xs font-semibold uppercase tracking-wider text-secondary-500 mb-1">Best For</p>
-          <p className={`text-sm ${colors.text} font-medium`}>{therapy.bestFor}</p>
+          {/* Benefits with checkmarks */}
+          <div className="space-y-3">
+            {therapy.benefits.map((benefit, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+                <span className="text-secondary-600 text-sm leading-relaxed">{benefit}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -234,7 +164,7 @@ export default function TherapiesPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-secondary-50 via-white to-primary-50/30">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative pt-32 pb-16 overflow-hidden">
         {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary-200/30 rounded-full blur-3xl"></div>
@@ -251,13 +181,13 @@ export default function TherapiesPage() {
             <span className="inline-block px-4 py-2 bg-primary-100 text-primary-600 rounded-full text-sm font-semibold mb-6">
               Our Therapeutic Approaches
             </span>
-            <h1 className="text-5xl lg:text-6xl font-display font-bold text-secondary-900 mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6 leading-tight">
               Evidence-Based Therapies for Your{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-600">
-                Unique Journey
+                Healing Journey
               </span>
             </h1>
-            <p className="text-xl text-secondary-600 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg text-secondary-600 leading-relaxed max-w-3xl mx-auto">
               At MindSettler, we use a range of proven therapeutic approaches, carefully selected and adapted 
               to meet your individual needs. Each therapy offers unique tools for understanding yourself 
               and creating lasting change.
@@ -267,9 +197,9 @@ export default function TherapiesPage() {
       </section>
 
       {/* Therapies Grid */}
-      <section className="py-16 relative">
+      <section className="py-12 relative">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {THERAPIES.map((therapy, index) => (
               <TherapyCard key={therapy.id} therapy={therapy} index={index} />
             ))}
