@@ -9,7 +9,7 @@ export default function AboutPage() {
     target: containerRef,
     offset: ["start end", "end start"]
   })
-  
+
   const y = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"])
 
   const listVariants = {
@@ -17,168 +17,219 @@ export default function AboutPage() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15
+        staggerChildren: 0.2,
+        delayChildren: 0.1
       }
     }
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 50 } }
+    hidden: {
+      opacity: 0,
+      y: 30
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  }
+
+  // Scroll reveal variants for different sections
+  const revealUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  }
+
+  const revealScale = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
   }
 
   return (
     <main>
-      {/* About Section with Image and Content */}
-      <section id="about" ref={containerRef} className="relative bg-gradient-to-br from-primary-50 via-white to-pink-50 overflow-hidden pt-20 pb-16">
-        {/* Decorative blobs */}
-        <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-primary-200/20 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-pink-200/20 rounded-full blur-3xl -z-10"></div>
+      {/* Hero Section with Video and Founder Story */}
+      <section id="about" ref={containerRef} className="relative overflow-hidden pt-20 pb-16">
+        {/* Subtle overlay for readability */}
+        <div className="absolute inset-0 bg-white/30 -z-10"></div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 max-w-7xl mx-auto px-6 items-center">
-          
-          {/* Left Side - Image Container */}
-          <div className="relative h-[500px] lg:h-[600px] order-2 lg:order-1 overflow-hidden group">
-             <motion.div style={{ y }} className="w-full h-full relative z-10">
-               <img 
-                 src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=2560&auto=format&fit=crop"
-                 alt="Aesthetic calming plant and light" 
-                 className="w-full h-full object-cover drop-shadow-2xl rounded-[2rem]"
-               />
-             </motion.div>
-             
-             {/* Decorative frame effect */}
-             <div className="absolute inset-0 rounded-[2rem] border-4 border-primary-300/30 pointer-events-none"></div>
-             <div className="absolute -inset-6 rounded-[2rem] border border-pink-200/20 pointer-events-none"></div>
+
+          {/* Left Side - Video Container */}
+          <div className="relative order-2 lg:order-1">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative z-10"
+            >
+              {/* Video with decorative styling */}
+              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl group">
+                {/* Gradient border effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-pink-400 to-primary-500 rounded-[2.2rem] opacity-50 blur group-hover:opacity-70 transition-opacity duration-500"></div>
+
+                <div className="relative rounded-[2rem] overflow-hidden">
+                  <video
+                    src="/mindsettler_intro.mp4"
+                    controls
+                    muted
+                    playsInline
+                    poster="/video-poster.jpg"
+                    className="w-full h-full rounded-[2rem] object-cover"
+                    style={{ maxHeight: '600px', aspectRatio: '9/16' }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+
+              {/* Play hint badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg border border-primary-100 flex items-center gap-2"
+              >
+                <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
+                <span className="text-sm font-medium text-secondary-700">Watch our story</span>
+              </motion.div>
+            </motion.div>
           </div>
 
-          {/* Right Side - Content */}
+          {/* Right Side - Founder Story */}
           <div className="order-1 lg:order-2">
-             <FadeIn direction='left'>
-               {/* Badge */}
-               <motion.div 
-                 initial={{ opacity: 0, y: -20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-100 to-pink-100 border border-primary-200/50 mb-8 backdrop-blur-sm"
-               >
-                 <div className="w-2 h-2 rounded-full bg-primary-600 animate-pulse"></div>
-                 <span className="text-sm font-bold tracking-widest uppercase text-primary-700">About MindSettler</span>
-               </motion.div>
+            <FadeIn direction='left'>
+              {/* Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-100 to-pink-100 border border-primary-200/50 mb-8 backdrop-blur-sm"
+              >
+                <div className="w-2 h-2 rounded-full bg-primary-600 animate-pulse"></div>
+                <span className="text-sm font-bold tracking-widest uppercase text-primary-700">A Note from the Founder</span>
+              </motion.div>
 
-               {/* Heading */}
-               <motion.h2 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.1 }}
-                 className="text-5xl lg:text-6xl font-display font-bold text-secondary-900 mb-8 leading-tight"
-               >
-                 A psycho-education <br />
-                 <span className="bg-gradient-to-r from-primary-600 via-pink-500 to-primary-700 bg-clip-text text-transparent">
-                   studio for everyday
-                 </span>
-                 <br />
-                 life
-               </motion.h2>
+              {/* Heading */}
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-8 leading-tight"
+              >
+                Why I started{' '}
+                <span className="bg-gradient-to-r from-primary-600 via-pink-500 to-primary-700 bg-clip-text text-transparent">
+                  MindSettler
+                </span>
+              </motion.h2>
 
-               {/* Description */}
-               <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.2 }}
-                 className="mb-10"
-               >
-                 <p className="text-lg text-secondary-700 leading-relaxed mb-5 font-medium">
-                   Explore our approach designed to help you find clarity, understanding, and peace of mind.
-                 </p>
-                 <p className="text-lg text-secondary-600 leading-relaxed">
-                   Many of us sense that something inside is unsettled — but we do not always have the language to describe it. MindSettler exists to make mental health understandable, relatable, and workable.
-                 </p>
-               </motion.div>
-               
-               {/* Feature List */}
-               <motion.div 
-                 variants={listVariants}
-                 initial="hidden"
-                 whileInView="show"
-                 viewport={{ once: true, margin: "-50px" }}
-                 className="space-y-4 mb-12"
-               >
-                  {[
-                    "60-minute one-on-one or small group sessions",
-                    "Blend of conversation, reflection, and psycho-education",
-                    "Online or at a calm, contained physical studio"
-                  ].map((item, i) => (
-                    <motion.div 
-                      key={i} 
-                      variants={itemVariants} 
-                      className="flex items-start gap-4 p-4 rounded-2xl bg-gradient-to-r from-white/80 to-pink-50/80 backdrop-blur-sm border border-primary-200/30 hover:border-primary-300 shadow-sm hover:shadow-md transition-all duration-300 group/item"
-                    >
-                      <div className="bg-gradient-to-br from-primary-200 to-pink-200 p-1.5 rounded-full mt-0.5 shrink-0 group-hover/item:scale-110 transition-transform">
-                        <CheckCircle2 className="w-4 h-4 text-primary-700" />
-                      </div>
-                      <span className="text-secondary-800 font-medium">{item}</span>
-                    </motion.div>
-                  ))}
-               </motion.div>
+              {/* Founder Note Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="bg-gradient-to-br from-white to-pink-50/50 p-8 rounded-3xl border border-primary-200/50 shadow-lg relative overflow-hidden group hover:border-primary-300 transition-all mb-8"
+              >
+                {/* Decorative gradient background */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-200/30 to-pink-200/30 rounded-full blur-2xl -z-0"></div>
 
-               {/* Founder Quote Card */}
-               <motion.div 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.4 }}
-                 className="bg-gradient-to-br from-white to-pink-50/50 p-8 rounded-3xl border border-primary-200/50 shadow-lg relative overflow-hidden group hover:border-primary-300 transition-all"
-               >
-                  {/* Decorative gradient background */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-200/30 to-pink-200/30 rounded-full blur-2xl -z-0"></div>
-                  
-                  {/* Quote icon */}
-                  <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <Quote className="w-16 h-16 text-primary-600" />
-                  </div>
+                {/* Quote icon */}
+                <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Quote className="w-16 h-16 text-primary-600" />
+                </div>
 
-                  {/* Quote text */}
-                  <p className="text-secondary-800 text-lg font-medium italic mb-8 leading-relaxed relative z-10">
-                    "MindSettler began as a quiet question: what if there was a soft corner of the internet where people could slow down?"
+                {/* Personal Message */}
+                <div className="relative z-10 space-y-4">
+                  <p className="text-secondary-700 text-lg leading-relaxed">
+                    I started MindSettler after realizing that so many people struggle in silence — not because help isn't available, but because it doesn't always feel accessible or relatable.
                   </p>
+                  <p className="text-secondary-700 text-lg leading-relaxed">
+                    I wanted to create a gentle space where mental health could be understood without jargon, without judgment, and without rushing. A place where slowing down is welcomed, and where you can begin to make sense of what's happening inside.
+                  </p>
+                  <p className="text-secondary-800 text-lg leading-relaxed font-medium italic">
+                    MindSettler is my small attempt to make that real.
+                  </p>
+                </div>
 
-                  {/* Author */}
-                  <div className="flex items-center gap-4 relative z-10">
-                     <div className="w-12 h-12 rounded-full border-3 border-primary-300 overflow-hidden shadow-md">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop" className="w-full h-full object-cover" alt="Founder Parnika" />
-                     </div>
-                     <div>
-                        <p className="text-secondary-900 font-bold">Parnika</p>
-                        <p className="text-primary-600 text-sm uppercase tracking-wide font-semibold">Founder</p>
-                     </div>
+                {/* Signature */}
+                <div className="flex items-center gap-4 mt-8 relative z-10 pt-6 border-t border-primary-100">
+                  <div className="w-16 h-16 rounded-full border-2 border-primary-300 overflow-hidden shadow-md bg-white flex-shrink-0">
+                    <img
+                      src="/parnika_p.png"
+                      className="w-full h-full object-cover"
+                      alt="Parnika - Founder of MindSettler"
+                      style={{ objectPosition: 'center center', transform: 'scale(1.3)', transformOrigin: 'center 30%' }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full hidden items-center justify-center text-primary-600 font-bold text-xl bg-gradient-to-br from-primary-100 to-pink-100">P</div>
                   </div>
-               </motion.div>
+                  <div>
+                    <p className="text-secondary-900 font-bold text-lg">Parnika</p>
+                    <p className="text-primary-600 text-sm uppercase tracking-wide font-semibold">Founder, MindSettler</p>
+                  </div>
+                </div>
+              </motion.div>
 
-             </FadeIn>
-           </div>
+              {/* CTA Button */}
+              <motion.a
+                href="/booking"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-secondary-900 to-secondary-800 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:from-secondary-800 hover:to-secondary-700"
+              >
+                <span>Begin Your Journey</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </motion.a>
+
+            </FadeIn>
+          </div>
         </div>
       </section>
 
       {/* What Makes Us Different Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-secondary-50/50">
+      <section className="py-24 bg-gradient-to-b from-white/80 to-secondary-50/50">
         <div className="max-w-7xl mx-auto px-6">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">What Makes Us Different</div>
-              <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
-                Gentle, structured, and <span className="text-primary-600">grounded in real life</span>
-              </h2>
-              <p className="text-lg text-secondary-600 max-w-2xl mx-auto">Discover the principles that guide every interaction at MindSettler</p>
-            </div>
-          </FadeIn>
+          <motion.div
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">What Makes Us Different</div>
+            <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
+              Gentle, structured, and <span className="text-primary-600">grounded in real life</span>
+            </h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">Discover the principles that guide every interaction at MindSettler</p>
+          </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={listVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             className="grid md:grid-cols-3 gap-8"
           >
             {[
@@ -198,7 +249,7 @@ export default function AboutPage() {
                 icon: "🎯"
               }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={itemVariants}
                 className="bg-white p-8 rounded-3xl border border-secondary-100 hover:border-primary-200 shadow-sm hover:shadow-md transition-all duration-300"
@@ -215,21 +266,25 @@ export default function AboutPage() {
       {/* How It Works Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">The Process</div>
-              <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
-                From first message to <span className="text-primary-600">settled next steps</span>
-              </h2>
-              <p className="text-lg text-secondary-600 max-w-2xl mx-auto">A clear, compassionate journey designed for your comfort</p>
-            </div>
-          </FadeIn>
+          <motion.div
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">The Process</div>
+            <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
+              From first message to <span className="text-primary-600">settled next steps</span>
+            </h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">A clear, compassionate journey designed for your comfort</p>
+          </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={listVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             className="space-y-6"
           >
             {[
@@ -285,7 +340,12 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-pink-200/30 rounded-full blur-3xl"></div>
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <FadeIn>
+          <motion.div
+            variants={revealScale}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
               Ready to settle in?
             </h2>
@@ -300,7 +360,7 @@ export default function AboutPage() {
             >
               Book a Session
             </motion.a>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
     </main>

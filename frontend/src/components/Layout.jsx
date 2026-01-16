@@ -9,6 +9,13 @@ function ChatbotWidget() {
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState('intro')
 
+  // Listen for external open event
+  useEffect(() => {
+    const handleOpenChatbot = () => setOpen(true)
+    window.addEventListener('openChatbot', handleOpenChatbot)
+    return () => window.removeEventListener('openChatbot', handleOpenChatbot)
+  }, [])
+
   const restart = () => setStep('intro')
 
   return (

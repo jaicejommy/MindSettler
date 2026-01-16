@@ -11,6 +11,7 @@ export default function BookingPage() {
     name: '',
     phone: '',
     mode: 'online',
+    clientType: '',
     sessionType: '',
     isFirstSession: true,
     date: '',
@@ -82,9 +83,10 @@ export default function BookingPage() {
   const isStep1Valid = () => {
     const hasValidName = form.name.trim().length > 0
     const hasValidPhone = isValidPhone(form.phone)
+    const hasClientType = form.clientType !== ''
     const hasSessionType = form.sessionType !== ''
     const hasPoliciesAccepted = !form.isFirstSession || acceptPolicies
-    return hasValidName && hasValidPhone && hasSessionType && hasPoliciesAccepted
+    return hasValidName && hasValidPhone && hasClientType && hasSessionType && hasPoliciesAccepted
   }
 
   const isStep2Valid = () => {
@@ -100,6 +102,10 @@ export default function BookingPage() {
       }
       if (form.phone && !isValidPhone(form.phone)) {
         setError('Please enter a valid phone number.')
+        return
+      }
+      if (!form.clientType) {
+        setError('Please select a client type.')
         return
       }
       if (!form.sessionType) {
@@ -465,35 +471,34 @@ export default function BookingPage() {
                     </div>
                   </div>
 
-                  <h3>Session preferences</h3>
+                  <h3 style={{ marginTop: '1.5rem' }}>Session preferences</h3>
                   <div className="field-grid">
                     <div className="field">
-                      <label>Mode</label>
-                      <div className="pill-group">
-                        <button
-                          type="button"
-                          className={form.mode === 'online' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
-                        >
-                          Online
-                        </button>
-                        <button
-                          type="button"
-                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
-                        >
-                          Offline Studio
-                        </button>
-                      </div>
+                      <label htmlFor="clientType">Client Type *</label>
+                      <select
+                        id="clientType"
+                        name="clientType"
+                        value={form.clientType}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="" disabled>Who are you booking for?</option>
+                        <option value="kids">Kids (5+)</option>
+                        <option value="teens">Teens</option>
+                        <option value="adults">Adults (up to 65)</option>
+                        <option value="couples">Couples</option>
+                        <option value="families">Families</option>
+                      </select>
                     </div>
 
                     <div className="field">
-                      <label htmlFor="sessionType">Session focus</label>
+                      <label htmlFor="sessionType">Session focus *</label>
                       <select
                         id="sessionType"
                         name="sessionType"
                         value={form.sessionType}
                         onChange={handleChange}
+                        required
                       >
                         <option value="" disabled>Choose your focus</option>
                         <option value="cbt">Cognitive Behavioural Therapy (CBT)</option>
@@ -517,7 +522,27 @@ export default function BookingPage() {
                       )}
                     </div>
 
-                    <div className="field" style={{ marginTop: '1rem' }}>
+                    <div className="field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Mode *</label>
+                      <div className="pill-group">
+                        <button
+                          type="button"
+                          className={form.mode === 'online' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+                        >
+                          Online
+                        </button>
+                        <button
+                          type="button"
+                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                        >
+                          Offline Studio
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="field" style={{ marginTop: '1rem', gridColumn: '1 / -1' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
@@ -531,7 +556,7 @@ export default function BookingPage() {
                     </div>
 
                     {form.isFirstSession && (
-                      <div className="field" style={{ marginTop: '0.75rem' }}>
+                      <div className="field" style={{ marginTop: '0.25rem', gridColumn: '1 / -1' }}>
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
                           <input
                             type="checkbox"
@@ -566,8 +591,7 @@ export default function BookingPage() {
                               style={{ color: 'var(--primary)', textDecoration: 'underline' }}
                             >
                               Confidentiality Policy
-                            </Link>
-                            {' '}*
+                            </Link><span style={{ whiteSpace: 'nowrap' }}>&nbsp;*</span>
                           </span>
                         </label>
                       </div>
@@ -658,6 +682,12 @@ export default function BookingPage() {
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
                       <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {{
+                        'kids': 'Kids (5+)',
+                        'teens': 'Teens',
+                        'adults': 'Adults (up to 65)',
+                        'couples': 'Couples',
+                        'families': 'Families'
+                      }[form.clientType] || form.clientType} • {{
                         'cbt': 'Cognitive Behavioural Therapy (CBT)',
                         'dbt': 'Dialectical Behavioural Therapy (DBT)',
                         'act': 'Acceptance & Commitment Therapy (ACT)',
@@ -770,6 +800,13 @@ export default function BookingPage() {
                       <p style={{ margin: '0.25rem 0' }}><strong>Date:</strong> {form.date}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Time:</strong> {form.time}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Mode:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Client Type:</strong> {{
+                        'kids': 'Kids (5+)',
+                        'teens': 'Teens',
+                        'adults': 'Adults (up to 65)',
+                        'couples': 'Couples',
+                        'families': 'Families'
+                      }[form.clientType] || form.clientType}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {{
                         'cbt': 'Cognitive Behavioural Therapy (CBT)',
                         'dbt': 'Dialectical Behavioural Therapy (DBT)',

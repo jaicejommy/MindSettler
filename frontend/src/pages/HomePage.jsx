@@ -612,7 +612,7 @@ const Services = () => {
                 <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Individual Therapies</h3>
                 <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Focused one-on-one sessions to help you understand your patterns, process emotions, and build resilience.</p>
                 
-                <div className="space-y-4 mb-10 relative z-10">
+                <div className="space-y-4 relative z-10">
                   {['Cognitive Behavioural Therapy (CBT)', 'Dialectical Behavioural Therapy (DBT)', 'Acceptance & Commitment Therapy (ACT)', 'Schema Therapy'].map(item => (
                     <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
                       <div className="w-2 h-2 rounded-full bg-primary-400"></div>
@@ -620,10 +620,6 @@ const Services = () => {
                     </div>
                   ))}
                 </div>
-                
-                <button className="w-full py-5 rounded-2xl border-2 border-secondary-900 text-secondary-900 font-bold hover:bg-secondary-900 hover:text-white transition-all duration-300 text-lg relative z-10">
-                  Learn More
-                </button>
              </div>
           </FadeIn>
 
@@ -639,7 +635,7 @@ const Services = () => {
                 <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Relational & Supportive</h3>
                 <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Creating safe spaces for couples and individuals to explore relationships, communication, and emotional bonds.</p>
                 
-                <div className="space-y-4 mb-10 relative z-10">
+                <div className="space-y-4 relative z-10">
                   {['Emotion-Focused Couples Therapy', 'Mindfulness-Based Cognitive Therapy', 'Client-Centred Therapy', 'Space to integrate these approaches'].map(item => (
                     <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
                       <div className="w-2 h-2 rounded-full bg-secondary-400"></div>
@@ -647,13 +643,16 @@ const Services = () => {
                     </div>
                   ))}
                 </div>
-
-                <button className="w-full py-5 rounded-2xl border-2 border-secondary-900 text-secondary-900 font-bold hover:bg-secondary-900 hover:text-white transition-all duration-300 text-lg relative z-10">
-                  Learn More
-                </button>
              </div>
           </FadeIn>
         </div>
+
+        {/* Single Learn More Button */}
+        <FadeIn delay={0.3} className="mt-12 text-center">
+          <a href="/therapies" className="inline-block px-12 py-5 rounded-2xl bg-secondary-900 text-white font-bold hover:bg-secondary-800 transition-all duration-300 text-lg shadow-lg hover:shadow-xl">
+            Learn More About Our Therapies
+          </a>
+        </FadeIn>
       </div>
     </section>
   )
@@ -684,7 +683,10 @@ const Process = () => {
                         <p className="text-sm text-secondary-500">Chat with us for a quick consultation.</p>
                       </div>
                    </div>
-                   <button className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium">Start Chat</button>
+                   <button 
+                     className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium hover:bg-secondary-800 transition-colors"
+                     onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
+                   >Start Chat</button>
                 </div>
               </FadeIn>
             </div>
@@ -789,7 +791,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 selection:bg-primary-200 selection:text-secondary-900 overflow-x-hidden">
-      <Navbar navigate={navigate} />
       <main>
         <Hero navigate={navigate} />
         <Stats />

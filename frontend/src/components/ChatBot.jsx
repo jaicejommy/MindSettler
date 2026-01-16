@@ -15,6 +15,13 @@ export default function ChatBot() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
 
+  // Listen for external open event
+  useEffect(() => {
+    const handleOpenChatbot = () => setIsOpen(true)
+    window.addEventListener('openChatbot', handleOpenChatbot)
+    return () => window.removeEventListener('openChatbot', handleOpenChatbot)
+  }, [])
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
