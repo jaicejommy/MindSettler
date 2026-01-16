@@ -16,9 +16,11 @@ const CorporateRequest = require('./models/CorporateRequest')
 const User = require('./models/User')
 const Admin = require('./models/Admin')
 const Message = require('./models/Message')
+const SessionPrice = require('./models/SessionPrice')
+const Coupon = require('./models/Coupon')
 
 // Services
-const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail } = require('./services/emailService')
+const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail, sendWelcomeEmail } = require('./services/emailService')
 const { sendRescheduleEmail } = require('./services/rescheduleEmail')
 
 // Middleware
@@ -82,6 +84,18 @@ const paymentUpload = multer({
     return cb(null, true)
   },
 })
+
+// Session categories used across booking & admin
+const SESSION_TYPES = [
+  { id: 'cbt', label: 'Cognitive Behavioural Therapy (CBT)' },
+  { id: 'dbt', label: 'Dialectical Behavioural Therapy (DBT)' },
+  { id: 'act', label: 'Acceptance & Commitment Therapy (ACT)' },
+  { id: 'schema', label: 'Schema Therapy' },
+  { id: 'eft', label: 'Emotion-Focused Therapy (EFT)' },
+  { id: 'efct', label: 'Emotion-Focused Couples Therapy' },
+  { id: 'mbct', label: 'Mindfulness-Based Cognitive Therapy' },
+  { id: 'cct', label: 'Client-Centred Therapy' },
+]
 
 // Initialize Gemini AI
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
@@ -157,6 +171,31 @@ async function initializeDefaultAdmin() {
 
 // Call after DB connection
 setTimeout(initializeDefaultAdmin, 2000)
+
+// Ensure pricing records exist for all session categories
+async function ensureDefaultSessionPrices() {
+  try {
+    await Promise.all(
+      SESSION_TYPES.map(async ({ id, label }) => {
+        await SessionPrice.findOneAndUpdate(
+          { sessionType: id },
+          { $setOnInsert: { sessionType: id, label, price: 0 } },
+          { upsert: true, new: true },
+        )
+      }),
+    )
+  } catch (err) {
+    console.error('Failed to seed session prices:', err.message)
+  }
+}
+
+async function getSessionPriceValue(sessionType) {
+  const record = await SessionPrice.findOne({ sessionType })
+  return record ? record.price : 0
+}
+
+// Seed default prices after DB connection
+setTimeout(ensureDefaultSessionPrices, 2500)
 
 // Admin login
 app.post('/api/admin/login', async (req, res) => {
@@ -483,6 +522,11 @@ app.patch('/api/me', firebaseAuth, async (req, res) => {
         phone: updates.phone || req.firebaseUser.phone_number || '',
         onboardingCompleted: true,
       })
+
+      // Send welcome email to new user (don't await to avoid blocking response)
+      sendWelcomeEmail(user.email, user.name).catch(err => {
+        console.error('Failed to send welcome email:', err.message)
+      })
     }
 
     return res.json({ user })
@@ -532,6 +576,11 @@ app.post('/api/me/profile-pic', firebaseAuth, upload.single('profilePic'), async
         phone: req.firebaseUser.phone_number || '',
         profilePic: relativePath,
         onboardingCompleted: true,
+      })
+
+      // Send welcome email to new user (don't await to avoid blocking response)
+      sendWelcomeEmail(user.email, user.name).catch(err => {
+        console.error('Failed to send welcome email:', err.message)
       })
     }
 
@@ -590,6 +639,119 @@ app.get('/api/slots', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to fetch slots' })
+  }
+})
+
+// Session pricing (public fetch)
+app.get('/api/pricing', async (_req, res) => {
+  try {
+    await ensureDefaultSessionPrices()
+    const prices = await SessionPrice.find().sort({ label: 1 })
+    res.json({ prices, sessionTypes: SESSION_TYPES })
+  } catch (err) {
+    console.error('Failed to fetch pricing', err)
+    res.status(500).json({ message: 'Failed to fetch pricing' })
+  }
+})
+
+// Update pricing (admin)
+app.put('/api/pricing', requireAdmin, async (req, res) => {
+  try {
+    const { prices } = req.body || {}
+
+    if (!Array.isArray(prices)) {
+      return res.status(400).json({ message: 'prices array is required' })
+    }
+
+    const upserts = prices.map((p) => {
+      const sessionType = String(p.sessionType || '').trim()
+      const priceValue = Number(p.price || 0)
+      const label = p.label || SESSION_TYPES.find((s) => s.id === sessionType)?.label || sessionType
+
+      if (!sessionType) return null
+
+      return SessionPrice.findOneAndUpdate(
+        { sessionType },
+        { sessionType, label, price: priceValue, isActive: p.isActive !== false },
+        { new: true, upsert: true, setDefaultsOnInsert: true },
+      )
+    }).filter(Boolean)
+
+    const updated = await Promise.all(upserts)
+    res.json({ message: 'Pricing updated', prices: updated })
+  } catch (err) {
+    console.error('Failed to update pricing', err)
+    res.status(500).json({ message: 'Failed to update pricing' })
+  }
+})
+
+// Coupon creation/listing (admin)
+app.get('/api/coupons', requireAdmin, async (_req, res) => {
+  try {
+    const coupons = await Coupon.find().sort({ createdAt: -1 })
+    res.json({ coupons })
+  } catch (err) {
+    console.error('Failed to list coupons', err)
+    res.status(500).json({ message: 'Failed to fetch coupons' })
+  }
+})
+
+app.post('/api/coupons', requireAdmin, async (req, res) => {
+  try {
+    const { code, discountAmount, isPercentage = false, description = '', expiresAt = null, maxRedemptions = 0, isActive = true } = req.body || {}
+
+    if (!code || discountAmount === undefined) {
+      return res.status(400).json({ message: 'code and discountAmount are required' })
+    }
+
+    const normalizedCode = String(code).trim().toUpperCase()
+    const coupon = await Coupon.findOneAndUpdate(
+      { code: normalizedCode },
+      {
+        code: normalizedCode,
+        discountAmount: Number(discountAmount),
+        isPercentage: Boolean(isPercentage),
+        description,
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
+        maxRedemptions: Number(maxRedemptions) || 0,
+        isActive: Boolean(isActive),
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    )
+
+    res.status(201).json({ message: 'Coupon saved', coupon })
+  } catch (err) {
+    console.error('Failed to save coupon', err)
+    res.status(500).json({ message: 'Failed to save coupon' })
+  }
+})
+
+// Coupon validation (client)
+app.post('/api/coupons/validate', async (req, res) => {
+  try {
+    const { code } = req.body || {}
+    if (!code) {
+      return res.status(400).json({ message: 'Coupon code is required' })
+    }
+
+    const normalizedCode = String(code).trim().toUpperCase()
+    const coupon = await Coupon.findOne({ code: normalizedCode })
+
+    if (!coupon || !coupon.isValid()) {
+      return res.json({ valid: false })
+    }
+
+    res.json({
+      valid: true,
+      coupon: {
+        code: coupon.code,
+        discountAmount: coupon.discountAmount,
+        isPercentage: coupon.isPercentage,
+      },
+    })
+  } catch (err) {
+    console.error('Failed to validate coupon', err)
+    res.status(500).json({ message: 'Failed to validate coupon' })
   }
 })
 
@@ -695,6 +857,8 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
       date,
       time,
       notes,
+      couponCode,
+      reviewDetails,
     } = req.body || {}
 
     // Get email from authenticated user
@@ -719,16 +883,44 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
         .json({ message: 'Selected slot is no longer available' })
     }
 
+    const sessionPrice = await getSessionPriceValue(sessionType || SESSION_TYPES[0].id)
+    let discountAmount = 0
+    let appliedCouponCode = ''
+
+    if (couponCode) {
+      const normalizedCode = String(couponCode).trim().toUpperCase()
+      const coupon = await Coupon.findOne({ code: normalizedCode })
+
+      if (!coupon || !coupon.isValid()) {
+        return res.status(400).json({ message: 'Invalid or expired coupon code' })
+      }
+
+      discountAmount = coupon.isPercentage
+        ? Math.round((sessionPrice * coupon.discountAmount) / 100)
+        : coupon.discountAmount
+      appliedCouponCode = coupon.code
+
+      coupon.redeemedCount += 1
+      await coupon.save()
+    }
+
+    const totalAmount = Math.max(sessionPrice - discountAmount, 0)
+
     const booking = await Booking.create({
       name,
       email,
       phone: phone || '',
       mode: mode || 'online',
       sessionType: sessionType || 'individual',
+      sessionPrice,
+      discountAmount,
+      totalAmount,
+      couponCode: appliedCouponCode,
       isFirstSession: Boolean(isFirstSession),
       date,
       time,
       notes: notes || '',
+      reviewDetails: reviewDetails || '',
       status: 'pending',
       paymentScreenshot: req.file ? `/uploads/${path.basename(req.file.path)}` : '',
       paymentStatus: 'pending',
@@ -1098,6 +1290,93 @@ Important: You provide general information and support, but you are not a substi
       error: err.message
     })
   }
+})
+
+// ================= QR CODE MANAGEMENT =================
+// QR code storage
+const qrStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir)
+  },
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '') || '.png'
+    cb(null, `payment-qr${ext}`)
+  },
+})
+
+const qrUpload = multer({
+  storage: qrStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'))
+    }
+    return cb(null, true)
+  },
+})
+
+// Get current QR code
+app.get('/api/settings/qr', (req, res) => {
+  const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+  let qrFile = null
+  
+  for (const ext of possibleExtensions) {
+    const filePath = path.join(uploadsDir, `payment-qr${ext}`)
+    if (fs.existsSync(filePath)) {
+      qrFile = `payment-qr${ext}`
+      break
+    }
+  }
+  
+  if (qrFile) {
+    res.json({ qrUrl: `/uploads/${qrFile}?t=${Date.now()}` })
+  } else {
+    res.json({ qrUrl: null })
+  }
+})
+
+// Upload new QR code (admin only)
+app.post('/api/settings/qr', (req, res) => {
+  // Verify admin token
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  
+  const token = authHeader.split(' ')[1]
+  const adminId = verifyAdminToken(token)
+  
+  if (!adminId) {
+    return res.status(401).json({ message: 'Invalid admin token' })
+  }
+  
+  // Delete existing QR files before upload
+  const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+  for (const ext of possibleExtensions) {
+    const filePath = path.join(uploadsDir, `payment-qr${ext}`)
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath)
+      } catch (e) {
+        console.error('Failed to delete old QR:', e)
+      }
+    }
+  }
+  
+  qrUpload.single('qr')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message })
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' })
+    }
+    
+    res.json({ 
+      message: 'QR code updated successfully',
+      qrUrl: `/uploads/${req.file.filename}?t=${Date.now()}`
+    })
+  })
 })
 
 // 404 fallback

@@ -104,11 +104,59 @@ const Icons = {
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
     ),
+    Phone: () => (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+    ),
     Menu: () => (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12" />
             <line x1="3" y1="6" x2="21" y2="6" />
             <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+    ),
+    Settings: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+    ),
+    Upload: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+    ),
+    QrCode: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="3" height="3" />
+            <rect x="18" y="14" width="3" height="3" />
+            <rect x="14" y="18" width="3" height="3" />
+            <rect x="18" y="18" width="3" height="3" />
+        </svg>
+    ),
+    DollarSign: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+    ),
+    Tag: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+            <path d="M7 7h.01" />
+        </svg>
+    ),
+    Percent: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="5" x2="5" y2="19" />
+            <circle cx="6.5" cy="6.5" r="2.5" />
+            <circle cx="17.5" cy="17.5" r="2.5" />
         </svg>
     ),
 }
@@ -127,6 +175,37 @@ function AdminDashboardPage() {
     const [loadingSlots, setLoadingSlots] = useState(false)
     const [activeTab, setActiveTab] = useState('dashboard')
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    
+    // QR Code management state
+    const [currentQr, setCurrentQr] = useState(null)
+    const [qrUploading, setQrUploading] = useState(false)
+    const [qrMessage, setQrMessage] = useState('')
+
+    // Pricing management state
+    const [pricing, setPricing] = useState([])
+    const [pricingLoading, setPricingLoading] = useState(false)
+    const [pricingUpdating, setPricingUpdating] = useState(false)
+    const [pricingMessage, setPricingMessage] = useState('')
+
+    // Coupon management state
+    const [coupons, setCoupons] = useState([])
+    const [couponsLoading, setCouponsLoading] = useState(false)
+    const [newCoupon, setNewCoupon] = useState({
+        code: '',
+        discountAmount: '',
+        isPercentage: false,
+        description: '',
+        maxRedemptions: '',
+        expiresAt: '',
+        isActive: true,
+    })
+    const [couponSaving, setCouponSaving] = useState(false)
+    const [couponMessage, setCouponMessage] = useState('')
+
+    // Email and call modal state
+    const [emailModal, setEmailModal] = useState({ open: false, contact: null })
+    const [callMessage, setCallMessage] = useState('')
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -141,26 +220,36 @@ function AdminDashboardPage() {
                 setLoading(true)
                 setError('')
 
-                const [bRes, cRes] = await Promise.all([
+                const [bRes, cRes, qrRes] = await Promise.all([
                     fetch(`${API_BASE_URL}/bookings`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                     fetch(`${API_BASE_URL}/contact`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
+                    fetch(`${API_BASE_URL}/settings/qr`),
                 ])
 
                 if (!bRes.ok || !cRes.ok) {
                     throw new Error('Failed to load admin data')
                 }
 
-                const [bData, cData] = await Promise.all([
+                const [bData, cData, qrData] = await Promise.all([
                     bRes.json(),
                     cRes.json(),
+                    qrRes.json(),
                 ])
 
                 setBookings(bData.bookings || [])
                 setContacts(cData.contacts || [])
+                if (qrData.qrUrl) {
+                    setCurrentQr(`${API_BASE_URL.replace('/api', '')}${qrData.qrUrl}`)
+                }
+
+                // Fetch pricing
+                fetchPricing()
+                // Fetch coupons
+                fetchCoupons()
             } catch (err) {
                 setError(err.message)
             } finally {
@@ -170,6 +259,126 @@ function AdminDashboardPage() {
 
         fetchData()
     }, [token, navigate])
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768)
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    const handleEmailClick = (contact) => {
+        setEmailModal({ open: true, contact })
+    }
+
+    const handleEmailOption = (option) => {
+        const contact = emailModal.contact
+        const subject = encodeURIComponent('Re: Your Message from MindSettler')
+        const body = encodeURIComponent('Thank you for contacting us. We appreciate your message and will get back to you shortly.')
+
+        if (option === 'gmail') {
+            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${contact.email}&su=${subject}&body=${body}`, '_blank')
+        } else if (option === 'mailto') {
+            window.location.href = `mailto:${contact.email}?subject=Re: Your Message from MindSettler&body=Thank you for contacting us. We appreciate your message and will get back to you shortly.`
+        }
+        setEmailModal({ open: false, contact: null })
+    }
+
+    const handleCallClick = (phone) => {
+        if (isMobile) {
+            window.location.href = `tel:${phone}`
+        } else {
+            setCallMessage('Phone calls can only be made from mobile devices.')
+            setTimeout(() => setCallMessage(''), 4000)
+        }
+    }
+
+    async function fetchPricing() {
+        try {
+            setPricingUpdating(true)
+            setPricingMessage('')
+            const res = await fetch(`${API_BASE_URL}/pricing`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ prices: pricing }),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                setPricingMessage('Pricing updated successfully!')
+                if (data.prices) {
+                    setPricing(data.prices)
+                }
+            } else {
+                setPricingMessage(data.message || 'Failed to update pricing')
+            }
+        } catch (err) {
+            console.error('Failed to update pricing', err)
+            setPricingMessage('Failed to update pricing')
+        } finally {
+            setPricingUpdating(false)
+            setTimeout(() => setPricingMessage(''), 3000)
+        }
+    }
+
+    async function fetchCoupons() {
+        try {
+            setCouponsLoading(true)
+            const res = await fetch(`${API_BASE_URL}/coupons`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data = await res.json()
+            setCoupons(data.coupons || [])
+        } catch (err) {
+            console.error('Failed to load coupons', err)
+        } finally {
+            setCouponsLoading(false)
+        }
+    }
+
+    async function handleCreateCoupon(e) {
+        e.preventDefault()
+        try {
+            setCouponSaving(true)
+            setCouponMessage('')
+            const res = await fetch(`${API_BASE_URL}/coupons`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ...newCoupon,
+                    discountAmount: Number(newCoupon.discountAmount) || 0,
+                    maxRedemptions: Number(newCoupon.maxRedemptions) || 0,
+                    expiresAt: newCoupon.expiresAt || null,
+                }),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                setCouponMessage('Coupon created successfully!')
+                setNewCoupon({
+                    code: '',
+                    discountAmount: '',
+                    isPercentage: false,
+                    description: '',
+                    maxRedemptions: '',
+                    expiresAt: '',
+                    isActive: true,
+                })
+                fetchCoupons()
+            } else {
+                setCouponMessage(data.message || 'Failed to create coupon')
+            }
+        } catch (err) {
+            console.error('Failed to create coupon', err)
+            setCouponMessage('Failed to create coupon')
+        } finally {
+            setCouponSaving(false)
+            setTimeout(() => setCouponMessage(''), 3000)
+        }
+    }
 
     async function updateBookingStatus(id, status, reason = '') {
         const res = await fetch(`${API_BASE_URL}/bookings/${id}/status`, {
@@ -270,6 +479,44 @@ function AdminDashboardPage() {
         navigate('/')
     }
 
+    // QR Code upload handler
+    async function handleQrUpload(e) {
+        const file = e.target.files?.[0]
+        if (!file) return
+        
+        setQrUploading(true)
+        setQrMessage('')
+        
+        try {
+            const formData = new FormData()
+            formData.append('qr', file)
+            
+            const res = await fetch(`${API_BASE_URL}/settings/qr`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            })
+            
+            const data = await res.json()
+            
+            if (res.ok) {
+                setCurrentQr(`${API_BASE_URL.replace('/api', '')}${data.qrUrl}`)
+                setQrMessage('QR code updated successfully!')
+            } else {
+                setQrMessage(data.message || 'Failed to upload QR code')
+            }
+        } catch (err) {
+            console.error('QR upload failed:', err)
+            setQrMessage('Failed to upload QR code')
+        } finally {
+            setQrUploading(false)
+            // Clear message after 3 seconds
+            setTimeout(() => setQrMessage(''), 3000)
+        }
+    }
+
     function getInitials(name) {
         return name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
     }
@@ -336,6 +583,34 @@ function AdminDashboardPage() {
                             Messages
                             {contacts.length > 0 && <span className="badge-count">{contacts.length}</span>}
                         </button>
+                        <button
+                            className={`nav-item ${activeTab === 'pricing' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('pricing')}
+                        >
+                            <span className="icon"><Icons.DollarSign /></span>
+                            Pricing
+                        </button>
+                        <button
+                            className={`nav-item ${activeTab === 'coupons' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('coupons')}
+                        >
+                            <span className="icon"><Icons.Tag /></span>
+                            Coupons
+                        </button>
+                        <button
+                            className={`nav-item ${activeTab === 'payment-qr' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('payment-qr')}
+                        >
+                            <span className="icon"><Icons.QrCode /></span>
+                            Payment QR
+                        </button>
+                        <button
+                            className="nav-item logout-nav-item"
+                            onClick={handleLogout}
+                        >
+                            <span className="icon"><Icons.Logout /></span>
+                            Sign Out
+                        </button>
                     </nav>
 
                     <div className="sidebar-footer">
@@ -346,10 +621,6 @@ function AdminDashboardPage() {
                                 <div className="role">Administrator</div>
                             </div>
                         </div>
-                        <button className="btn-logout" onClick={handleLogout}>
-                            <Icons.Logout />
-                            Sign Out
-                        </button>
                     </div>
                 </aside>
 
@@ -363,6 +634,13 @@ function AdminDashboardPage() {
                             </button>
                         </div>
                         <div className="topbar-right">
+                            <button 
+                                className="mobile-logout-btn" 
+                                onClick={handleLogout}
+                                title="Sign Out"
+                            >
+                                <Icons.Logout />
+                            </button>
                             <div className="mobile-admin-profile">
                                 <div className="user-avatar">AD</div>
                             </div>
@@ -379,6 +657,9 @@ function AdminDashboardPage() {
                             {activeTab === 'dashboard' && 'Dashboard'}
                             {activeTab === 'appointments' && 'Appointments'}
                             {activeTab === 'messages' && 'Messages'}
+                            {activeTab === 'pricing' && 'Session Pricing'}
+                            {activeTab === 'coupons' && 'Discount Coupons'}
+                            {activeTab === 'payment-qr' && 'Payment QR Code'}
                         </h1>
                         <p>{getCurrentDate()}</p>
                     </div>
@@ -569,7 +850,28 @@ function AdminDashboardPage() {
                                                                         <span className="message-name">{c.name}</span>
                                                                     </div>
                                                                     <div className="message-email">{c.email}</div>
+                                                                    {c.phone && <div className="message-phone">{c.phone}</div>}
                                                                     <div className="message-text">{c.message}</div>
+                                                                </div>
+                                                                <div className="message-actions">
+                                                                    <button 
+                                                                        onClick={() => handleEmailClick(c)}
+                                                                        className="action-btn email-btn"
+                                                                        title="Reply via Email"
+                                                                    >
+                                                                        <Icons.Mail />
+                                                                        Reply
+                                                                    </button>
+                                                                    {c.phone && isMobile && (
+                                                                        <button 
+                                                                            onClick={() => handleCallClick(c.phone)}
+                                                                            className="action-btn call-btn"
+                                                                            title="Call User"
+                                                                        >
+                                                                            <Icons.Phone />
+                                                                            Call
+                                                                        </button>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -719,7 +1021,578 @@ function AdminDashboardPage() {
                                                                     <span className="message-name">{c.name}</span>
                                                                 </div>
                                                                 <div className="message-email">{c.email}</div>
+                                                                {c.phone && <div className="message-phone">{c.phone}</div>}
                                                                 <div className="message-text">{c.message}</div>
+                                                            </div>
+                                                            <div className="message-actions">
+                                                                <button 
+                                                                    onClick={() => handleEmailClick(c)}
+                                                                    className="action-btn email-btn"
+                                                                    title="Reply via Email"
+                                                                >
+                                                                    <Icons.Mail />
+                                                                    Reply
+                                                                </button>
+                                                                {c.phone && isMobile && (
+                                                                    <button 
+                                                                        onClick={() => handleCallClick(c.phone)}
+                                                                        className="action-btn call-btn"
+                                                                        title="Call User"
+                                                                    >
+                                                                        <Icons.Phone />
+                                                                        Call
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Payment QR View */}
+                            {activeTab === 'payment-qr' && (
+                                <div className="content-grid full">
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Payment QR Code</h2>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body">
+                                            <div className="settings-section">
+                                                <p style={{ marginBottom: '1rem', color: '#666' }}>
+                                                    Upload or change the QR code displayed on the booking page for payment.
+                                                </p>
+                                                
+                                                <div className="qr-preview" style={{ 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    alignItems: 'center', 
+                                                    gap: '1.5rem',
+                                                    padding: '2rem',
+                                                    background: '#f8f9fa',
+                                                    borderRadius: '12px',
+                                                    marginBottom: '1.5rem'
+                                                }}>
+                                                    {currentQr ? (
+                                                        <img 
+                                                            src={currentQr} 
+                                                            alt="Current Payment QR" 
+                                                            style={{ 
+                                                                maxWidth: '250px', 
+                                                                borderRadius: '8px',
+                                                                border: '1px solid #ddd',
+                                                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                                            }} 
+                                                        />
+                                                    ) : (
+                                                        <div style={{ 
+                                                            width: '200px', 
+                                                            height: '200px', 
+                                                            background: '#e9ecef',
+                                                            borderRadius: '8px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            color: '#6c757d',
+                                                            flexDirection: 'column',
+                                                            gap: '0.5rem'
+                                                        }}>
+                                                            <Icons.Upload />
+                                                            <span>No QR uploaded</span>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div style={{ textAlign: 'center' }}>
+                                                        <label 
+                                                            htmlFor="qr-upload" 
+                                                            className="btn-modal-action"
+                                                            style={{ 
+                                                                cursor: 'pointer',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '0.5rem',
+                                                                padding: '0.75rem 1.5rem',
+                                                                background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                                color: 'white',
+                                                                borderRadius: '8px',
+                                                                fontWeight: '600',
+                                                                opacity: qrUploading ? 0.7 : 1
+                                                            }}
+                                                        >
+                                                            <Icons.Upload />
+                                                            {qrUploading ? 'Uploading...' : (currentQr ? 'Change QR Code' : 'Upload QR Code')}
+                                                        </label>
+                                                        <input
+                                                            id="qr-upload"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleQrUpload}
+                                                            disabled={qrUploading}
+                                                            style={{ display: 'none' }}
+                                                        />
+                                                        
+                                                        {qrMessage && (
+                                                            <p style={{ 
+                                                                marginTop: '1rem', 
+                                                                color: qrMessage.includes('success') ? '#28a745' : '#dc3545',
+                                                                fontWeight: '500'
+                                                            }}>
+                                                                {qrMessage}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style={{ 
+                                                    padding: '1rem', 
+                                                    background: '#fff3cd', 
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #ffc107'
+                                                }}>
+                                                    <p style={{ margin: 0, color: '#856404', fontSize: '0.9rem' }}>
+                                                        <strong>Note:</strong> This QR code will be shown to users when they book a session and need to make a payment. Make sure it's a valid UPI payment QR code.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Pricing View */}
+                            {activeTab === 'pricing' && (
+                                <div className="content-grid full">
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Session Pricing</h2>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body">
+                                            <p style={{ marginBottom: '1.5rem', color: '#666', fontSize: '0.95rem' }}>
+                                                Set the price for each therapy session type. Changes are reflected on the booking page immediately after saving.
+                                            </p>
+
+                                            {pricingLoading ? (
+                                                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                                                    <div className="loading-spinner"></div>
+                                                    <p style={{ marginTop: '1rem', color: '#888' }}>Loading pricing...</p>
+                                                </div>
+                                            ) : (
+                                                <div className="pricing-grid" style={{ display: 'grid', gap: '0.75rem' }}>
+                                                    {pricing.map((p, index) => (
+                                                        <div key={p.sessionType} style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '1rem',
+                                                            padding: '1rem 1.25rem',
+                                                            background: 'linear-gradient(135deg, #f8f9fa 0%, #fff 100%)',
+                                                            borderRadius: '12px',
+                                                            border: '1px solid #eee',
+                                                            transition: 'box-shadow 0.2s, border-color 0.2s',
+                                                        }}>
+                                                            <div style={{ 
+                                                                width: '40px', 
+                                                                height: '40px', 
+                                                                borderRadius: '10px', 
+                                                                background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                color: 'white',
+                                                                fontSize: '1rem',
+                                                                fontWeight: 700,
+                                                                flexShrink: 0,
+                                                            }}>
+                                                                {p.label.charAt(0)}
+                                                            </div>
+                                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#333' }}>{p.label}</div>
+                                                                <div style={{ fontSize: '0.8rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{p.sessionType}</div>
+                                                            </div>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                                <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#3F2965' }}>₹</span>
+                                                                <input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    value={p.price}
+                                                                    onChange={(e) => {
+                                                                        const val = parseInt(e.target.value, 10) || 0
+                                                                        setPricing((prev) =>
+                                                                            prev.map((item, i) =>
+                                                                                i === index ? { ...item, price: val } : item
+                                                                            )
+                                                                        )
+                                                                    }}
+                                                                    style={{ 
+                                                                        width: '100px', 
+                                                                        padding: '0.6rem 0.75rem', 
+                                                                        borderRadius: '8px', 
+                                                                        border: '2px solid #e0e0e0',
+                                                                        fontSize: '1rem',
+                                                                        fontWeight: 600,
+                                                                        textAlign: 'right',
+                                                                        transition: 'border-color 0.2s',
+                                                                        outline: 'none',
+                                                                    }}
+                                                                    onFocus={(e) => e.target.style.borderColor = '#DD1764'}
+                                                                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                                                <button
+                                                    onClick={handlePricingUpdate}
+                                                    disabled={pricingUpdating}
+                                                    style={{
+                                                        cursor: pricingUpdating ? 'not-allowed' : 'pointer',
+                                                        padding: '0.85rem 2rem',
+                                                        background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                        color: 'white',
+                                                        borderRadius: '10px',
+                                                        fontWeight: '600',
+                                                        border: 'none',
+                                                        fontSize: '0.95rem',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.5rem',
+                                                        boxShadow: '0 4px 15px rgba(221, 23, 100, 0.3)',
+                                                        transition: 'transform 0.2s, box-shadow 0.2s',
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(221, 23, 100, 0.4)' }}
+                                                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 15px rgba(221, 23, 100, 0.3)' }}
+                                                >
+                                                    {pricingUpdating ? 'Saving...' : '💾 Save All Prices'}
+                                                </button>
+                                                {pricingMessage && (
+                                                    <span style={{ 
+                                                        padding: '0.5rem 1rem',
+                                                        borderRadius: '8px',
+                                                        background: pricingMessage.includes('success') ? '#d4edda' : '#f8d7da',
+                                                        color: pricingMessage.includes('success') ? '#155724' : '#721c24',
+                                                        fontWeight: 500,
+                                                        fontSize: '0.9rem',
+                                                    }}>
+                                                        {pricingMessage.includes('success') ? '✓ ' : '✗ '}{pricingMessage}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Coupons View */}
+                            {activeTab === 'coupons' && (
+                                <div className="content-grid full" style={{ gap: '1.5rem' }}>
+                                    {/* Create Coupon Panel */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Create New Coupon</h2>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body">
+                                            <form onSubmit={handleCreateCoupon} style={{ display: 'grid', gap: '1.25rem', maxWidth: '700px' }}>
+                                                <div style={{ 
+                                                    display: 'grid', 
+                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                                                    gap: '1rem' 
+                                                }}>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Coupon Code *</label>
+                                                        <input
+                                                            type="text"
+                                                            required
+                                                            value={newCoupon.code}
+                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, code: e.target.value.toUpperCase() }))}
+                                                            placeholder="e.g. WELCOME20"
+                                                            style={{
+                                                                padding: '0.75rem 1rem',
+                                                                borderRadius: '8px',
+                                                                border: '2px solid #e0e0e0',
+                                                                fontSize: '1rem',
+                                                                fontWeight: 600,
+                                                                letterSpacing: '1px',
+                                                                width: '100%',
+                                                                boxSizing: 'border-box',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Discount Amount *</label>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                required
+                                                                value={newCoupon.discountAmount}
+                                                                onChange={(e) => setNewCoupon((c) => ({ ...c, discountAmount: e.target.value }))}
+                                                                placeholder="100"
+                                                                style={{
+                                                                    padding: '0.75rem 1rem',
+                                                                    borderRadius: '8px',
+                                                                    border: '2px solid #e0e0e0',
+                                                                    fontSize: '1rem',
+                                                                    flex: 1,
+                                                                    width: '100%',
+                                                                    boxSizing: 'border-box',
+                                                                }}
+                                                            />
+                                                            <label style={{ 
+                                                                display: 'flex', 
+                                                                alignItems: 'center', 
+                                                                gap: '0.35rem',
+                                                                padding: '0.5rem 0.75rem',
+                                                                background: newCoupon.isPercentage ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)' : '#f0f0f0',
+                                                                color: newCoupon.isPercentage ? '#fff' : '#666',
+                                                                borderRadius: '8px',
+                                                                cursor: 'pointer',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.9rem',
+                                                                transition: 'all 0.2s',
+                                                                whiteSpace: 'nowrap',
+                                                            }}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={newCoupon.isPercentage}
+                                                                    onChange={(e) => setNewCoupon((c) => ({ ...c, isPercentage: e.target.checked }))}
+                                                                    style={{ display: 'none' }}
+                                                                />
+                                                                <Icons.Percent />
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group-modal">
+                                                    <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Description (optional)</label>
+                                                    <input
+                                                        type="text"
+                                                        value={newCoupon.description}
+                                                        onChange={(e) => setNewCoupon((c) => ({ ...c, description: e.target.value }))}
+                                                        placeholder="e.g. New user discount, Festival offer"
+                                                        style={{
+                                                            padding: '0.75rem 1rem',
+                                                            borderRadius: '8px',
+                                                            border: '2px solid #e0e0e0',
+                                                            fontSize: '0.95rem',
+                                                            width: '100%',
+                                                            boxSizing: 'border-box',
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{ 
+                                                    display: 'grid', 
+                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
+                                                    gap: '1rem' 
+                                                }}>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Max Redemptions</label>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            value={newCoupon.maxRedemptions}
+                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, maxRedemptions: e.target.value }))}
+                                                            placeholder="0 = unlimited"
+                                                            style={{
+                                                                padding: '0.75rem 1rem',
+                                                                borderRadius: '8px',
+                                                                border: '2px solid #e0e0e0',
+                                                                fontSize: '0.95rem',
+                                                                width: '100%',
+                                                                boxSizing: 'border-box',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Expires On</label>
+                                                        <input
+                                                            type="date"
+                                                            value={newCoupon.expiresAt}
+                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, expiresAt: e.target.value }))}
+                                                            style={{
+                                                                padding: '0.75rem 1rem',
+                                                                borderRadius: '8px',
+                                                                border: '2px solid #e0e0e0',
+                                                                fontSize: '0.95rem',
+                                                                width: '100%',
+                                                                boxSizing: 'border-box',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'space-between',
+                                                    flexWrap: 'wrap',
+                                                    gap: '1rem',
+                                                    marginTop: '0.5rem',
+                                                }}>
+                                                    <label style={{ 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        gap: '0.5rem',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 500,
+                                                    }}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={newCoupon.isActive}
+                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, isActive: e.target.checked }))}
+                                                            style={{ width: '18px', height: '18px', accentColor: '#DD1764' }}
+                                                        />
+                                                        <span style={{ color: newCoupon.isActive ? '#28a745' : '#888' }}>
+                                                            {newCoupon.isActive ? '✓ Active' : 'Inactive'}
+                                                        </span>
+                                                    </label>
+                                                    <button
+                                                        type="submit"
+                                                        disabled={couponSaving}
+                                                        style={{
+                                                            cursor: couponSaving ? 'not-allowed' : 'pointer',
+                                                            padding: '0.85rem 2rem',
+                                                            background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '10px',
+                                                            fontWeight: '600',
+                                                            border: 'none',
+                                                            fontSize: '0.95rem',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '0.5rem',
+                                                            boxShadow: '0 4px 15px rgba(221, 23, 100, 0.3)',
+                                                        }}
+                                                    >
+                                                        🎟️ {couponSaving ? 'Creating...' : 'Create Coupon'}
+                                                    </button>
+                                                </div>
+                                                {couponMessage && (
+                                                    <div style={{ 
+                                                        padding: '0.75rem 1rem',
+                                                        borderRadius: '8px',
+                                                        background: couponMessage.includes('success') ? '#d4edda' : '#f8d7da',
+                                                        color: couponMessage.includes('success') ? '#155724' : '#721c24',
+                                                        fontWeight: 500,
+                                                        fontSize: '0.9rem',
+                                                    }}>
+                                                        {couponMessage.includes('success') ? '✓ ' : '✗ '}{couponMessage}
+                                                    </div>
+                                                )}
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    {/* Existing Coupons Panel */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Existing Coupons</h2>
+                                                <span className="count">{coupons.length}</span>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body no-padding">
+                                            {couponsLoading ? (
+                                                <div className="empty-state">
+                                                    <p>Loading coupons...</p>
+                                                </div>
+                                            ) : coupons.length === 0 ? (
+                                                <div className="empty-state">
+                                                    <div className="empty-icon">🎟️</div>
+                                                    <h3>No coupons yet</h3>
+                                                    <p>Create a coupon above</p>
+                                                </div>
+                                            ) : (
+                                                <div style={{ display: 'grid', gap: '0.75rem', padding: '1rem' }}>
+                                                    {coupons.map((c) => (
+                                                        <div key={c._id} style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '1rem',
+                                                            padding: '1rem 1.25rem',
+                                                            background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+                                                            borderRadius: '12px',
+                                                            border: c.isActive ? '2px solid #28a74533' : '2px solid #dc354533',
+                                                            transition: 'box-shadow 0.2s',
+                                                        }}>
+                                                            <div style={{ 
+                                                                width: '50px', 
+                                                                height: '50px', 
+                                                                borderRadius: '12px', 
+                                                                background: c.isActive 
+                                                                    ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' 
+                                                                    : 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                color: 'white',
+                                                                fontSize: '1.25rem',
+                                                                flexShrink: 0,
+                                                            }}>
+                                                                🎟️
+                                                            </div>
+                                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                                                    <span style={{ 
+                                                                        fontWeight: 700, 
+                                                                        fontSize: '1.1rem', 
+                                                                        color: '#333',
+                                                                        letterSpacing: '0.5px',
+                                                                    }}>{c.code}</span>
+                                                                    <span style={{
+                                                                        background: c.isActive ? '#d4edda' : '#f8d7da',
+                                                                        color: c.isActive ? '#155724' : '#721c24',
+                                                                        padding: '0.25rem 0.6rem',
+                                                                        borderRadius: '20px',
+                                                                        fontSize: '0.75rem',
+                                                                        fontWeight: 600,
+                                                                    }}>
+                                                                        {c.isActive ? '● Active' : '○ Inactive'}
+                                                                    </span>
+                                                                </div>
+                                                                {c.description && (
+                                                                    <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.35rem' }}>
+                                                                        {c.description}
+                                                                    </div>
+                                                                )}
+                                                                <div style={{ 
+                                                                    display: 'flex', 
+                                                                    alignItems: 'center', 
+                                                                    gap: '1rem', 
+                                                                    marginTop: '0.5rem',
+                                                                    flexWrap: 'wrap',
+                                                                    fontSize: '0.8rem',
+                                                                    color: '#888',
+                                                                }}>
+                                                                    <span>📊 Used: {c.redeemedCount || 0}{c.maxRedemptions ? `/${c.maxRedemptions}` : ''}</span>
+                                                                    {c.expiresAt && <span>📅 Expires: {new Date(c.expiresAt).toLocaleDateString()}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div style={{ 
+                                                                textAlign: 'right',
+                                                                padding: '0.5rem 1rem',
+                                                                background: c.isPercentage 
+                                                                    ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)' 
+                                                                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                                borderRadius: '10px',
+                                                                color: 'white',
+                                                                flexShrink: 0,
+                                                            }}>
+                                                                <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+                                                                    {c.isPercentage ? `${c.discountAmount}%` : `₹${c.discountAmount}`}
+                                                                </div>
+                                                                <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>
+                                                                    {c.isPercentage ? 'OFF' : 'FLAT'}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -850,6 +1723,77 @@ function AdminDashboardPage() {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Email Modal */}
+            {emailModal.open && emailModal.contact && (
+                <div className="modal-overlay" onClick={() => setEmailModal({ open: false, contact: null })}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>Choose Email Service</h3>
+                            <button className="modal-close" onClick={() => setEmailModal({ open: false, contact: null })}>
+                                <Icons.X />
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p style={{ marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
+                                Choose how to reply to <strong>{emailModal.contact.name}</strong> ({emailModal.contact.email})
+                            </p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <button
+                                    onClick={() => handleEmailOption('gmail')}
+                                    style={{
+                                        padding: '0.875rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid #EA4335',
+                                        background: 'rgba(234, 67, 53, 0.08)',
+                                        color: '#EA4335',
+                                        fontWeight: '500',
+                                        cursor: 'pointer',
+                                        transition: 'all var(--transition-fast)',
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.target.style.background = 'rgba(234, 67, 53, 0.15)'
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.target.style.background = 'rgba(234, 67, 53, 0.08)'
+                                    }}
+                                >
+                                    Gmail
+                                </button>
+                                <button
+                                    onClick={() => handleEmailOption('mailto')}
+                                    style={{
+                                        padding: '0.875rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--info)',
+                                        background: 'rgba(66, 135, 245, 0.08)',
+                                        color: 'var(--info)',
+                                        fontWeight: '500',
+                                        cursor: 'pointer',
+                                        transition: 'all var(--transition-fast)',
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.target.style.background = 'rgba(66, 135, 245, 0.15)'
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.target.style.background = 'rgba(66, 135, 245, 0.08)'
+                                    }}
+                                >
+                                    Default Email Client
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Call Message Notification */}
+            {callMessage && (
+                <div className="notification notification-info">
+                    <Icons.AlertCircle />
+                    <span>{callMessage}</span>
                 </div>
             )}
         </main>

@@ -76,6 +76,45 @@ export default function ChatBot() {
     }
   }
 
+  // Helper to get display label for internal routes
+  const getRouteLabel = (path) => {
+    const labels = {
+      '/booking': '📅 Book Appointment',
+      '/book-a-session': '📅 Book a Session',
+      '/services': '🧠 Our Services',
+      '/about': 'ℹ️ About Us',
+      '/contact': '📞 Contact Us',
+      '/login': '🔐 Login',
+      '/signin': '🔐 Sign In',
+      '/signup': '✨ Sign Up',
+      '/register': '✨ Register',
+      '/profile': '👤 My Profile',
+      '/resources': '📚 Resources',
+      '/faq': '❓ FAQ',
+      '/faqs': '❓ FAQs',
+      '/psycho-education': '🧠 Psycho-Education',
+      '/psychoeducation': '🧠 Psycho-Education',
+      '/journey': '🌟 Our Journey',
+      '/corporate': '🏢 Corporate',
+      '/home': '🏠 Home',
+      '/': '🏠 Home',
+    }
+
+    // Try exact match first
+    const exactMatch = labels[path.toLowerCase()]
+    if (exactMatch) return exactMatch
+
+    // Create a nice label from the path
+    const pathName = path.replace(/^\//, '') // Remove leading slash
+      .replace(/-/g, ' ') // Replace hyphens with spaces
+      .replace(/_/g, ' ') // Replace underscores with spaces
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+
+    return `➡️ ${pathName}`
+  }
+
   // Helper to parse text and render links
   const renderMessageWithLinks = (text) => {
     // Split by spaces/newlines to process words individually while preserving whitespace
@@ -92,15 +131,24 @@ export default function ChatBot() {
         const cleanHref = href.replace(/[.,;!?)]+$/, '')
         const punctuation = part.slice(cleanHref.length)
 
+        // Extract domain for display
+        let displayText = cleanHref
+        try {
+          const url = new URL(cleanHref)
+          displayText = url.hostname.replace('www.', '')
+        } catch {
+          displayText = cleanHref
+        }
+
         return (
           <span key={i}>
             <a
               href={cleanHref}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#007bff', textDecoration: 'underline' }}
+              className="chat-link chat-link-external"
             >
-              {cleanHref}
+              🔗 {displayText}
             </a>
             {punctuation}
           </span>
@@ -116,7 +164,9 @@ export default function ChatBot() {
         if (/^[\w\-/]+$/.test(to)) {
           return (
             <span key={i}>
-              <Link to={to} style={{ color: '#007bff', textDecoration: 'underline' }}>{to}</Link>
+              <Link to={to} className="chat-link chat-link-internal">
+                {getRouteLabel(to)}
+              </Link>
               {punctuation}
             </span>
           )

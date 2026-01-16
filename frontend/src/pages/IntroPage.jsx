@@ -33,7 +33,7 @@ export default function IntroPage() {
   useEffect(() => {
     if (phase === PHASES.FADE_OUT) {
       const fadeTimer = setTimeout(() => {
-        sessionStorage.setItem('justFromIntro', 'true')
+        sessionStorage.setItem('introViewed', 'true')
         navigate('/', { replace: true })
       }, 800)
 
@@ -46,7 +46,7 @@ export default function IntroPage() {
     if (videoRef.current) {
       videoRef.current.pause()
     }
-    sessionStorage.setItem('justFromIntro', 'true')
+    sessionStorage.setItem('introViewed', 'true')
     navigate('/', { replace: true })
   }
 
@@ -69,7 +69,7 @@ export default function IntroPage() {
             key="intro-video"
             ref={videoRef}
             className="intro-video"
-            src="/Video%20Project%201.mp4"
+            src="/intro_main.mp4"
             autoPlay
             muted
             playsInline

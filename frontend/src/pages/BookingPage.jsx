@@ -18,6 +18,8 @@ export default function BookingPage() {
     time: '',
     notes: '',
     paymentScreenshot: null,
+    couponCode: '',
+    reviewDetails: '',
   })
   const [touched, setTouched] = useState({})
   const [acceptPolicies, setAcceptPolicies] = useState(false)
@@ -29,8 +31,53 @@ export default function BookingPage() {
   const [calendarAdded, setCalendarAdded] = useState(false)
   const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
+  const [paymentQrUrl, setPaymentQrUrl] = useState('/payment-qr.png') // Default fallback
+  const [pricing, setPricing] = useState([])
+  const [pricingLoading, setPricingLoading] = useState(true)
+  const [pricingError, setPricingError] = useState('')
+  const [couponInput, setCouponInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponMessage, setCouponMessage] = useState('')
+  const [applyingCoupon, setApplyingCoupon] = useState(false)
 
   const { user, loading: authLoading } = useAuth()
+
+  // Fetch payment QR URL from backend
+  useEffect(() => {
+    async function fetchQr() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/settings/qr`)
+        const data = await res.json()
+        if (data.qrUrl) {
+          setPaymentQrUrl(`${API_BASE_URL.replace('/api', '')}${data.qrUrl}`)
+        }
+      } catch (e) {
+        console.log('Using default QR')
+      }
+    }
+    fetchQr()
+  }, [])
+
+  useEffect(() => {
+    async function fetchPricing() {
+      try {
+        setPricingLoading(true)
+        setPricingError('')
+        const res = await fetch(`${API_BASE_URL}/pricing`)
+        if (!res.ok) {
+          throw new Error('Unable to load pricing')
+        }
+        const data = await res.json()
+        setPricing(data.prices || [])
+      } catch (e) {
+        console.error('Pricing fetch failed', e)
+        setPricingError('Could not load session pricing right now. Prices will show as 0 until refreshed.')
+      } finally {
+        setPricingLoading(false)
+      }
+    }
+    fetchPricing()
+  }, [])
 
   // Step validation
   const isStep1Valid = () => {
@@ -110,6 +157,26 @@ export default function BookingPage() {
     fetchSlots()
   }, [form.date])
 
+  const priceMap = useMemo(() => {
+    const map = {}
+    pricing.forEach((p) => {
+      map[p.sessionType] = p.price
+    })
+    return map
+  }, [pricing])
+
+  const sessionPrice = useMemo(() => priceMap[form.sessionType] ?? 0, [priceMap, form.sessionType])
+
+  const discountAmount = useMemo(() => {
+    if (!appliedCoupon) return 0
+    if (appliedCoupon.isPercentage) {
+      return Math.round((sessionPrice * appliedCoupon.discountAmount) / 100)
+    }
+    return appliedCoupon.discountAmount
+  }, [appliedCoupon, sessionPrice])
+
+  const totalAmount = useMemo(() => Math.max(sessionPrice - discountAmount, 0), [sessionPrice, discountAmount])
+
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target
     if (type === 'file') {
@@ -132,6 +199,40 @@ export default function BookingPage() {
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhone = (phone) => !phone || /^\d{10,}$/.test(phone.replace(/\D/g, ''))
+
+  async function handleApplyCoupon() {
+    if (!couponInput.trim()) {
+      setCouponMessage('Enter a coupon code to apply')
+      return
+    }
+
+    try {
+      setApplyingCoupon(true)
+      setCouponMessage('')
+      const res = await fetch(`${API_BASE_URL}/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput.trim() }),
+      })
+      const data = await res.json()
+
+      if (!data.valid || !data.coupon) {
+        setAppliedCoupon(null)
+        setForm((prev) => ({ ...prev, couponCode: '' }))
+        setCouponMessage('Coupon is invalid or expired')
+        return
+      }
+
+      setAppliedCoupon(data.coupon)
+      setForm((prev) => ({ ...prev, couponCode: data.coupon.code }))
+      setCouponMessage(`Coupon applied: ${data.coupon.code}`)
+    } catch (err) {
+      console.error('Coupon apply failed', err)
+      setCouponMessage('Could not apply coupon right now')
+    } finally {
+      setApplyingCoupon(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -223,10 +324,15 @@ export default function BookingPage() {
         time: '',
         notes: '',
         paymentScreenshot: null,
+        couponCode: '',
+        reviewDetails: '',
       })
       setTouched({})
       setAcceptPolicies(false)
       setPaymentOption('online')
+      setAppliedCoupon(null)
+      setCouponInput('')
+      setCouponMessage('')
       setCurrentStep(1)
     } catch (err) {
       console.error(err)
@@ -313,33 +419,17 @@ export default function BookingPage() {
           <div className="booking-grid">
             <form className="card booking-form" onSubmit={handleSubmit}>
               {/* Step Progress Indicator */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative' }}>
+              <div className="step-indicator">
                 {/* Progress Line */}
-                <div style={{ position: 'absolute', top: '18px', left: '15%', right: '15%', height: '2px', background: '#e0e0e0', zIndex: 0 }} />
-                <div style={{ position: 'absolute', top: '18px', left: '15%', height: '2px', background: '#7c3aed', zIndex: 0, width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%', transition: 'width 0.3s ease' }} />
+                <div className="step-progress-bg" />
+                <div className="step-progress-fill" style={{ width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%' }} />
                 
                 {[1, 2, 3].map((step) => (
-                  <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, flex: 1 }}>
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '50%',
-                        backgroundColor: currentStep >= step ? '#7c3aed' : '#ffffff',
-                        color: currentStep >= step ? '#ffffff' : '#666666',
-                        border: currentStep >= step ? '2px solid #7c3aed' : '2px solid #e0e0e0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 700,
-                        fontSize: '1rem',
-                        lineHeight: 1,
-                        boxSizing: 'border-box',
-                      }}
-                    >
+                  <div key={step} className="step-item">
+                    <div className={`step-circle ${currentStep >= step ? 'active' : ''}`}>
                       <span>{step}</span>
                     </div>
-                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: currentStep >= step ? 'var(--primary)' : '#666', fontWeight: currentStep === step ? 600 : 400 }}>
+                    <span className={`step-label ${currentStep >= step ? 'active' : ''} ${currentStep === step ? 'current' : ''}`}>
                       {step === 1 ? 'Details' : step === 2 ? 'Schedule' : 'Payment'}
                     </span>
                   </div>
@@ -420,51 +510,41 @@ export default function BookingPage() {
                         <option value="mbct">Mindfulness-Based Cognitive Therapy</option>
                         <option value="cct">Client-Centred Therapy</option>
                       </select>
+                      {form.sessionType && (
+                        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 600 }}>
+                          Session fee: ₹{pricingLoading ? '...' : (sessionPrice || 0)}
+                        </p>
+                      )}
+                      {pricingError && (
+                        <p style={{ marginTop: '0.25rem', fontSize: '0.85rem', color: '#c0392b' }}>
+                          {pricingError}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="field">
-                      <label>Mode</label>
-                      <div className="pill-group">
-                        <button
-                          type="button"
-                          className={form.mode === 'online' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
-                        >
-                          Online
-                        </button>
-                        <button
-                          type="button"
-                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
-                        >
-                          Offline Studio
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="field field-checkbox" style={{ marginTop: '1.5rem', marginBottom: '0.25rem' }}>
-                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <div className="field" style={{ marginTop: '1rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           name="isFirstSession"
                           checked={form.isFirstSession}
                           onChange={handleChange}
-                          style={{ marginTop: '0.2rem' }}
+                          style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', flexShrink: 0 }}
                         />
                         <span>This is my first session with MindSettler</span>
                       </label>
                     </div>
 
                     {form.isFirstSession && (
-                      <div className="field field-checkbox" style={{ marginTop: '0' }}>
-                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <div className="field" style={{ marginTop: '0.75rem' }}>
+                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
                           <input
                             type="checkbox"
                             checked={acceptPolicies}
                             onChange={(e) => setAcceptPolicies(e.target.checked)}
-                            style={{ marginTop: '0.2rem' }}
+                            style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', flexShrink: 0, marginTop: '3px' }}
                           />
-                          <span>
+                          <span style={{ lineHeight: '1.5' }}>
                             I have read and accept the{' '}
                             <Link
                               to="/privacy"
@@ -567,6 +647,18 @@ export default function BookingPage() {
                     />
                   </div>
 
+                  <div className="field">
+                    <label htmlFor="reviewDetails">Review details (optional)</label>
+                    <textarea
+                      id="reviewDetails"
+                      name="reviewDetails"
+                      rows={3}
+                      placeholder="Share past therapy experience, key wins, or areas you want us to review."
+                      value={form.reviewDetails}
+                      onChange={handleChange}
+                    />
+                  </div>
+
                   {/* Summary of selections */}
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
@@ -625,7 +717,7 @@ export default function BookingPage() {
                       <>
                         <p>Please scan the QR code to pay for your session. Upload the screenshot below to confirm your booking.</p>
                         <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
-                          <img src="/payment-qr.png" alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                          <img src={paymentQrUrl} alt="Payment QR Code" style={{ maxWidth: '200px', border: '1px solid #ddd', borderRadius: '8px' }} />
                         </div>
                         <div className="field">
                           <label htmlFor="paymentScreenshot">Upload Payment Screenshot *</label>
@@ -649,6 +741,33 @@ export default function BookingPage() {
                         <p style={{ fontSize: '1.1rem', color: 'var(--text)' }}>You can pay at the studio before your session begins.</p>
                         <p style={{ fontSize: '0.9rem', color: 'var(--text-soft)', marginTop: '0.5rem' }}>Please arrive 10 minutes early to complete the payment.</p>
                       </div>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: '1rem', padding: '1rem', background: '#fff', borderRadius: '8px', border: '1px solid #eee' }}>
+                    <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Apply discount code</h4>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value)}
+                        placeholder="Enter coupon"
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        onClick={handleApplyCoupon}
+                        disabled={applyingCoupon}
+                        style={{ minWidth: '120px' }}
+                      >
+                        {applyingCoupon ? 'Applying…' : 'Apply'}
+                      </button>
+                    </div>
+                    {couponMessage && (
+                      <p style={{ marginTop: '0.5rem', color: appliedCoupon ? '#1b7f3b' : '#c0392b', fontWeight: 600 }}>
+                        {couponMessage}
+                      </p>
                     )}
                   </div>
 
@@ -679,6 +798,9 @@ export default function BookingPage() {
                         'mbct': 'Mindfulness-Based Cognitive Therapy',
                         'cct': 'Client-Centred Therapy'
                       }[form.sessionType] || form.sessionType}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Session fee:</strong> ₹{sessionPrice || 0}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Discount:</strong> ₹{discountAmount || 0}</p>
+                      <p style={{ margin: '0.25rem 0', fontWeight: 700 }}><strong>Total to pay:</strong> ₹{totalAmount || 0}</p>
                     </div>
                   </div>
                 </>
