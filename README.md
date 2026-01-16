@@ -21,71 +21,170 @@ MindSettler is a structured psycho-education studio designed to help individuals
 
 ```
 MindSettler/
-├── backend/                    # Node.js backend
-│   ├── index.js
+├── backend/                        # Node.js + Express backend
+│   ├── index.js                    # Main server file with all API routes
 │   ├── package.json
+│   ├── firebaseAdmin.js            # Firebase Admin SDK configuration
 │   ├── config/
-│   │   └── db.js              # Database configuration
-│   └── models/
-│       ├── User.js
-│       ├── Booking.js
-│       ├── Contact.js
-│       ├── CorporateRequest.js
-│       └── DisabledSlot.js
-├── frontend/                   # React + Vite frontend
+│   │   └── db.js                   # MongoDB database configuration
+│   ├── middleware/
+│   │   ├── firebaseAuth.js         # Firebase authentication middleware (users)
+│   │   └── firebaseAdminAuth.js    # Firebase admin authentication middleware
+│   ├── models/
+│   │   ├── Admin.js                # Admin user model
+│   │   ├── Booking.js              # Session booking model
+│   │   ├── Contact.js              # Contact form submissions
+│   │   ├── CorporateRequest.js     # Corporate inquiry model
+│   │   ├── Coupon.js               # Discount coupons model
+│   │   ├── DisabledSlot.js         # Blocked time slots model
+│   │   ├── Message.js              # User notifications/messages
+│   │   ├── SessionPrice.js         # Session pricing model
+│   │   └── User.js                 # User profile model
+│   ├── services/
+│   │   ├── emailService.js         # Email templates & sending (Nodemailer)
+│   │   └── rescheduleEmail.js      # Rescheduling notification emails
+│   └── uploads/                    # Profile pictures & payment screenshots
+├── frontend/                       # React + Vite user-facing website
 │   ├── src/
-│   │   ├── pages/             # Page components
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── AboutPage.jsx
-│   │   │   ├── BookingPage.jsx
-│   │   │   ├── ContactPage.jsx
-│   │   │   ├── CorporatePage.jsx
-│   │   │   ├── FAQsPage.jsx
-│   │   │   ├── PsychoEducationPage.jsx
-│   │   │   ├── JourneyPage.jsx
-│   │   │   ├── PrivacyPage.jsx
-│   │   │   ├── NonRefundPage.jsx
-│   │   │   ├── ConfidentialityPage.jsx
-│   │   │   ├── AdminLoginPage.jsx
-│   │   │   └── AdminDashboardPage.jsx
-│   │   ├── components/        # Reusable components
-│   │   │   ├── Layout.jsx     # Header, Footer, Chatbot
-│   │   │   └── DesiGallery.jsx
-│   │   ├── hooks/             # Custom React hooks
-│   │   │   ├── useInView.js
-│   │   │   └── useParallax.js
-│   │   ├── api.js             # API calls
-│   │   ├── App.jsx            # Main app component
-│   │   ├── main.jsx           # Entry point
-│   │   └── *.css              # Styling files
+│   │   ├── pages/
+│   │   │   ├── IntroPage.jsx       # Welcome intro animation
+│   │   │   ├── HomePage.jsx        # Landing page
+│   │   │   ├── AboutPage.jsx       # About MindSettler
+│   │   │   ├── BookingPage.jsx     # Session booking with payment
+│   │   │   ├── ContactPage.jsx     # Contact form
+│   │   │   ├── CorporatePage.jsx   # Corporate/B2B inquiries
+│   │   │   ├── FAQsPage.jsx        # Frequently asked questions
+│   │   │   ├── PsychoEducationPage.jsx  # Educational content
+│   │   │   ├── JourneyPage.jsx     # Session journey pathway
+│   │   │   ├── AuthPage.jsx        # User login/signup
+│   │   │   ├── ResetPasswordPage.jsx   # Password reset
+│   │   │   ├── PrivacyPage.jsx     # Privacy policy
+│   │   │   ├── NonRefundPage.jsx   # Refund policy
+│   │   │   └── ConfidentialityPage.jsx # Confidentiality & ethics
+│   │   ├── components/
+│   │   │   ├── Layout.jsx          # Header, footer, navigation
+│   │   │   ├── ChatBot.jsx         # AI-powered chatbot (Gemini)
+│   │   │   ├── IntroAnimation.jsx  # Animated intro sequence
+│   │   │   ├── JourneySection.jsx  # Session journey visualization
+│   │   │   ├── DesiGallery.jsx     # Image gallery component
+│   │   │   ├── FadeIn.jsx          # Scroll-triggered animations
+│   │   │   ├── FloatingBlobs.jsx   # Background visual effects
+│   │   │   ├── HeroParticleBackground.jsx  # Particle animations
+│   │   │   ├── NeuralNetwork.jsx   # Neural network visualization
+│   │   │   └── ParticleDivider.jsx # Section divider effect
+│   │   ├── hooks/
+│   │   │   ├── useAuth.js          # Firebase authentication hook
+│   │   │   ├── useInView.js        # Intersection observer hook
+│   │   │   └── useParallax.js      # Parallax scroll effect hook
+│   │   ├── api.js                  # API base URL config
+│   │   ├── authedApi.js            # Authenticated API calls
+│   │   ├── firebase.js             # Firebase client config
+│   │   ├── App.jsx                 # Main app with routing
+│   │   └── *.css                   # Styling files
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── index.html
+├── admin-frontend/                 # React + Vite admin dashboard
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── AdminLoginPage.jsx      # Admin authentication
+│   │   │   ├── AdminDashboardPage.jsx  # Main admin panel
+│   │   │   ├── ForgotPasswordPage.jsx  # Admin password recovery
+│   │   │   └── ResetPasswordPage.jsx   # Admin password reset
+│   │   ├── api.js                  # Admin API config
+│   │   ├── firebase.js             # Firebase admin config
+│   │   └── App.jsx                 # Admin app routing
 │   ├── package.json
 │   ├── vite.config.js
 │   └── index.html
+├── package.json                    # Root package (Google GenAI)
 └── README.md
-
 ```
 
 ## Tech Stack
 
-### Frontend
+### Frontend (User Website)
 
-- **React 18** - UI library
-- **Vite** - Fast build tool and dev server
-- **React Router** - Client-side routing
-- **CSS** - Custom styling with design system variables
+- **React 19** - UI library with hooks
+- **Vite 7** - Fast build tool and dev server
+- **React Router DOM 7** - Client-side routing
+- **Tailwind CSS 3** - Utility-first CSS framework
+- **Framer Motion** - Smooth animations and transitions
+- **Lucide React** - Modern icon library
+- **Axios** - HTTP client for API requests
+- **Firebase 11** - Authentication (Email/Password + Google OAuth)
+
+### Admin Frontend
+
+- **React 19** - UI library
+- **Vite 7** - Build tool
+- **React Router DOM 7** - Routing
+- **Firebase 12** - Admin authentication
 
 ### Backend
 
-- **Node.js** - Runtime
-- **Express.js** - Web framework (implied from structure)
-- **MongoDB** - Database (from config/db.js)
+- **Node.js** - Runtime environment
+- **Express.js 4** - Web framework & REST API
+- **MongoDB** - NoSQL database with Mongoose 9 ODM
+- **Firebase Admin SDK 13** - Server-side authentication & user management
+- **Nodemailer 7** - Email service (SMTP)
+- **Multer** - File upload handling (profile pics, payment screenshots)
+- **bcryptjs** - Password hashing
+- **dotenv** - Environment variable management
+
+### Google Technologies
+
+- **Firebase Authentication** - User authentication with Email/Password and Google Sign-In
+- **Firebase Admin SDK** - Server-side user management and token verification
+- **Google Gemini AI** - AI-powered chatbot using `@google/genai` SDK
+- **Google Calendar API** - Session calendar integration (OAuth scope)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
+- MongoDB instance (local or Atlas)
+- Firebase project with Authentication enabled
+- Google Gemini API key
+
+### Environment Variables
+
+#### Backend (`backend/.env`)
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+GEMINI_API_KEY=your_google_gemini_api_key
+ADMIN_TOKEN_SECRET=your_admin_secret
+ADMIN_EMAIL=admin@mindsettler.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+```
+
+#### Frontend (`frontend/.env`)
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+#### Admin Frontend (`admin-frontend/.env`)
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
 
 ### Frontend Setup
 
@@ -97,6 +196,16 @@ npm run dev
 
 The frontend will run at `http://localhost:5173/`
 
+### Admin Frontend Setup
+
+```bash
+cd admin-frontend
+npm install
+npm run dev
+```
+
+The admin panel will run at `http://localhost:5174/`
+
 ### Backend Setup
 
 ```bash
@@ -105,50 +214,161 @@ npm install
 npm run dev
 ```
 
+The backend API will run at `http://localhost:5000/`
+
+## Website Flow
+
+### User Journey
+
+1. **Intro Animation** → First-time visitors see a welcoming intro animation
+2. **Home Page** → Landing page with hero section, stats, and call-to-action
+3. **Explore Content** → Users can browse About, Psycho-Education, Journey pages
+4. **Authentication** → Sign up/Login via Email or Google OAuth
+5. **Book Session** → Multi-step booking form with:
+   - Personal details & session type selection
+   - Date/time slot selection
+   - Payment via UPI (QR code) with screenshot upload
+   - Optional coupon code application
+6. **Confirmation** → Email confirmation sent, session added to calendar
+7. **Dashboard** → Users can view their bookings and messages
+
+### Admin Flow
+
+1. **Admin Login** → Secure authentication with Firebase
+2. **Dashboard Overview** → View pending bookings, stats, and notifications
+3. **Manage Bookings** → Approve, reject, or reschedule sessions
+4. **Manage Slots** → Disable specific dates/times
+5. **Pricing Management** → Set session prices for different therapy types
+6. **Coupon Management** → Create and manage discount codes
+7. **View Inquiries** → Handle contact and corporate requests
+8. **QR Code Management** → Upload/update payment QR code
+
 ## Features
 
-### Pages
+### Pages (User Frontend)
 
-- **Home** - Landing page with hero, stats, and CTA
-- **About** - MindSettler's mission, values, and process
-- **Psycho-Education** - Educational content and resources
-- **Journey** - Structured pathway for sessions
-- **Booking** - Session booking form
-- **Corporate** - B2B offerings and group programs
-- **FAQs** - Common questions answered
-- **Contact** - Contact form for inquiries
-- **Privacy Policy** - Data privacy, usage data, and third-party tools
-- **Non-Refund Policy** - Refund, cancellation, and payment handling terms
-- **Confidentiality & Ethics** - Session confidentiality, ethical boundaries, and crisis redirection
-- **Admin Dashboard** - Admin panel for managing bookings and inquiries
+| Page | Description |
+|------|-------------|
+| **Intro** | Animated welcome screen (first visit only) |
+| **Home** | Hero section, statistics, testimonials, and CTAs |
+| **About** | MindSettler's mission, values, and process |
+| **Psycho-Education** | Educational content and therapy types |
+| **Journey** | Visual session pathway and what to expect |
+| **Booking** | Multi-step session booking with payment |
+| **Corporate** | B2B offerings and group program inquiries |
+| **FAQs** | Frequently asked questions |
+| **Contact** | Contact form for general inquiries |
+| **Auth** | User login/signup with Firebase |
+| **Privacy Policy** | Data privacy and usage |
+| **Non-Refund Policy** | Refund and cancellation terms |
+| **Confidentiality** | Session confidentiality and ethical boundaries |
+
+### Session Types
+
+- Cognitive Behavioural Therapy (CBT)
+- Dialectical Behavioural Therapy (DBT)
+- Acceptance & Commitment Therapy (ACT)
+- Schema Therapy
+- Emotion-Focused Therapy (EFT)
+- Emotion-Focused Couples Therapy
+- Mindfulness-Based Cognitive Therapy (MBCT)
+- Client-Centred Therapy (CCT)
 
 ### Key Features
 
-- 📱 Responsive design
-- 💬 In-app chatbot guide (navigation & informational guidance only)
-- 📅 Session booking system
-- 👥 Corporate/group inquiries
-- 📋 Admin dashboard
-- 🔐 Confidential session management
-- 🎨 Calming, accessible UI
+| Feature | Description |
+|---------|-------------|
+| 📱 **Responsive Design** | Mobile-first, works on all devices |
+| 🤖 **AI Chatbot** | Gemini-powered assistant for navigation & info |
+| 🔐 **Firebase Auth** | Secure authentication with Google Sign-In |
+| 📅 **Smart Booking** | Real-time slot availability with calendar sync |
+| 💳 **UPI Payments** | QR-based payments with screenshot verification |
+| 🎟️ **Coupon System** | Discount codes with validation |
+| 📧 **Email Notifications** | Booking confirmations & password resets |
+| 👤 **User Profiles** | Profile pictures and booking history |
+| 🎨 **Animations** | Smooth Framer Motion transitions |
+| 🌊 **Visual Effects** | Particle backgrounds, floating blobs |
+
+### Admin Dashboard Features
+
+| Feature | Description |
+|---------|-------------|
+| 📊 **Dashboard Overview** | Stats and pending items at a glance |
+| 📋 **Booking Management** | Approve, reject, reschedule bookings |
+| 📅 **Slot Management** | Disable dates/times for unavailability |
+| 💰 **Pricing Control** | Set session prices by therapy type |
+| 🎟️ **Coupon Management** | Create/manage discount codes |
+| 📨 **Contact Inquiries** | View and respond to contact forms |
+| 🏢 **Corporate Requests** | Manage B2B and group inquiries |
+| 🖼️ **QR Code Upload** | Update payment QR code |
+| 🔑 **Password Management** | Change admin credentials |
+
+### API Endpoints
+
+#### Authentication
+- `POST /api/admin/login` - Admin login
+- `POST /api/admin/forgot-password` - Admin password reset request
+- `POST /api/admin/reset-password` - Reset admin password
+- `POST /api/auth/forgot-password` - User password reset
+- `POST /api/auth/reset-password` - Reset user password
+- `GET /api/auth/resolve-username` - Check username availability
+
+#### User Profile
+- `GET /api/me` - Get current user profile
+- `PATCH /api/me` - Update user profile
+- `POST /api/me/profile-pic` - Upload profile picture
+- `GET /api/me/bookings` - Get user's bookings
+- `GET /api/me/messages` - Get user's messages
+
+#### Bookings
+- `POST /api/bookings` - Create new booking
+- `GET /api/bookings` - Get all bookings (admin)
+- `PATCH /api/bookings/:id/status` - Update booking status
+- `POST /api/bookings/:id/reschedule` - Reschedule booking
+
+#### Slots & Pricing
+- `GET /api/slots` - Get available time slots
+- `POST /api/slots/disable` - Disable slots (admin)
+- `GET /api/pricing` - Get session prices
+- `PUT /api/pricing` - Update prices (admin)
+
+#### Coupons
+- `GET /api/coupons` - Get all coupons (admin)
+- `POST /api/coupons` - Create coupon (admin)
+- `POST /api/coupons/validate` - Validate coupon code
+
+#### Forms & Inquiries
+- `POST /api/contact` - Submit contact form
+- `GET /api/contact` - Get contacts (admin)
+- `POST /api/corporate` - Submit corporate inquiry
+- `GET /api/corporate` - Get corporate requests (admin)
+
+#### Miscellaneous
+- `GET /api/health` - Health check
+- `POST /api/chatbot` - AI chatbot interaction
+- `GET /api/settings/qr` - Get payment QR URL
+- `POST /api/settings/qr` - Update payment QR (admin)
 
 ## Design System
 
 ### Color Palette
 
-- **Primary Accent**: #DD1764 (Rose/Pink)
-- **Background**: #FFFFFF (White)
-- **Background Alt**: #f5f5f5 (Light Gray)
-- **Card**: #f0f0f0 (Gray)
-- **Text**: #3F2965 (Deep Purple)
-- **Text Soft**: #6b5b7f (Muted Purple)
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Primary Accent | `#DD1764` | Buttons, links, highlights |
+| Background | `#FFFFFF` | Main background |
+| Background Alt | `#f5f5f5` | Secondary sections |
+| Card | `#f0f0f0` | Card backgrounds |
+| Text Primary | `#3F2965` | Headings, primary text |
+| Text Soft | `#6b5b7f` | Secondary text, captions |
 
 ### Typography & Components
 
 - Custom radius values for rounded corners
 - Soft shadows for depth
-- Smooth animations and transitions
+- Smooth Framer Motion animations
 - Accessible button styles and interactions
+- Responsive typography scaling
 
 **Design Intent**: The design system is intentionally minimal and calming, aimed at reducing cognitive load and supporting emotional safety for users navigating sensitive topics.
 
@@ -156,23 +376,39 @@ npm run dev
 
 ### Payment Methods
 
-- UPI payments
-- Cash payments (in-studio)
+- **UPI Payments** - Scan QR code and upload screenshot
+- **Cash Payments** - Available for in-studio sessions
 
 ### Booking Flow
 
-1. User fills booking or contact form
-2. MindSettler reviews and confirms via email/WhatsApp
-3. Payment details shared after confirmation
-4. Session scheduled
+```
+┌─────────────────┐
+│  1. User Info   │ → Name, phone, session type, first session?
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  2. Date/Time   │ → Select available slot
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│   3. Payment    │ → Scan QR, upload screenshot, apply coupon
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  4. Confirm     │ → Review and submit
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│ Email + Calendar│ → Confirmation sent, Google Calendar sync
+└─────────────────┘
+```
 
 ### Chatbot Constraints
 
 - 🤖 Chatbot provides navigation and informational guidance only
 - 🚫 Does not offer psychological advice, diagnosis, or therapeutic suggestions
 - 🔁 Redirects users to booking, contact, or corporate forms when appropriate
-
-See [Layout.jsx](./frontend/src/components/Layout.jsx) for chatbot implementation.
+- 💬 Powered by Google Gemini AI with context about MindSettler services
 
 ### Cancellation & Refunds
 
@@ -203,27 +439,13 @@ See our [Confidentiality & Ethics Policy](./frontend/src/pages/ConfidentialityPa
 - **Scope**: Psycho-education only—not therapy, diagnosis, or psychiatric care
 - **Consent**: Users must acknowledge policies before first session
 
-### Admin Capabilities
-
-- Manage available time slots and disable dates
-- Approve or reject booking requests
-- View pending and confirmed sessions
-- Manage contact and corporate inquiries
-- Track user information securely
-
 ### Helplines (India)
 
-- AASRA: 9820466726
-- iCall: 9152987821
-- Vandrevala Foundation: 9999 77 6555
-
-## Environment Variables
-
-The backend requires environment variables for database connection and server configuration.
-
-Refer to `config/db.js` for required database setup and create a `.env` file in the `backend/` directory with necessary credentials (database URI, server port, etc.).
-
-Frontend environment variables (if needed) should be defined in `.env` at the `frontend/` root level.
+| Service | Number |
+|---------|--------|
+| AASRA | 9820466726 |
+| iCall | 9152987821 |
+| Vandrevala Foundation | 9999 77 6555 |
 
 ## Development
 
@@ -232,7 +454,16 @@ Frontend environment variables (if needed) should be defined in `.env` at the `f
 **Frontend:**
 
 ```bash
-npm run dev       # Start dev server
+npm run dev       # Start dev server (port 5173)
+npm run build     # Build for production
+npm run preview   # Preview production build
+npm run lint      # Run ESLint
+```
+
+**Admin Frontend:**
+
+```bash
+npm run dev       # Start dev server (port 5174)
 npm run build     # Build for production
 npm run preview   # Preview production build
 npm run lint      # Run ESLint
@@ -241,7 +472,33 @@ npm run lint      # Run ESLint
 **Backend:**
 
 ```bash
-npm run dev       # Start backend server
+npm start         # Start production server
+npm run dev       # Start with nodemon (auto-reload)
+```
+
+### Project Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Frontend (React)                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
+│  │   Firebase   │  │   REST API   │  │  Google Calendar │  │
+│  │     Auth     │  │    Calls     │  │    (OAuth)       │  │
+│  └──────┬───────┘  └──────┬───────┘  └────────┬─────────┘  │
+└─────────┼─────────────────┼────────────────────┼────────────┘
+          │                 │                    │
+          ↓                 ↓                    ↓
+┌─────────────────────────────────────────────────────────────┐
+│                    Backend (Express.js)                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
+│  │Firebase Admin│  │   MongoDB    │  │   Gemini AI      │  │
+│  │     SDK      │  │  (Mongoose)  │  │   (Chatbot)      │  │
+│  └──────────────┘  └──────────────┘  └──────────────────┘  │
+│  ┌──────────────┐  ┌──────────────┐                        │
+│  │  Nodemailer  │  │    Multer    │                        │
+│  │   (Email)    │  │  (Uploads)   │                        │
+│  └──────────────┘  └──────────────┘                        │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Contributing
