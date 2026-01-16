@@ -1285,12 +1285,17 @@ main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+  align-items: end;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.field label {
+  min-height: 1.2rem;
 }
 
 .field-checkbox {
@@ -1470,7 +1475,7 @@ textarea {
 
 .pill-group {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.4rem;
 }
 
