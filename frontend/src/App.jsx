@@ -22,6 +22,7 @@ import NonRefundPage from './pages/NonRefundPage'
 import ConfidentialityPage from './pages/ConfidentialityPage'
 import AuthPage from './pages/AuthPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import TherapiesPage from './pages/TherapiesPage'
 import ChatBot from './components/ChatBot'
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
         <Route path="/confidentiality" element={<Layout><ConfidentialityPage /></Layout>} />
         <Route path="/auth" element={<Layout><AuthPage /></Layout>} />
         <Route path="/reset-password" element={<Layout><ResetPasswordPage /></Layout>} />
+        <Route path="/therapies" element={<Layout><TherapiesPage /></Layout>} />
       </Routes>
       <ChatBot />
     </>
