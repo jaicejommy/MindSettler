@@ -340,3 +340,46 @@
         font-size: 0.85rem;
     }
 }
+
+/* Resource Link */
+.resource-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.resource-item-link::after {
+    display: none !important;
+}
+
+/* Read time */
+.resource-read-time {
+    font-size: 0.8rem;
+    color: #9a8ab0;
+}
+
+/* Loading */
+.resources-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem;
+    color: #6b5b7f;
+}
+
+.resources-loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(63, 41, 101, 0.1);
+    border-top-color: #3F2965;
+    border-radius: 50%;
+    animation: resources-spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes resources-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -22,6 +22,7 @@ import NonRefundPage from './pages/NonRefundPage'
 import ConfidentialityPage from './pages/ConfidentialityPage'
 import AuthPage from './pages/AuthPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import ArticlePage from './pages/ArticlePage'
 import ChatBot from './components/ChatBot'
 
 function App() {
@@ -47,10 +48,10 @@ function App() {
       <Routes>
         {/* Show intro on root if first time, otherwise show home */}
         <Route path="/" element={showIntro ? <IntroPage /> : <Layout><HomePage /></Layout>} />
-        
+
         {/* Intro page - can also be accessed directly */}
         <Route path="/intro" element={<IntroPage />} />
-        
+
         {/* All other pages */}
         <Route path="/about" element={<Layout><AboutPage /></Layout>} />
         <Route path="/psycho-education" element={<Layout><PsychoEducationPage /></Layout>} />
@@ -64,6 +65,7 @@ function App() {
         <Route path="/confidentiality" element={<Layout><ConfidentialityPage /></Layout>} />
         <Route path="/auth" element={<Layout><AuthPage /></Layout>} />
         <Route path="/reset-password" element={<Layout><ResetPasswordPage /></Layout>} />
+        <Route path="/article/:slug" element={<Layout><ArticlePage /></Layout>} />
       </Routes>
       <ChatBot />
     </>
