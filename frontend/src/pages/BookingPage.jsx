@@ -381,28 +381,8 @@ export default function BookingPage() {
                     </div>
                   </div>
 
-                  <h3>Session preferences</h3>
+                  <h3 style={{ marginTop: '1.5rem' }}>Session preferences</h3>
                   <div className="field-grid">
-                    <div className="field">
-                      <label>Mode</label>
-                      <div className="pill-group">
-                        <button
-                          type="button"
-                          className={form.mode === 'online' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
-                        >
-                          Online
-                        </button>
-                        <button
-                          type="button"
-                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
-                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
-                        >
-                          Offline Studio
-                        </button>
-                      </div>
-                    </div>
-
                     <div className="field">
                       <label htmlFor="clientType">Client Type *</label>
                       <select
@@ -442,20 +422,41 @@ export default function BookingPage() {
                       </select>
                     </div>
 
-                    <div className="field field-checkbox">
-                      <label>
+                    <div className="field">
+                      <label>Mode</label>
+                      <div className="pill-group">
+                        <button
+                          type="button"
+                          className={form.mode === 'online' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+                        >
+                          Online
+                        </button>
+                        <button
+                          type="button"
+                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                        >
+                          Offline Studio
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="field field-checkbox" style={{ marginTop: '1.5rem', marginBottom: '0.25rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                         <input
                           type="checkbox"
                           name="isFirstSession"
                           checked={form.isFirstSession}
                           onChange={handleChange}
+                          style={{ marginTop: '0.2rem' }}
                         />
-                        This is my first session with MindSettler
+                        <span>This is my first session with MindSettler</span>
                       </label>
                     </div>
 
                     {form.isFirstSession && (
-                      <div className="field field-checkbox" style={{ marginTop: '0.5rem' }}>
+                      <div className="field field-checkbox" style={{ marginTop: '0' }}>
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                           <input
                             type="checkbox"
