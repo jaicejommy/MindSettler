@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { Heart, ArrowRight } from 'lucide-react'
 import ChatBot from './ChatBot'
 import authedApi from '../authedApi'
 import { listenToAuthChanges, logout } from '../firebase'
@@ -916,47 +917,70 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="site-footer">
-      <div className="footer-inner">
-        <div className="footer-brand">
-          <p className="brand-name">MindSettler</p>
-          <p className="footer-tagline">Psycho-education &amp; mental well-being platform</p>
-          <p className="footer-disclaimer">
-            This website is for informational purposes only and is not a substitute for professional medical or
-            psychiatric care.
-          </p>
-        </div>
-        <div className="footer-section">
-          <h4 className="footer-section-title">Policies</h4>
-          <div className="footer-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/non-refund">Non-refund policy</a>
-            <a href="/confidentiality">Confidentiality</a>
+    <footer className="bg-secondary-950 text-white pt-24 pb-12 rounded-t-[3rem] mt-10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary-900 to-secondary-950 z-0"></div>
+      
+      {/* Abstract Shapes */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-900/20 rounded-full blur-[100px]"></div>
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-800/20 rounded-full blur-[100px]"></div>
+      
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+             <div className="flex items-center gap-2 mb-6">
+                <Heart className="w-6 h-6 text-primary-400 fill-primary-400" />
+                <span className="font-display text-2xl font-bold tracking-tight">MindSettler</span>
+             </div>
+             <p className="text-secondary-200 text-sm leading-relaxed mb-8 opacity-80">
+               Gentle, structured, and grounded in real life. Making mental health support accessible and understandable for everyone.
+             </p>
+             <div className="flex gap-4">
+               {['Instagram', 'Twitter', 'LinkedIn'].map((social) => (
+                 <a key={social} href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary-500 hover:border-primary-500 transition-all duration-300 group">
+                    <span className="sr-only">{social}</span>
+                    <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform" />
+                 </a>
+               ))}
+             </div>
+          </div>
+
+          <div className="col-span-1">
+            <h4 className="font-bold text-lg mb-6 text-white">Company</h4>
+            <ul className="space-y-4">
+              {['About', 'Psycho-education', 'Our Team', 'Careers'].map(item => (
+                <li key={item}><a href="#" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">{item}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="col-span-1">
+            <h4 className="font-bold text-lg mb-6 text-white">Support</h4>
+            <ul className="space-y-4">
+              {['Contact Us', 'FAQs', 'Privacy Policy', 'Terms of Service'].map(item => (
+                <li key={item}><a href="#" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">{item}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="col-span-1">
+             <h4 className="font-bold text-lg mb-6 text-white">Get in touch</h4>
+             <button className="w-full py-4 bg-white text-secondary-950 rounded-xl font-bold hover:bg-primary-50 transition-all mb-4 shadow-lg hover:shadow-white/20">
+               Book a Consultation
+             </button>
+             <p className="text-[10px] text-secondary-400 leading-tight">
+               * This website is for informational purposes only and is not a substitute for professional medical care.
+             </p>
           </div>
         </div>
-        <div className="footer-section">
-          <h4 className="footer-section-title">Connect</h4>
-          <div className="footer-links">
-            <a
-              href="https://www.instagram.com/mindsettlerbypb/"
-              target="_blank"
-              rel="noreferrer"
-              className="footer-social-link"
-            >
-              <span>Instagram</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-            </a>
+
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-secondary-400 text-sm">© {new Date().getFullYear()} MindSettler. All rights reserved.</p>
+          <div className="flex items-center gap-2 text-secondary-400 text-sm bg-white/5 px-4 py-1.5 rounded-full">
+             <span>Designed with</span>
+             <Heart className="w-3 h-3 text-primary-500 fill-primary-500 animate-pulse" />
+             <span>for wellness</span>
           </div>
         </div>
-      </div>
-      <div className="footer-bottom">
-        <p className="footer-copyright">
-          &copy; {new Date().getFullYear()} MindSettler by Parnika. All rights reserved.
-        </p>
       </div>
     </footer>
   )

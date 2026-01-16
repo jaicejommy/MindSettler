@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import './design-system.css'
 import './overrides.css'
-
 import './scroll-animations.css'
 import './reel.css'
 import './no-step-labels.css'
@@ -25,40 +25,45 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import ChatBot from './components/ChatBot'
 
 function App() {
+  const location = useLocation()
   const [isReady, setIsReady] = useState(false)
+  const [showIntro, setShowIntro] = useState(() => {
+    // Check if user has already seen the intro in this session
+    return !sessionStorage.getItem('introViewed')
+  })
 
   useEffect(() => {
     setIsReady(true)
   }, [])
 
+  // Check sessionStorage whenever location changes
+  useEffect(() => {
+    const introViewed = sessionStorage.getItem('introViewed')
+    setShowIntro(!introViewed)
+  }, [location])
+
   return (
     <>
       <Routes>
-        {/* Intro page - standalone without Layout */}
+        {/* Show intro on root if first time, otherwise show home */}
+        <Route path="/" element={showIntro ? <IntroPage /> : <Layout><HomePage /></Layout>} />
+        
+        {/* Intro page - can also be accessed directly */}
         <Route path="/intro" element={<IntroPage />} />
         
-        {/* Main app with Layout */}
-        <Route path="/*" element={
-          <div className={`app-root ${isReady ? 'app-ready' : ''}`}>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/psycho-education" element={<PsychoEducationPage />} />
-                <Route path="/journey" element={<JourneyPage />} />
-                <Route path="/booking" element={<BookingPage />} />
-                <Route path="/corporate" element={<CorporatePage />} />
-                <Route path="/faqs" element={<FAQsPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/non-refund" element={<NonRefundPage />} />
-                <Route path="/confidentiality" element={<ConfidentialityPage />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-              </Routes>
-            </Layout>
-          </div>
-        } />
+        {/* All other pages */}
+        <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+        <Route path="/psycho-education" element={<Layout><PsychoEducationPage /></Layout>} />
+        <Route path="/journey" element={<Layout><JourneyPage /></Layout>} />
+        <Route path="/booking" element={<Layout><BookingPage /></Layout>} />
+        <Route path="/corporate" element={<Layout><CorporatePage /></Layout>} />
+        <Route path="/faqs" element={<Layout><FAQsPage /></Layout>} />
+        <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+        <Route path="/privacy" element={<Layout><PrivacyPage /></Layout>} />
+        <Route path="/non-refund" element={<Layout><NonRefundPage /></Layout>} />
+        <Route path="/confidentiality" element={<Layout><ConfidentialityPage /></Layout>} />
+        <Route path="/auth" element={<Layout><AuthPage /></Layout>} />
+        <Route path="/reset-password" element={<Layout><ResetPasswordPage /></Layout>} />
       </Routes>
       <ChatBot />
     </>
