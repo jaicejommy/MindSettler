@@ -17,6 +17,8 @@ export default function BookingPage() {
     time: '',
     notes: '',
     paymentScreenshot: null,
+    couponCode: '',
+    reviewDetails: '',
   })
   const [touched, setTouched] = useState({})
   const [acceptPolicies, setAcceptPolicies] = useState(false)
@@ -29,6 +31,13 @@ export default function BookingPage() {
   const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [paymentQrUrl, setPaymentQrUrl] = useState('/payment-qr.png') // Default fallback
+  const [pricing, setPricing] = useState([])
+  const [pricingLoading, setPricingLoading] = useState(true)
+  const [pricingError, setPricingError] = useState('')
+  const [couponInput, setCouponInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponMessage, setCouponMessage] = useState('')
+  const [applyingCoupon, setApplyingCoupon] = useState(false)
 
   const { user, loading: authLoading } = useAuth()
 
@@ -46,6 +55,27 @@ export default function BookingPage() {
       }
     }
     fetchQr()
+  }, [])
+
+  useEffect(() => {
+    async function fetchPricing() {
+      try {
+        setPricingLoading(true)
+        setPricingError('')
+        const res = await fetch(`${API_BASE_URL}/pricing`)
+        if (!res.ok) {
+          throw new Error('Unable to load pricing')
+        }
+        const data = await res.json()
+        setPricing(data.prices || [])
+      } catch (e) {
+        console.error('Pricing fetch failed', e)
+        setPricingError('Could not load session pricing right now. Prices will show as 0 until refreshed.')
+      } finally {
+        setPricingLoading(false)
+      }
+    }
+    fetchPricing()
   }, [])
 
   // Step validation
@@ -121,6 +151,26 @@ export default function BookingPage() {
     fetchSlots()
   }, [form.date])
 
+  const priceMap = useMemo(() => {
+    const map = {}
+    pricing.forEach((p) => {
+      map[p.sessionType] = p.price
+    })
+    return map
+  }, [pricing])
+
+  const sessionPrice = useMemo(() => priceMap[form.sessionType] ?? 0, [priceMap, form.sessionType])
+
+  const discountAmount = useMemo(() => {
+    if (!appliedCoupon) return 0
+    if (appliedCoupon.isPercentage) {
+      return Math.round((sessionPrice * appliedCoupon.discountAmount) / 100)
+    }
+    return appliedCoupon.discountAmount
+  }, [appliedCoupon, sessionPrice])
+
+  const totalAmount = useMemo(() => Math.max(sessionPrice - discountAmount, 0), [sessionPrice, discountAmount])
+
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target
     if (type === 'file') {
@@ -143,6 +193,40 @@ export default function BookingPage() {
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhone = (phone) => !phone || /^\d{10,}$/.test(phone.replace(/\D/g, ''))
+
+  async function handleApplyCoupon() {
+    if (!couponInput.trim()) {
+      setCouponMessage('Enter a coupon code to apply')
+      return
+    }
+
+    try {
+      setApplyingCoupon(true)
+      setCouponMessage('')
+      const res = await fetch(`${API_BASE_URL}/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput.trim() }),
+      })
+      const data = await res.json()
+
+      if (!data.valid || !data.coupon) {
+        setAppliedCoupon(null)
+        setForm((prev) => ({ ...prev, couponCode: '' }))
+        setCouponMessage('Coupon is invalid or expired')
+        return
+      }
+
+      setAppliedCoupon(data.coupon)
+      setForm((prev) => ({ ...prev, couponCode: data.coupon.code }))
+      setCouponMessage(`Coupon applied: ${data.coupon.code}`)
+    } catch (err) {
+      console.error('Coupon apply failed', err)
+      setCouponMessage('Could not apply coupon right now')
+    } finally {
+      setApplyingCoupon(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -234,10 +318,15 @@ export default function BookingPage() {
         time: '',
         notes: '',
         paymentScreenshot: null,
+        couponCode: '',
+        reviewDetails: '',
       })
       setTouched({})
       setAcceptPolicies(false)
       setPaymentOption('online')
+      setAppliedCoupon(null)
+      setCouponInput('')
+      setCouponMessage('')
       setCurrentStep(1)
     } catch (err) {
       console.error(err)
@@ -416,30 +505,41 @@ export default function BookingPage() {
                         <option value="mbct">Mindfulness-Based Cognitive Therapy</option>
                         <option value="cct">Client-Centred Therapy</option>
                       </select>
+                      {form.sessionType && (
+                        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 600 }}>
+                          Session fee: ₹{pricingLoading ? '...' : (sessionPrice || 0)}
+                        </p>
+                      )}
+                      {pricingError && (
+                        <p style={{ marginTop: '0.25rem', fontSize: '0.85rem', color: '#c0392b' }}>
+                          {pricingError}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="field field-checkbox">
-                      <label>
+                    <div className="field" style={{ marginTop: '1rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           name="isFirstSession"
                           checked={form.isFirstSession}
                           onChange={handleChange}
+                          style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', flexShrink: 0 }}
                         />
-                        This is my first session with MindSettler
+                        <span>This is my first session with MindSettler</span>
                       </label>
                     </div>
 
                     {form.isFirstSession && (
-                      <div className="field field-checkbox" style={{ marginTop: '0.5rem' }}>
-                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <div className="field" style={{ marginTop: '0.75rem' }}>
+                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
                           <input
                             type="checkbox"
                             checked={acceptPolicies}
                             onChange={(e) => setAcceptPolicies(e.target.checked)}
-                            style={{ marginTop: '0.2rem' }}
+                            style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', flexShrink: 0, marginTop: '3px' }}
                           />
-                          <span>
+                          <span style={{ lineHeight: '1.5' }}>
                             I have read and accept the{' '}
                             <Link
                               to="/privacy"
@@ -542,6 +642,18 @@ export default function BookingPage() {
                     />
                   </div>
 
+                  <div className="field">
+                    <label htmlFor="reviewDetails">Review details (optional)</label>
+                    <textarea
+                      id="reviewDetails"
+                      name="reviewDetails"
+                      rows={3}
+                      placeholder="Share past therapy experience, key wins, or areas you want us to review."
+                      value={form.reviewDetails}
+                      onChange={handleChange}
+                    />
+                  </div>
+
                   {/* Summary of selections */}
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
@@ -621,6 +733,33 @@ export default function BookingPage() {
                     )}
                   </div>
 
+                  <div style={{ marginTop: '1rem', padding: '1rem', background: '#fff', borderRadius: '8px', border: '1px solid #eee' }}>
+                    <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Apply discount code</h4>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value)}
+                        placeholder="Enter coupon"
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        onClick={handleApplyCoupon}
+                        disabled={applyingCoupon}
+                        style={{ minWidth: '120px' }}
+                      >
+                        {applyingCoupon ? 'Applying…' : 'Apply'}
+                      </button>
+                    </div>
+                    {couponMessage && (
+                      <p style={{ marginTop: '0.5rem', color: appliedCoupon ? '#1b7f3b' : '#c0392b', fontWeight: 600 }}>
+                        {couponMessage}
+                      </p>
+                    )}
+                  </div>
+
                   {/* Booking Summary */}
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>Booking Summary</h4>
@@ -641,6 +780,9 @@ export default function BookingPage() {
                         'mbct': 'Mindfulness-Based Cognitive Therapy',
                         'cct': 'Client-Centred Therapy'
                       }[form.sessionType] || form.sessionType}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Session fee:</strong> ₹{sessionPrice || 0}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Discount:</strong> ₹{discountAmount || 0}</p>
+                      <p style={{ margin: '0.25rem 0', fontWeight: 700 }}><strong>Total to pay:</strong> ₹{totalAmount || 0}</p>
                     </div>
                   </div>
                 </>
