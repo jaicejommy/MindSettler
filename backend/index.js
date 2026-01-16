@@ -18,6 +18,7 @@ const Admin = require('./models/Admin')
 const Message = require('./models/Message')
 const SessionPrice = require('./models/SessionPrice')
 const Coupon = require('./models/Coupon')
+const Article = require('./models/Article')
 
 // Services
 const { sendPasswordResetEmail, sendBookingConfirmationEmail, sendBookingRejectionEmail, sendWelcomeEmail } = require('./services/emailService')
@@ -1217,6 +1218,86 @@ app.get('/api/corporate', firebaseAdminAuth, async (_req, res) => {
   }
 })
 
+// ================= PRICING API =================
+// Get session prices
+app.get('/api/pricing', async (_req, res) => {
+  try {
+    let prices = await SessionPrice.find({})
+
+    // If no prices in DB, return defaults based on SESSION_TYPES
+    if (prices.length === 0) {
+      prices = SESSION_TYPES.map((t) => ({
+        sessionType: t.id,
+        label: t.label,
+        price: 0,
+        currency: 'INR',
+        isActive: true,
+      }))
+    } else {
+      // Merge with any new types in SESSION_TYPES that might not be in DB yet
+      // This ensures we always return the full list known to the system
+      const dbTypes = new Set(prices.map(p => p.sessionType))
+
+      SESSION_TYPES.forEach(t => {
+        if (!dbTypes.has(t.id)) {
+          prices.push({
+            sessionType: t.id,
+            label: t.label,
+            price: 0,
+            currency: 'INR',
+            isActive: true,
+          })
+        }
+      })
+    }
+
+    // Sort to match SESSION_TYPES order
+    const typeOrder = SESSION_TYPES.map(t => t.id)
+    prices.sort((a, b) => typeOrder.indexOf(a.sessionType) - typeOrder.indexOf(b.sessionType))
+
+    res.json({ prices })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch pricing' })
+  }
+})
+
+// Update session prices (admin only)
+app.put('/api/pricing', firebaseAdminAuth, async (req, res) => {
+  try {
+    const { prices } = req.body
+    if (!Array.isArray(prices)) {
+      return res.status(400).json({ message: 'prices must be an array' })
+    }
+
+    const updatedPrices = []
+
+    // Bulk upsert
+    for (const p of prices) {
+      const updated = await SessionPrice.findOneAndUpdate(
+        { sessionType: p.sessionType },
+        {
+          label: p.label,
+          price: p.price,
+          currency: p.currency || 'INR',
+          isActive: p.isActive !== undefined ? p.isActive : true
+        },
+        { new: true, upsert: true, setDefaultsOnInsert: true }
+      )
+      updatedPrices.push(updated)
+    }
+
+    // Sort again before returning
+    const typeOrder = SESSION_TYPES.map(t => t.id)
+    updatedPrices.sort((a, b) => typeOrder.indexOf(a.sessionType) - typeOrder.indexOf(b.sessionType))
+
+    res.json({ message: 'Pricing updated', prices: updatedPrices })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to update pricing' })
+  }
+})
+
 // ================= CHATBOT ENDPOINT =================
 app.post('/api/chatbot', async (req, res) => {
   try {
@@ -1319,7 +1400,7 @@ const qrUpload = multer({
 app.get('/api/settings/qr', (req, res) => {
   const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
   let qrFile = null
-  
+
   for (const ext of possibleExtensions) {
     const filePath = path.join(uploadsDir, `payment-qr${ext}`)
     if (fs.existsSync(filePath)) {
@@ -1327,7 +1408,7 @@ app.get('/api/settings/qr', (req, res) => {
       break
     }
   }
-  
+
   if (qrFile) {
     res.json({ qrUrl: `/uploads/${qrFile}?t=${Date.now()}` })
   } else {
@@ -1342,14 +1423,14 @@ app.post('/api/settings/qr', (req, res) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
-  
+
   const token = authHeader.split(' ')[1]
   const adminId = verifyAdminToken(token)
-  
+
   if (!adminId) {
     return res.status(401).json({ message: 'Invalid admin token' })
   }
-  
+
   // Delete existing QR files before upload
   const possibleExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
   for (const ext of possibleExtensions) {
@@ -1362,21 +1443,166 @@ app.post('/api/settings/qr', (req, res) => {
       }
     }
   }
-  
+
   qrUpload.single('qr')(req, res, (err) => {
     if (err) {
       return res.status(400).json({ message: err.message })
     }
-    
+
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' })
     }
-    
-    res.json({ 
+
+    res.json({
       message: 'QR code updated successfully',
       qrUrl: `/uploads/${req.file.filename}?t=${Date.now()}`
     })
   })
+})
+
+// ================= ARTICLES API =================
+
+// Get all published articles (public)
+app.get('/api/articles', async (req, res) => {
+  try {
+    const { category, limit = 20, skip = 0 } = req.query
+
+    const query = { isPublished: true }
+    if (category && category !== 'all') {
+      query.category = category
+    }
+
+    const articles = await Article.find(query)
+      .select('title slug category coverImage excerpt readTime publishedAt author tags')
+      .sort({ publishedAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(skip))
+
+    const total = await Article.countDocuments(query)
+
+    res.json({ articles, total })
+  } catch (err) {
+    console.error('Failed to fetch articles:', err)
+    res.status(500).json({ message: 'Failed to fetch articles' })
+  }
+})
+
+// Get single article by slug (public)
+app.get('/api/articles/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params
+
+    const article = await Article.findOne({ slug, isPublished: true })
+
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' })
+    }
+
+    res.json({ article })
+  } catch (err) {
+    console.error('Failed to fetch article:', err)
+    res.status(500).json({ message: 'Failed to fetch article' })
+  }
+})
+
+// Admin: Get all articles (including drafts)
+app.get('/api/admin/articles', requireAdmin, async (req, res) => {
+  try {
+    const articles = await Article.find()
+      .sort({ createdAt: -1 })
+
+    res.json({ articles })
+  } catch (err) {
+    console.error('Failed to fetch admin articles:', err)
+    res.status(500).json({ message: 'Failed to fetch articles' })
+  }
+})
+
+// Admin: Create article
+app.post('/api/admin/articles', requireAdmin, async (req, res) => {
+  try {
+    const { title, category, coverImage, excerpt, content, isPublished, tags } = req.body || {}
+
+    if (!title || !excerpt || !content) {
+      return res.status(400).json({ message: 'Title, excerpt, and content are required' })
+    }
+
+    // Generate slug from title
+    let slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+
+    // Check for slug uniqueness
+    const existingSlug = await Article.findOne({ slug })
+    if (existingSlug) {
+      slug = `${slug}-${Date.now()}`
+    }
+
+    const article = await Article.create({
+      title,
+      slug,
+      category: category || 'article',
+      coverImage: coverImage || null,
+      excerpt,
+      content,
+      isPublished: isPublished || false,
+      tags: tags || []
+    })
+
+    res.status(201).json({ message: 'Article created', article })
+  } catch (err) {
+    console.error('Failed to create article:', err)
+    res.status(500).json({ message: 'Failed to create article' })
+  }
+})
+
+// Admin: Update article
+app.put('/api/admin/articles/:id', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params
+    const { title, category, coverImage, excerpt, content, isPublished, tags } = req.body || {}
+
+    const article = await Article.findById(id)
+
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' })
+    }
+
+    // Update fields
+    if (title) article.title = title
+    if (category) article.category = category
+    if (coverImage !== undefined) article.coverImage = coverImage
+    if (excerpt) article.excerpt = excerpt
+    if (content) article.content = content
+    if (isPublished !== undefined) article.isPublished = isPublished
+    if (tags) article.tags = tags
+
+    await article.save()
+
+    res.json({ message: 'Article updated', article })
+  } catch (err) {
+    console.error('Failed to update article:', err)
+    res.status(500).json({ message: 'Failed to update article' })
+  }
+})
+
+// Admin: Delete article
+app.delete('/api/admin/articles/:id', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const article = await Article.findByIdAndDelete(id)
+
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' })
+    }
+
+    res.json({ message: 'Article deleted' })
+  } catch (err) {
+    console.error('Failed to delete article:', err)
+    res.status(500).json({ message: 'Failed to delete article' })
+  }
 })
 
 // 404 fallback
