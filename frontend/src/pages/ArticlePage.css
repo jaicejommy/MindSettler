@@ -1,0 +1,415 @@
+/* ==========================================
+   ARTICLE PAGE - BRAND ALIGNED
+   ========================================== */
+
+/* Layout Wrapper */
+.article-page-wrapper {
+    background-color: var(--bg);
+    min-height: 100vh;
+}
+
+/* Immersive Hero Section */
+.article-hero {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 400px;
+    max-height: 600px;
+    overflow: hidden;
+    background-color: var(--bg-alt);
+    /* Using global var */
+}
+
+.article-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: zoomIn 20s ease infinite alternate;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.1);
+    }
+}
+
+.article-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.2) 60%,
+            rgba(63, 41, 101, 0.4) 100%
+            /* using dark purple tint */
+        );
+}
+
+/* Article Container */
+.article-container {
+    max-width: 800px;
+    /* Slightly wider for modern feel */
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+}
+
+/* Header floating over/under hero */
+.article-header {
+    margin-top: -100px;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 10;
+    background: var(--bg);
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Meta Data */
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    font-family: inherit;
+    /* Inherit global Nunito */
+}
+
+.article-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+}
+
+/* Using simple brand colors for badges */
+.article-category.article {
+    background: rgba(0, 150, 80, 0.1);
+    color: #009650;
+}
+
+.article-category.blog {
+    background: rgba(221, 23, 100, 0.1);
+    color: var(--accent);
+}
+
+.article-category.video {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.article-category.exercise {
+    background: rgba(168, 85, 247, 0.1);
+    color: #9333ea;
+}
+
+.article-date,
+.article-read-time {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    font-weight: 600;
+}
+
+.article-read-time {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Title */
+.article-title {
+    font-family: inherit;
+    /* Nunito */
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    margin: 0 0 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+/* Author Section */
+.article-author-block {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 1.5rem;
+}
+
+.author-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--text));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.author-role {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+}
+
+/* CONTENT TYPOGRAPHY - Matching Site Style */
+.article-content {
+    font-family: inherit;
+    /* Nunito */
+    font-size: 1.15rem;
+    /* slightly smaller than the previous serif 1.25rem */
+    line-height: 1.8;
+    color: #2d2d3a;
+    /* legible dark grey */
+    padding-bottom: 6rem;
+}
+
+/* Removed drop cap to match cleaner site style, or kept it subtle? 
+   let's keep it but use the site font and color */
+.article-content>p:first-of-type::first-letter {
+    float: left;
+    font-size: 4rem;
+    line-height: 0.85;
+    font-weight: 800;
+    color: var(--text);
+    /* Purple */
+    margin-right: 0.75rem;
+    margin-top: 0.1rem;
+}
+
+.article-content p {
+    margin-bottom: 2rem;
+}
+
+.article-content h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 3.5rem 0 1.25rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.article-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 2.5rem 0 1rem;
+}
+
+.article-content blockquote {
+    position: relative;
+    margin: 2.5rem 0;
+    padding: 1rem 2rem;
+    border-left: 4px solid var(--accent);
+    /* Brand accent border */
+    font-size: 1.4rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: var(--text);
+    text-align: left;
+    /* standard alignment */
+    background: var(--bg-alt);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.article-content blockquote::before {
+    content: none;
+    /* remove big quote mark for cleaner look */
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.75rem;
+    color: var(--text-soft);
+    /* softer text for list items sometimes looks good, or keep inherit */
+    color: inherit;
+}
+
+/* Links inside article */
+.article-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(221, 23, 100, 0.3);
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.article-content a:hover {
+    text-decoration-color: var(--accent);
+    background-color: rgba(221, 23, 100, 0.05);
+}
+
+.article-content hr {
+    border: 0;
+    height: 1px;
+    background: transparent;
+    border-top: 1px solid var(--border-subtle);
+    margin: 4rem auto;
+    width: 60%;
+}
+
+.article-content code {
+    font-family: 'Fira Code', monospace;
+    /* Fira code is fine if installed or it falls back */
+    font-family: monospace;
+    font-size: 0.9em;
+    background: #f1f5f9;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    color: var(--accent);
+    /* Brand accent for code */
+}
+
+.article-content pre {
+    background: #2d2d3a;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: 2rem 0;
+    color: #f8f8f2;
+    font-size: 0.9rem;
+}
+
+.article-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Engagement Floating Bar */
+.engagement-bar {
+    position: fixed;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    z-index: 50;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.engagement-bar:hover {
+    opacity: 1;
+}
+
+.engagement-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.engagement-btn:hover {
+    transform: scale(1.1);
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(221, 23, 100, 0.15);
+}
+
+.engagement-count {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    margin-top: -1rem;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .engagement-bar {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        top: auto;
+        transform: translateX(-50%);
+        flex-direction: row;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        box-shadow: var(--shadow-subtle);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .engagement-btn {
+        width: 40px;
+        height: 40px;
+        box-shadow: none;
+        background: transparent;
+        border: none;
+    }
+
+    .engagement-count {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-hero {
+        height: 45vh;
+    }
+
+    .article-header {
+        margin-top: -60px;
+        padding: 2rem 1.5rem;
+    }
+
+    .article-title {
+        font-size: 1.75rem;
+    }
+
+    .article-content {
+        font-size: 1.05rem;
+        line-height: 1.75;
+    }
+
+    .article-content blockquote {
+        font-size: 1.15rem;
+        padding: 1rem;
+    }
+
+    .article-content blockquote::before {
+        display: none;
+    }
+}
