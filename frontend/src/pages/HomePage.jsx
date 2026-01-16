@@ -789,7 +789,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 selection:bg-primary-200 selection:text-secondary-900 overflow-x-hidden">
-      <Navbar navigate={navigate} />
       <main>
         <Hero navigate={navigate} />
         <Stats />
