@@ -570,6 +570,12 @@ export default function BookingPage() {
                   <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(63, 41, 101, 0.05)', borderRadius: '8px' }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-soft)' }}>
                       <strong>Session summary:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'} • {{
+                        'kids': 'Kids (5+)',
+                        'teens': 'Teens',
+                        'adults': 'Adults (up to 65)',
+                        'couples': 'Couples',
+                        'families': 'Families'
+                      }[form.clientType] || form.clientType} • {{
                         'cbt': 'Cognitive Behavioural Therapy (CBT)',
                         'dbt': 'Dialectical Behavioural Therapy (DBT)',
                         'act': 'Acceptance & Commitment Therapy (ACT)',
@@ -655,6 +661,13 @@ export default function BookingPage() {
                       <p style={{ margin: '0.25rem 0' }}><strong>Date:</strong> {form.date}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Time:</strong> {form.time}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Mode:</strong> {form.mode === 'online' ? 'Online' : 'Offline Studio'}</p>
+                      <p style={{ margin: '0.25rem 0' }}><strong>Client Type:</strong> {{
+                        'kids': 'Kids (5+)',
+                        'teens': 'Teens',
+                        'adults': 'Adults (up to 65)',
+                        'couples': 'Couples',
+                        'families': 'Families'
+                      }[form.clientType] || form.clientType}</p>
                       <p style={{ margin: '0.25rem 0' }}><strong>Focus:</strong> {{
                         'cbt': 'Cognitive Behavioural Therapy (CBT)',
                         'dbt': 'Dialectical Behavioural Therapy (DBT)',
