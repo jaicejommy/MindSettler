@@ -895,10 +895,11 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <Heart className="w-6 h-6 text-primary-400 fill-primary-400" />
-              <span className="font-display text-2xl font-bold tracking-tight">MindSettler</span>
-            </div>
+            <img
+              src="/Mindsettler_logo_Final-Photoroom.png"
+              alt="MindSettler"
+              className="w-48 h-auto mb-6 bg-white p-3 rounded-xl"
+            />
             <p className="text-secondary-200 text-sm leading-relaxed mb-8 opacity-80">
               Gentle, structured, and grounded in real life. Making mental health support accessible and understandable for everyone.
             </p>
