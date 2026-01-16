@@ -537,25 +537,7 @@ function Header() {
                   <span className="mobile-nav-text">About</span>
                 </a>
 
-                <a href="/psycho-education" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/psycho-education') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">Psycho-education</span>
-                </a>
 
-                <a href="/journey" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/journey') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">Journey</span>
-                </a>
 
                 <a href="/booking" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/booking') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
@@ -585,16 +567,7 @@ function Header() {
                   <span className="mobile-nav-text">Corporate</span>
                 </a>
 
-                <a href="/faqs" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/faqs') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">FAQs</span>
-                </a>
+
 
                 <a href="/contact" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/contact') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
@@ -638,20 +611,11 @@ function Header() {
           <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
           </a>
-          <a href="/psycho-education" onClick={closeMobileMenu}>
-            <button type="button">Psycho-education</button>
-          </a>
-          <a href="/journey" onClick={closeMobileMenu}>
-            <button type="button">Journey</button>
-          </a>
           <a href="/booking" onClick={closeMobileMenu}>
             <button type="button">Book a session</button>
           </a>
           <a href="/corporate" onClick={closeMobileMenu}>
             <button type="button">Corporate</button>
-          </a>
-          <a href="/faqs" onClick={closeMobileMenu}>
-            <button type="button">FAQs</button>
           </a>
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
@@ -679,13 +643,6 @@ function Header() {
             </a>
           )}
 
-          {/* Admin Portal Link */}
-          <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer">
-            <button type="button" className="nav-admin-btn">
-              Admin
-            </button>
-          </a>
-
           {/* Notification Bell */}
           {firebaseUser && (
             <div className="notif-dropdown-container" style={{ position: 'relative' }}>
@@ -707,207 +664,207 @@ function Header() {
 
               {/* Notification Dropdown */}
               {notifOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '0.5rem',
+                    width: '320px',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    background: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 32px rgba(63, 41, 101, 0.2)',
+                    border: '1px solid rgba(63, 41, 101, 0.1)',
+                    zIndex: 1000,
+                  }}
+                >
+                  {/* Header */}
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: '0.5rem',
-                      width: '320px',
-                      maxHeight: '400px',
-                      overflowY: 'auto',
-                      background: 'white',
-                      borderRadius: '12px',
-                      boxShadow: '0 8px 32px rgba(63, 41, 101, 0.2)',
-                      border: '1px solid rgba(63, 41, 101, 0.1)',
-                      zIndex: 1000,
+                      padding: '0.75rem 1rem',
+                      borderBottom: '1px solid rgba(63, 41, 101, 0.1)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    {/* Header */}
-                    <div
-                      style={{
-                        padding: '0.75rem 1rem',
-                        borderBottom: '1px solid rgba(63, 41, 101, 0.1)',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1a1a2e' }}>
-                        Notifications
-                      </span>
-                      {unreadCount > 0 && (
-                        <button
-                          type="button"
-                          onClick={markAllAsRead}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#6b5b95',
-                            fontSize: '0.75rem',
-                            cursor: 'pointer',
-                            textDecoration: 'underline',
-                          }}
-                        >
-                          Mark all read
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Messages List */}
-                    {messages.length === 0 ? (
-                      <div style={{ padding: '2rem 1rem', textAlign: 'center' }}>
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(63, 41, 101, 0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}>
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                        <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-soft)' }}>
-                          No notifications yet
-                        </p>
-                      </div>
-                    ) : (
-                      <div>
-                        {messages.slice(0, 5).map((msg) => (
-                          <div
-                            key={msg._id}
-                            onClick={() => {
-                              if (!msg.isRead) markAsRead(msg._id)
-                              setNotifOpen(false)
-                              navigate('/auth')
-                            }}
-                            style={{
-                              padding: '0.75rem 1rem',
-                              borderBottom: '1px solid rgba(63, 41, 101, 0.06)',
-                              cursor: 'pointer',
-                              background: msg.isRead ? 'transparent' : 'rgba(241, 237, 255, 0.5)',
-                              transition: 'background 0.2s',
-                            }}
-                          >
-                            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                              {/* Icon */}
-                              <div
-                                style={{
-                                  width: 28,
-                                  height: 28,
-                                  borderRadius: '8px',
-                                  background: msg.type === 'booking_confirmed'
-                                    ? 'rgba(0, 150, 80, 0.12)'
-                                    : msg.type === 'booking_rejected'
-                                      ? 'rgba(220, 53, 69, 0.12)'
-                                      : msg.type === 'booking_rescheduled'
-                                        ? 'rgba(59, 130, 246, 0.12)'
-                                        : 'rgba(63, 41, 101, 0.1)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  flexShrink: 0,
-                                }}
-                              >
-                                {msg.type === 'booking_confirmed' && (
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#006644" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                  </svg>
-                                )}
-                                {msg.type === 'booking_rejected' && (
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                  </svg>
-                                )}
-                                {msg.type === 'booking_rescheduled' && (
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                  </svg>
-                                )}
-                                {msg.type === 'general' && (
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f2965" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                  </svg>
-                                )}
-                              </div>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.15rem' }}>
-                                  <span style={{
-                                    fontSize: '0.8rem',
-                                    fontWeight: msg.isRead ? 500 : 600,
-                                    color: msg.isRead ? 'var(--text-soft)' : '#1a1a2e',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                  }}>
-                                    {msg.title}
-                                  </span>
-                                  <span style={{ fontSize: '0.65rem', color: 'var(--text-soft)', flexShrink: 0, marginLeft: '0.5rem' }}>
-                                    {new Date(msg.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                  </span>
-                                </div>
-                                <p style={{
-                                  margin: 0,
-                                  fontSize: '0.75rem',
-                                  color: 'var(--text-soft)',
-                                  lineHeight: 1.3,
-                                  display: '-webkit-box',
-                                  WebkitLineClamp: 2,
-                                  WebkitBoxOrient: 'vertical',
-                                  overflow: 'hidden',
-                                }}>
-                                  {msg.content}
-                                </p>
-                              </div>
-                              {!msg.isRead && (
-                                <div
-                                  style={{
-                                    width: 8,
-                                    height: 8,
-                                    borderRadius: '50%',
-                                    background: '#6b5b95',
-                                    flexShrink: 0,
-                                    marginTop: '0.25rem',
-                                  }}
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Footer */}
-                    {messages.length > 0 && (
-                      <div
+                    <span style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1a1a2e' }}>
+                      Notifications
+                    </span>
+                    {unreadCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={markAllAsRead}
                         style={{
-                          padding: '0.6rem 1rem',
-                          borderTop: '1px solid rgba(63, 41, 101, 0.1)',
-                          textAlign: 'center',
+                          background: 'none',
+                          border: 'none',
+                          color: '#6b5b95',
+                          fontSize: '0.75rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
                         }}
                       >
-                        <button
-                          type="button"
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Messages List */}
+                  {messages.length === 0 ? (
+                    <div style={{ padding: '2rem 1rem', textAlign: 'center' }}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(63, 41, 101, 0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}>
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                      </svg>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-soft)' }}>
+                        No notifications yet
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      {messages.slice(0, 5).map((msg) => (
+                        <div
+                          key={msg._id}
                           onClick={() => {
+                            if (!msg.isRead) markAsRead(msg._id)
                             setNotifOpen(false)
                             navigate('/auth')
                           }}
                           style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#6b5b95',
-                            fontSize: '0.8rem',
+                            padding: '0.75rem 1rem',
+                            borderBottom: '1px solid rgba(63, 41, 101, 0.06)',
                             cursor: 'pointer',
-                            fontWeight: 500,
+                            background: msg.isRead ? 'transparent' : 'rgba(241, 237, 255, 0.5)',
+                            transition: 'background 0.2s',
                           }}
                         >
-                          View all in Profile →
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+                          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                            {/* Icon */}
+                            <div
+                              style={{
+                                width: 28,
+                                height: 28,
+                                borderRadius: '8px',
+                                background: msg.type === 'booking_confirmed'
+                                  ? 'rgba(0, 150, 80, 0.12)'
+                                  : msg.type === 'booking_rejected'
+                                    ? 'rgba(220, 53, 69, 0.12)'
+                                    : msg.type === 'booking_rescheduled'
+                                      ? 'rgba(59, 130, 246, 0.12)'
+                                      : 'rgba(63, 41, 101, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                              }}
+                            >
+                              {msg.type === 'booking_confirmed' && (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#006644" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              )}
+                              {msg.type === 'booking_rejected' && (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                              )}
+                              {msg.type === 'booking_rescheduled' && (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                                </svg>
+                              )}
+                              {msg.type === 'general' && (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f2965" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                              )}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.15rem' }}>
+                                <span style={{
+                                  fontSize: '0.8rem',
+                                  fontWeight: msg.isRead ? 500 : 600,
+                                  color: msg.isRead ? 'var(--text-soft)' : '#1a1a2e',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                }}>
+                                  {msg.title}
+                                </span>
+                                <span style={{ fontSize: '0.65rem', color: 'var(--text-soft)', flexShrink: 0, marginLeft: '0.5rem' }}>
+                                  {new Date(msg.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </span>
+                              </div>
+                              <p style={{
+                                margin: 0,
+                                fontSize: '0.75rem',
+                                color: 'var(--text-soft)',
+                                lineHeight: 1.3,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                              }}>
+                                {msg.content}
+                              </p>
+                            </div>
+                            {!msg.isRead && (
+                              <div
+                                style={{
+                                  width: 8,
+                                  height: 8,
+                                  borderRadius: '50%',
+                                  background: '#6b5b95',
+                                  flexShrink: 0,
+                                  marginTop: '0.25rem',
+                                }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Footer */}
+                  {messages.length > 0 && (
+                    <div
+                      style={{
+                        padding: '0.6rem 1rem',
+                        borderTop: '1px solid rgba(63, 41, 101, 0.1)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNotifOpen(false)
+                          navigate('/auth')
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#6b5b95',
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          fontWeight: 500,
+                        }}
+                      >
+                        View all in Profile →
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
       </div>
     </header>
@@ -919,29 +876,29 @@ function Footer() {
   return (
     <footer className="bg-secondary-950 text-white pt-24 pb-12 rounded-t-[3rem] mt-10 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-secondary-900 to-secondary-950 z-0"></div>
-      
+
       {/* Abstract Shapes */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-900/20 rounded-full blur-[100px]"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-800/20 rounded-full blur-[100px]"></div>
-      
+
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-             <div className="flex items-center gap-2 mb-6">
-                <Heart className="w-6 h-6 text-primary-400 fill-primary-400" />
-                <span className="font-display text-2xl font-bold tracking-tight">MindSettler</span>
-             </div>
-             <p className="text-secondary-200 text-sm leading-relaxed mb-8 opacity-80">
-               Gentle, structured, and grounded in real life. Making mental health support accessible and understandable for everyone.
-             </p>
-             <div className="flex gap-4">
-               {['Instagram', 'Twitter', 'LinkedIn'].map((social) => (
-                 <a key={social} href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary-500 hover:border-primary-500 transition-all duration-300 group">
-                    <span className="sr-only">{social}</span>
-                    <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform" />
-                 </a>
-               ))}
-             </div>
+            <div className="flex items-center gap-2 mb-6">
+              <Heart className="w-6 h-6 text-primary-400 fill-primary-400" />
+              <span className="font-display text-2xl font-bold tracking-tight">MindSettler</span>
+            </div>
+            <p className="text-secondary-200 text-sm leading-relaxed mb-8 opacity-80">
+              Gentle, structured, and grounded in real life. Making mental health support accessible and understandable for everyone.
+            </p>
+            <div className="flex gap-4">
+              {['Instagram', 'Twitter', 'LinkedIn'].map((social) => (
+                <a key={social} href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary-500 hover:border-primary-500 transition-all duration-300 group">
+                  <span className="sr-only">{social}</span>
+                  <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform" />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div className="col-span-1">
@@ -963,22 +920,22 @@ function Footer() {
           </div>
 
           <div className="col-span-1">
-             <h4 className="font-bold text-lg mb-6 text-white">Get in touch</h4>
-             <button className="w-full py-4 bg-white text-secondary-950 rounded-xl font-bold hover:bg-primary-50 transition-all mb-4 shadow-lg hover:shadow-white/20">
-               Book a Consultation
-             </button>
-             <p className="text-[10px] text-secondary-400 leading-tight">
-               * This website is for informational purposes only and is not a substitute for professional medical care.
-             </p>
+            <h4 className="font-bold text-lg mb-6 text-white">Get in touch</h4>
+            <button className="w-full py-4 bg-white text-secondary-950 rounded-xl font-bold hover:bg-primary-50 transition-all mb-4 shadow-lg hover:shadow-white/20">
+              Book a Consultation
+            </button>
+            <p className="text-[10px] text-secondary-400 leading-tight">
+              * This website is for informational purposes only and is not a substitute for professional medical care.
+            </p>
           </div>
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-secondary-400 text-sm">© {new Date().getFullYear()} MindSettler. All rights reserved.</p>
           <div className="flex items-center gap-2 text-secondary-400 text-sm bg-white/5 px-4 py-1.5 rounded-full">
-             <span>Designed with</span>
-             <Heart className="w-3 h-3 text-primary-500 fill-primary-500 animate-pulse" />
-             <span>for wellness</span>
+            <span>Designed with</span>
+            <Heart className="w-3 h-3 text-primary-500 fill-primary-500 animate-pulse" />
+            <span>for wellness</span>
           </div>
         </div>
       </div>
