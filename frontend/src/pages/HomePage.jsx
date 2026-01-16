@@ -684,7 +684,10 @@ const Process = () => {
                         <p className="text-sm text-secondary-500">Chat with us for a quick consultation.</p>
                       </div>
                    </div>
-                   <button className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium">Start Chat</button>
+                   <button 
+                     className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium hover:bg-secondary-800 transition-colors"
+                     onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
+                   >Start Chat</button>
                 </div>
               </FadeIn>
             </div>
