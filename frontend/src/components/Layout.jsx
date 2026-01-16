@@ -537,25 +537,7 @@ function Header() {
                   <span className="mobile-nav-text">About</span>
                 </a>
 
-                <a href="/psycho-education" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/psycho-education') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">Psycho-education</span>
-                </a>
 
-                <a href="/journey" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/journey') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">Journey</span>
-                </a>
 
                 <a href="/booking" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/booking') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
@@ -585,16 +567,7 @@ function Header() {
                   <span className="mobile-nav-text">Corporate</span>
                 </a>
 
-                <a href="/faqs" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/faqs') ? 'active' : ''}`}>
-                  <span className="mobile-nav-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                  </span>
-                  <span className="mobile-nav-text">FAQs</span>
-                </a>
+
 
                 <a href="/contact" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/contact') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
@@ -638,20 +611,11 @@ function Header() {
           <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
           </a>
-          <a href="/psycho-education" onClick={closeMobileMenu}>
-            <button type="button">Psycho-education</button>
-          </a>
-          <a href="/journey" onClick={closeMobileMenu}>
-            <button type="button">Journey</button>
-          </a>
           <a href="/booking" onClick={closeMobileMenu}>
             <button type="button">Book a session</button>
           </a>
           <a href="/corporate" onClick={closeMobileMenu}>
             <button type="button">Corporate</button>
-          </a>
-          <a href="/faqs" onClick={closeMobileMenu}>
-            <button type="button">FAQs</button>
           </a>
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
@@ -678,13 +642,6 @@ function Header() {
               <button type="button">Sign in</button>
             </a>
           )}
-
-          {/* Admin Portal Link */}
-          <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer">
-            <button type="button" className="nav-admin-btn">
-              Admin
-            </button>
-          </a>
 
           {/* Notification Bell */}
           {firebaseUser && (
