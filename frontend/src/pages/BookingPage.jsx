@@ -522,7 +522,27 @@ export default function BookingPage() {
                       )}
                     </div>
 
-                    <div className="field" style={{ marginTop: '1rem' }}>
+                    <div className="field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Mode *</label>
+                      <div className="pill-group">
+                        <button
+                          type="button"
+                          className={form.mode === 'online' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'online' }))}
+                        >
+                          Online
+                        </button>
+                        <button
+                          type="button"
+                          className={form.mode === 'offline' ? 'pill active' : 'pill'}
+                          onClick={() => setForm((f) => ({ ...f, mode: 'offline' }))}
+                        >
+                          Offline Studio
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="field" style={{ marginTop: '1rem', gridColumn: '1 / -1' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
@@ -536,7 +556,7 @@ export default function BookingPage() {
                     </div>
 
                     {form.isFirstSession && (
-                      <div className="field" style={{ marginTop: '0.75rem' }}>
+                      <div className="field" style={{ marginTop: '0.25rem', gridColumn: '1 / -1' }}>
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
                           <input
                             type="checkbox"
@@ -571,8 +591,7 @@ export default function BookingPage() {
                               style={{ color: 'var(--primary)', textDecoration: 'underline' }}
                             >
                               Confidentiality Policy
-                            </Link>
-                            {' '}*
+                            </Link><span style={{ whiteSpace: 'nowrap' }}>&nbsp;*</span>
                           </span>
                         </label>
                       </div>
