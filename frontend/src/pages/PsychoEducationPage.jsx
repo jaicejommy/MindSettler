@@ -1,60 +1,67 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './ResourcesPage.css'
 
-// Sample resources data with simplified categories
-const resourcesData = [
+// Fallback data if API is empty or fails
+const fallbackData = [
   {
     id: 1,
+    slug: 'stress-vs-burnout',
     category: 'article',
     title: 'Stress vs. Burnout: What\'s the Difference?',
     excerpt: 'Why feeling tired isn\'t the same as being emotionally exhausted, and how to notice early warning signs.'
   },
   {
     id: 2,
+    slug: 'understanding-emotional-patterns',
     category: 'video',
     title: 'Understanding Your Emotional Patterns',
     excerpt: 'A guided video exploring how our emotions develop patterns over time and what we can do to recognize them.'
   },
   {
     id: 3,
+    slug: 'emotional-hygiene',
     category: 'article',
     title: 'Emotional Hygiene for Everyday Life',
     excerpt: 'Small, doable practices that help you check in with yourself before things feel too heavy.'
   },
   {
     id: 4,
+    slug: 'grounding-technique',
     category: 'exercise',
     title: 'The 5-4-3-2-1 Grounding Technique',
     excerpt: 'A simple sensory exercise to help you return to the present moment when anxiety feels overwhelming.'
   },
   {
     id: 5,
+    slug: 'healthy-boundaries',
     category: 'article',
     title: 'Setting Healthy Boundaries',
     excerpt: 'Learn how to establish and maintain boundaries that protect your mental well-being without guilt.'
   },
   {
     id: 6,
+    slug: 'body-scan',
     category: 'exercise',
     title: 'Body Scan: Where Do I Feel It?',
     excerpt: 'A guided prompt that connects physical sensations with emotional patterns for deeper self-awareness.'
   },
   {
     id: 7,
+    slug: 'mindful-breathing',
     category: 'video',
     title: 'Mindful Breathing: A 10-Minute Practice',
     excerpt: 'Follow along with this calming video to learn breathing techniques that reduce stress and anxiety.'
   },
   {
     id: 8,
+    slug: 'journaling-prompts',
     category: 'exercise',
     title: 'Journaling Prompts for Self-Reflection',
     excerpt: 'Thoughtful questions to help you explore your feelings and gain clarity on what matters most.'
   }
 ]
 
-// Simplified categories
 const categories = [
   { id: 'all', label: 'All' },
   { id: 'article', label: 'Articles' },
@@ -64,10 +71,40 @@ const categories = [
 
 export default function PsychoEducationPage() {
   const [activeFilter, setActiveFilter] = useState('all')
+  const [resources, setResources] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch articles from API
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles`)
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.articles && data.articles.length > 0) {
+            setResources(data.articles)
+          } else {
+            // Use fallback if API returns empty
+            setResources(fallbackData)
+          }
+        } else {
+          setResources(fallbackData)
+        }
+      } catch (err) {
+        console.error('Failed to fetch articles:', err)
+        setResources(fallbackData)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchArticles()
+  }, [])
 
   const filteredResources = activeFilter === 'all'
-    ? resourcesData
-    : resourcesData.filter(r => r.category === activeFilter)
+    ? resources
+    : resources.filter(r => r.category === activeFilter)
 
   const getCategoryIcon = (category) => {
     switch (category) {
@@ -128,42 +165,58 @@ export default function PsychoEducationPage() {
           ))}
         </div>
 
-        {/* Resources List */}
-        <div className="resources-list">
-          {filteredResources.length > 0 ? (
-            filteredResources.map(resource => (
-              <article key={resource.id} className="resource-item">
-                <div className={`resource-icon ${resource.category}`}>
-                  {getCategoryIcon(resource.category)}
-                </div>
-                <div className="resource-content">
-                  <div className="resource-meta">
-                    <span className={`resource-category ${resource.category}`}>
-                      {resource.category}
-                    </span>
-                  </div>
-                  <h3 className="resource-title">{resource.title}</h3>
-                  <p className="resource-excerpt">{resource.excerpt}</p>
-                </div>
-                <svg className="resource-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
+        {/* Loading State */}
+        {loading ? (
+          <div className="resources-loading">
+            <div className="resources-loading-spinner" />
+            <p>Loading resources...</p>
+          </div>
+        ) : (
+          /* Resources List */
+          <div className="resources-list">
+            {filteredResources.length > 0 ? (
+              filteredResources.map(resource => (
+                <Link
+                  key={resource._id || resource.id}
+                  to={`/article/${resource.slug}`}
+                  className="resource-item-link"
+                >
+                  <article className="resource-item">
+                    <div className={`resource-icon ${resource.category}`}>
+                      {getCategoryIcon(resource.category)}
+                    </div>
+                    <div className="resource-content">
+                      <div className="resource-meta">
+                        <span className={`resource-category ${resource.category}`}>
+                          {resource.category}
+                        </span>
+                        {resource.readTime && (
+                          <span className="resource-read-time">{resource.readTime} min read</span>
+                        )}
+                      </div>
+                      <h3 className="resource-title">{resource.title}</h3>
+                      <p className="resource-excerpt">{resource.excerpt}</p>
+                    </div>
+                    <svg className="resource-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </article>
+                </Link>
+              ))
+            ) : (
+              <div className="resources-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
-              </article>
-            ))
-          ) : (
-            <div className="resources-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p>No resources found in this category.</p>
-            </div>
-          )}
-        </div>
+                <p>No resources found in this category.</p>
+              </div>
+            )}
+          </div>
+        )}
       </section>
-
     </main>
   )
 }
