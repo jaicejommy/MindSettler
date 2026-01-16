@@ -11,6 +11,7 @@ export default function BookingPage() {
     name: '',
     phone: '',
     mode: 'online',
+    clientType: '',
     sessionType: '',
     isFirstSession: true,
     date: '',
@@ -35,9 +36,10 @@ export default function BookingPage() {
   const isStep1Valid = () => {
     const hasValidName = form.name.trim().length > 0
     const hasValidPhone = isValidPhone(form.phone)
+    const hasClientType = form.clientType !== ''
     const hasSessionType = form.sessionType !== ''
     const hasPoliciesAccepted = !form.isFirstSession || acceptPolicies
-    return hasValidName && hasValidPhone && hasSessionType && hasPoliciesAccepted
+    return hasValidName && hasValidPhone && hasClientType && hasSessionType && hasPoliciesAccepted
   }
 
   const isStep2Valid = () => {
@@ -53,6 +55,10 @@ export default function BookingPage() {
       }
       if (form.phone && !isValidPhone(form.phone)) {
         setError('Please enter a valid phone number.')
+        return
+      }
+      if (!form.clientType) {
+        setError('Please select a client type.')
         return
       }
       if (!form.sessionType) {
@@ -398,12 +404,31 @@ export default function BookingPage() {
                     </div>
 
                     <div className="field">
-                      <label htmlFor="sessionType">Session focus</label>
+                      <label htmlFor="clientType">Client Type *</label>
+                      <select
+                        id="clientType"
+                        name="clientType"
+                        value={form.clientType}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="" disabled>Who are you booking for?</option>
+                        <option value="kids">Kids (5+)</option>
+                        <option value="teens">Teens</option>
+                        <option value="adults">Adults (up to 65)</option>
+                        <option value="couples">Couples</option>
+                        <option value="families">Families</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="sessionType">Session focus *</label>
                       <select
                         id="sessionType"
                         name="sessionType"
                         value={form.sessionType}
                         onChange={handleChange}
+                        required
                       >
                         <option value="" disabled>Choose your focus</option>
                         <option value="cbt">Cognitive Behavioural Therapy (CBT)</option>
