@@ -936,13 +936,16 @@ function Footer() {
             <ul className="space-y-4">
               <li><a href="/about" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">About</a></li>
               <li><a href="/psycho-education" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Psycho-education</a></li>
-              <li><a href="/journey" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Our Journey</a></li>
+              <li><a href="/therapies" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Therapies</a></li>
+              <li><a href="/corporate" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Corporate</a></li>
+              <li><a href="/#journey" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Our Journey</a></li>
             </ul>
           </div>
 
           <div className="col-span-1">
             <h4 className="font-bold text-lg mb-6 text-white">Support</h4>
             <ul className="space-y-4">
+              <li><a href="/booking" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Book a Session</a></li>
               <li><a href="/contact" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Contact Us</a></li>
               <li><a href="/faqs" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">FAQs</a></li>
               <li><a href="/privacy" className="text-secondary-300 hover:text-white transition-colors text-sm hover:translate-x-1 inline-block duration-200">Privacy Policy</a></li>
