@@ -7,6 +7,10 @@ const contactSchema = new mongoose.Schema(
     phone: String,
     preferredChannel: String,
     message: String,
+    isRead: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 )

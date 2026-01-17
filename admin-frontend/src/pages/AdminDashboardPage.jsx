@@ -192,6 +192,7 @@ function AdminDashboardPage() {
     const navigate = useNavigate()
     const [bookings, setBookings] = useState([])
     const [contacts, setContacts] = useState([])
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [rejectModal, setRejectModal] = useState({ open: false, bookingId: null })
@@ -289,6 +290,7 @@ function AdminDashboardPage() {
 
                 setBookings(bData.bookings || [])
                 setContacts(cData.contacts || [])
+                setUnreadMessagesCount(cData.unreadCount || 0)
                 if (qrData.qrUrl) {
                     setCurrentQr(`${API_BASE_URL.replace('/api', '')}${qrData.qrUrl}`)
                 }
@@ -312,6 +314,27 @@ function AdminDashboardPage() {
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
     }, [])
+
+    // Mark all messages as read when viewing the messages tab
+    useEffect(() => {
+        if (activeTab === 'messages' && unreadMessagesCount > 0) {
+            markMessagesAsRead()
+        }
+    }, [activeTab])
+
+    async function markMessagesAsRead() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/contact/read-all`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            if (res.ok) {
+                setUnreadMessagesCount(0)
+            }
+        } catch (err) {
+            console.error('Failed to mark messages as read', err)
+        }
+    }
 
     const handleEmailClick = (contact) => {
         setEmailModal({ open: true, contact })
@@ -827,7 +850,7 @@ function AdminDashboardPage() {
                         >
                             <span className="icon"><Icons.Messages /></span>
                             Messages
-                            {contacts.length > 0 && <span className="badge-count">{contacts.length}</span>}
+                            {unreadMessagesCount > 0 && <span className="badge-count">{unreadMessagesCount}</span>}
                         </button>
                         <button
                             className={`nav-item ${activeTab === 'pricing' ? 'active' : ''}`}

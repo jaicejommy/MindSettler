@@ -1195,10 +1195,22 @@ app.post('/api/contact', async (req, res) => {
 app.get('/api/contact', firebaseAdminAuth, async (_req, res) => {
   try {
     const contacts = await Contact.find().sort({ createdAt: -1 })
-    res.json({ contacts })
+    const unreadCount = await Contact.countDocuments({ isRead: false })
+    res.json({ contacts, unreadCount })
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Failed to fetch contacts' })
+  }
+})
+
+// Mark all contacts as read (admin)
+app.patch('/api/contact/read-all', firebaseAdminAuth, async (_req, res) => {
+  try {
+    await Contact.updateMany({ isRead: false }, { isRead: true })
+    res.json({ message: 'All messages marked as read' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to mark messages as read' })
   }
 })
 
