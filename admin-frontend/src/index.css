@@ -1467,6 +1467,7 @@ body {
 /* Message Card */
 .message-card {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 1.25rem;
   margin: 0.5rem;
@@ -1501,7 +1502,7 @@ body {
 
 .message-content {
   flex: 1;
-  min-width: 0;
+  min-width: 200px;
 }
 
 .message-header {
@@ -1515,6 +1516,7 @@ body {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-primary);
+  word-break: break-word;
 }
 
 .message-time {
@@ -1556,6 +1558,19 @@ body {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+  align-self: flex-start;
+}
+
+@media (max-width: 600px) {
+  .message-card {
+    flex-direction: column;
+  }
+  
+  .message-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
 }
 
 .action-btn {
