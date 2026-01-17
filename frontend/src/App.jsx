@@ -23,6 +23,7 @@ import ConfidentialityPage from './pages/ConfidentialityPage'
 import AuthPage from './pages/AuthPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import TherapiesPage from './pages/TherapiesPage'
+import TherapyArticlePage from './pages/TherapyArticlePage'
 import ChatBot from './components/ChatBot'
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
         <Route path="/auth" element={<Layout><AuthPage /></Layout>} />
         <Route path="/reset-password" element={<Layout><ResetPasswordPage /></Layout>} />
         <Route path="/therapies" element={<Layout><TherapiesPage /></Layout>} />
+        <Route path="/therapy/:id" element={<Layout><TherapyArticlePage /></Layout>} />
       </Routes>
       <ChatBot />
     </>
