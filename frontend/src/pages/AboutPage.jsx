@@ -307,7 +307,7 @@ export default function AboutPage() {
             className="relative"
           >
             {/* Vertical connecting line */}
-            <div className="absolute left-7 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary-300 via-pink-300 to-primary-300 hidden md:block"></div>
+            <div className="absolute left-7 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary-300 via-pink-300 to-primary-300"></div>
             
             <div className="space-y-4">
               {[
