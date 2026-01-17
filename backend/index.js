@@ -1006,13 +1006,11 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' })
     }
 
-    // Send confirmation email if status is confirmed
+    // Send confirmation email if status is confirmed (Non-blocking)
     if (status === 'confirmed' && booking.email) {
-      try {
-        await sendBookingConfirmationEmail(booking.email, booking)
-      } catch (emailErr) {
+      sendBookingConfirmationEmail(booking.email, booking).catch(emailErr => {
         console.error('Failed to send confirmation email:', emailErr)
-      }
+      })
 
       // Create in-app message for confirmation
       try {
@@ -1036,13 +1034,11 @@ app.patch('/api/bookings/:id/status', firebaseAdminAuth, async (req, res) => {
       }
     }
 
-    // Send rejection email if status is rejected
+    // Send rejection email if status is rejected (Non-blocking)
     if (status === 'rejected' && booking.email) {
-      try {
-        await sendBookingRejectionEmail(booking.email, booking, reason)
-      } catch (emailErr) {
+      sendBookingRejectionEmail(booking.email, booking, reason).catch(emailErr => {
         console.error('Failed to send rejection email:', emailErr)
-      }
+      })
 
       // Create in-app message for rejection
       try {
