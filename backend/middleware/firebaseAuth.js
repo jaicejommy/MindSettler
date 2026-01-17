@@ -33,7 +33,7 @@ async function firebaseAuth(req, res, next) {
 
     return next()
   } catch (err) {
-    console.error('Firebase auth error:', err)
+    console.error('❌ Firebase auth error:', err.code, err.message)
     return res.status(401).json({ message: 'Invalid or expired token' })
   }
 }

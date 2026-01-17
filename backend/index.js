@@ -123,6 +123,7 @@ app.use(
       if (allowedOrigins.includes(origin)) {
         return callback(null, true)
       }
+      console.error('❌ CORS Blocked Origin:', origin)
       return callback(new Error('Not allowed by CORS'))
     },
     credentials: true,
