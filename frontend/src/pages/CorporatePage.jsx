@@ -152,7 +152,14 @@ export default function CorporatePage() {
                 Thank you. We will write back to explore a suitable format for your organisation.
               </p>
             )}
-            <button type="submit" className="primary-btn mt-6" disabled={submitting}>
+            <button
+              type="submit"
+              className="mt-6 px-6 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              disabled={submitting}
+              style={{ background: '#3F2965', color: '#ffffff' }}
+              onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+              onMouseLeave={(e) => e.target.style.background = '#3F2965'}
+            >
               {submitting ? 'Sending…' : 'Send request'}
             </button>
           </form>
