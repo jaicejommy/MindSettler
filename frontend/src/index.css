@@ -176,6 +176,49 @@ a:not(.primary-btn):not(.secondary-btn):hover::after {
   transform-origin: left;
 }
 
+/* Disable underline effect for Book a Consultation button only */
+.footer-cta-btn::after {
+  display: none !important;
+}
+
+/* Footer contact links - underline only on text, not icon */
+.footer-contact-link::after {
+  display: none !important;
+}
+
+.footer-contact-link .underline-text {
+  position: relative;
+}
+
+.footer-contact-link .underline-text::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent), var(--accent-strong));
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.footer-contact-link:hover .underline-text::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.footer-cta-btn button {
+  transition: all 0.3s ease;
+}
+
+.footer-cta-btn:hover button {
+  background: linear-gradient(135deg, #DD1764, #c41358) !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(221, 23, 100, 0.35);
+}
+
 html,
 body {
   margin: 0;
@@ -2093,6 +2136,7 @@ textarea {
 .primary-btn:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 20px 45px rgba(221, 23, 100, 0.4);
+  color: #FFFFFF !important;
 }
 
 .primary-btn:active::before {

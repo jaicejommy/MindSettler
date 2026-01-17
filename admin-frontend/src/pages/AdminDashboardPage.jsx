@@ -118,15 +118,15 @@ const Icons = {
     ),
     Settings: () => (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
     ),
     Upload: () => (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
         </svg>
     ),
     QrCode: () => (
@@ -144,6 +144,15 @@ const Icons = {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="1" x2="12" y2="23" />
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+    ),
+    FileText: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
         </svg>
     ),
     Tag: () => (
@@ -175,7 +184,7 @@ function AdminDashboardPage() {
     const [loadingSlots, setLoadingSlots] = useState(false)
     const [activeTab, setActiveTab] = useState('dashboard')
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    
+
     // QR Code management state
     const [currentQr, setCurrentQr] = useState(null)
     const [qrUploading, setQrUploading] = useState(false)
@@ -201,6 +210,22 @@ function AdminDashboardPage() {
     })
     const [couponSaving, setCouponSaving] = useState(false)
     const [couponMessage, setCouponMessage] = useState('')
+
+    // Articles management state
+    const [articles, setArticles] = useState([])
+    const [articlesLoading, setArticlesLoading] = useState(false)
+    const [articleForm, setArticleForm] = useState({
+        title: '',
+        category: 'article',
+        coverImage: '',
+        excerpt: '',
+        content: '',
+        isPublished: false,
+        tags: ''
+    })
+    const [editingArticle, setEditingArticle] = useState(null)
+    const [articleSaving, setArticleSaving] = useState(false)
+    const [articleMessage, setArticleMessage] = useState('')
 
     // Email and call modal state
     const [emailModal, setEmailModal] = useState({ open: false, contact: null })
@@ -294,6 +319,24 @@ function AdminDashboardPage() {
 
     async function fetchPricing() {
         try {
+            setPricingLoading(true)
+            const res = await fetch(`${API_BASE_URL}/pricing`, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            const data = await res.json()
+            if (res.ok && data.prices) {
+                setPricing(data.prices)
+            }
+        } catch (err) {
+            console.error('Failed to load pricing', err)
+        } finally {
+            setPricingLoading(false)
+        }
+    }
+
+    async function handlePricingUpdate() {
+        try {
             setPricingUpdating(true)
             setPricingMessage('')
             const res = await fetch(`${API_BASE_URL}/pricing`, {
@@ -378,6 +421,103 @@ function AdminDashboardPage() {
             setCouponSaving(false)
             setTimeout(() => setCouponMessage(''), 3000)
         }
+    }
+
+    // Article management functions
+    async function fetchArticles() {
+        try {
+            setArticlesLoading(true)
+            const res = await fetch(`${API_BASE_URL}/admin/articles`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data = await res.json()
+            setArticles(data.articles || [])
+        } catch (err) {
+            console.error('Failed to load articles', err)
+        } finally {
+            setArticlesLoading(false)
+        }
+    }
+
+    async function handleSaveArticle(e) {
+        e.preventDefault()
+        try {
+            setArticleSaving(true)
+            setArticleMessage('')
+
+            const isEditing = !!editingArticle
+            const url = isEditing
+                ? `${API_BASE_URL}/admin/articles/${editingArticle._id}`
+                : `${API_BASE_URL}/admin/articles`
+
+            const res = await fetch(url, {
+                method: isEditing ? 'PUT' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ...articleForm,
+                    tags: articleForm.tags ? articleForm.tags.split(',').map(t => t.trim()) : []
+                }),
+            })
+
+            const data = await res.json()
+            if (res.ok) {
+                setArticleMessage(isEditing ? 'Article updated!' : 'Article created!')
+                resetArticleForm()
+                fetchArticles()
+            } else {
+                setArticleMessage(data.message || 'Failed to save article')
+            }
+        } catch (err) {
+            console.error('Failed to save article', err)
+            setArticleMessage('Failed to save article')
+        } finally {
+            setArticleSaving(false)
+            setTimeout(() => setArticleMessage(''), 3000)
+        }
+    }
+
+    async function handleDeleteArticle(id) {
+        if (!window.confirm('Are you sure you want to delete this article?')) return
+        try {
+            const res = await fetch(`${API_BASE_URL}/admin/articles/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            if (res.ok) {
+                fetchArticles()
+            }
+        } catch (err) {
+            console.error('Failed to delete article', err)
+        }
+    }
+
+    function handleEditArticle(article) {
+        setEditingArticle(article)
+        setArticleForm({
+            title: article.title || '',
+            category: article.category || 'article',
+            coverImage: article.coverImage || '',
+            excerpt: article.excerpt || '',
+            content: article.content || '',
+            isPublished: article.isPublished || false,
+            tags: article.tags ? article.tags.join(', ') : ''
+        })
+    }
+
+    function resetArticleForm() {
+        setEditingArticle(null)
+        setArticleForm({
+            title: '',
+            category: 'article',
+            coverImage: '',
+            excerpt: '',
+            content: '',
+            isPublished: false,
+            tags: ''
+        })
     }
 
     async function updateBookingStatus(id, status, reason = '') {
@@ -483,14 +623,14 @@ function AdminDashboardPage() {
     async function handleQrUpload(e) {
         const file = e.target.files?.[0]
         if (!file) return
-        
+
         setQrUploading(true)
         setQrMessage('')
-        
+
         try {
             const formData = new FormData()
             formData.append('qr', file)
-            
+
             const res = await fetch(`${API_BASE_URL}/settings/qr`, {
                 method: 'POST',
                 headers: {
@@ -498,9 +638,9 @@ function AdminDashboardPage() {
                 },
                 body: formData,
             })
-            
+
             const data = await res.json()
-            
+
             if (res.ok) {
                 setCurrentQr(`${API_BASE_URL.replace('/api', '')}${data.qrUrl}`)
                 setQrMessage('QR code updated successfully!')
@@ -605,6 +745,13 @@ function AdminDashboardPage() {
                             Payment QR
                         </button>
                         <button
+                            className={`nav-item ${activeTab === 'articles' ? 'active' : ''}`}
+                            onClick={() => { setActiveTab('articles'); fetchArticles(); }}
+                        >
+                            <span className="icon"><Icons.FileText /></span>
+                            Articles
+                        </button>
+                        <button
                             className="nav-item logout-nav-item"
                             onClick={handleLogout}
                         >
@@ -634,8 +781,8 @@ function AdminDashboardPage() {
                             </button>
                         </div>
                         <div className="topbar-right">
-                            <button 
-                                className="mobile-logout-btn" 
+                            <button
+                                className="mobile-logout-btn"
                                 onClick={handleLogout}
                                 title="Sign Out"
                             >
@@ -660,6 +807,7 @@ function AdminDashboardPage() {
                             {activeTab === 'pricing' && 'Session Pricing'}
                             {activeTab === 'coupons' && 'Discount Coupons'}
                             {activeTab === 'payment-qr' && 'Payment QR Code'}
+                            {activeTab === 'articles' && 'Content Management'}
                         </h1>
                         <p>{getCurrentDate()}</p>
                     </div>
@@ -854,7 +1002,7 @@ function AdminDashboardPage() {
                                                                     <div className="message-text">{c.message}</div>
                                                                 </div>
                                                                 <div className="message-actions">
-                                                                    <button 
+                                                                    <button
                                                                         onClick={() => handleEmailClick(c)}
                                                                         className="action-btn email-btn"
                                                                         title="Reply via Email"
@@ -863,7 +1011,7 @@ function AdminDashboardPage() {
                                                                         Reply
                                                                     </button>
                                                                     {c.phone && isMobile && (
-                                                                        <button 
+                                                                        <button
                                                                             onClick={() => handleCallClick(c.phone)}
                                                                             className="action-btn call-btn"
                                                                             title="Call User"
@@ -1025,7 +1173,7 @@ function AdminDashboardPage() {
                                                                 <div className="message-text">{c.message}</div>
                                                             </div>
                                                             <div className="message-actions">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleEmailClick(c)}
                                                                     className="action-btn email-btn"
                                                                     title="Reply via Email"
@@ -1034,7 +1182,7 @@ function AdminDashboardPage() {
                                                                     Reply
                                                                 </button>
                                                                 {c.phone && isMobile && (
-                                                                    <button 
+                                                                    <button
                                                                         onClick={() => handleCallClick(c.phone)}
                                                                         className="action-btn call-btn"
                                                                         title="Call User"
@@ -1067,11 +1215,11 @@ function AdminDashboardPage() {
                                                 <p style={{ marginBottom: '1rem', color: '#666' }}>
                                                     Upload or change the QR code displayed on the booking page for payment.
                                                 </p>
-                                                
-                                                <div className="qr-preview" style={{ 
-                                                    display: 'flex', 
-                                                    flexDirection: 'column', 
-                                                    alignItems: 'center', 
+
+                                                <div className="qr-preview" style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
                                                     gap: '1.5rem',
                                                     padding: '2rem',
                                                     background: '#f8f9fa',
@@ -1079,20 +1227,20 @@ function AdminDashboardPage() {
                                                     marginBottom: '1.5rem'
                                                 }}>
                                                     {currentQr ? (
-                                                        <img 
-                                                            src={currentQr} 
-                                                            alt="Current Payment QR" 
-                                                            style={{ 
-                                                                maxWidth: '250px', 
+                                                        <img
+                                                            src={currentQr}
+                                                            alt="Current Payment QR"
+                                                            style={{
+                                                                maxWidth: '250px',
                                                                 borderRadius: '8px',
                                                                 border: '1px solid #ddd',
                                                                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                                                            }} 
+                                                            }}
                                                         />
                                                     ) : (
-                                                        <div style={{ 
-                                                            width: '200px', 
-                                                            height: '200px', 
+                                                        <div style={{
+                                                            width: '200px',
+                                                            height: '200px',
                                                             background: '#e9ecef',
                                                             borderRadius: '8px',
                                                             display: 'flex',
@@ -1106,12 +1254,12 @@ function AdminDashboardPage() {
                                                             <span>No QR uploaded</span>
                                                         </div>
                                                     )}
-                                                    
+
                                                     <div style={{ textAlign: 'center' }}>
-                                                        <label 
-                                                            htmlFor="qr-upload" 
+                                                        <label
+                                                            htmlFor="qr-upload"
                                                             className="btn-modal-action"
-                                                            style={{ 
+                                                            style={{
                                                                 cursor: 'pointer',
                                                                 display: 'inline-flex',
                                                                 alignItems: 'center',
@@ -1135,10 +1283,10 @@ function AdminDashboardPage() {
                                                             disabled={qrUploading}
                                                             style={{ display: 'none' }}
                                                         />
-                                                        
+
                                                         {qrMessage && (
-                                                            <p style={{ 
-                                                                marginTop: '1rem', 
+                                                            <p style={{
+                                                                marginTop: '1rem',
                                                                 color: qrMessage.includes('success') ? '#28a745' : '#dc3545',
                                                                 fontWeight: '500'
                                                             }}>
@@ -1147,10 +1295,10 @@ function AdminDashboardPage() {
                                                         )}
                                                     </div>
                                                 </div>
-                                                
-                                                <div style={{ 
-                                                    padding: '1rem', 
-                                                    background: '#fff3cd', 
+
+                                                <div style={{
+                                                    padding: '1rem',
+                                                    background: '#fff3cd',
                                                     borderRadius: '8px',
                                                     border: '1px solid #ffc107'
                                                 }}>
@@ -1196,10 +1344,10 @@ function AdminDashboardPage() {
                                                             border: '1px solid #eee',
                                                             transition: 'box-shadow 0.2s, border-color 0.2s',
                                                         }}>
-                                                            <div style={{ 
-                                                                width: '40px', 
-                                                                height: '40px', 
-                                                                borderRadius: '10px', 
+                                                            <div style={{
+                                                                width: '40px',
+                                                                height: '40px',
+                                                                borderRadius: '10px',
                                                                 background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
@@ -1229,10 +1377,10 @@ function AdminDashboardPage() {
                                                                             )
                                                                         )
                                                                     }}
-                                                                    style={{ 
-                                                                        width: '100px', 
-                                                                        padding: '0.6rem 0.75rem', 
-                                                                        borderRadius: '8px', 
+                                                                    style={{
+                                                                        width: '100px',
+                                                                        padding: '0.6rem 0.75rem',
+                                                                        borderRadius: '8px',
                                                                         border: '2px solid #e0e0e0',
                                                                         fontSize: '1rem',
                                                                         fontWeight: 600,
@@ -1271,10 +1419,10 @@ function AdminDashboardPage() {
                                                     onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 20px rgba(221, 23, 100, 0.4)' }}
                                                     onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 15px rgba(221, 23, 100, 0.3)' }}
                                                 >
-                                                    {pricingUpdating ? 'Saving...' : '💾 Save All Prices'}
+                                                    {pricingUpdating ? 'Saving...' : 'Save All Prices'}
                                                 </button>
                                                 {pricingMessage && (
-                                                    <span style={{ 
+                                                    <span style={{
                                                         padding: '0.5rem 1rem',
                                                         borderRadius: '8px',
                                                         background: pricingMessage.includes('success') ? '#d4edda' : '#f8d7da',
@@ -1282,7 +1430,7 @@ function AdminDashboardPage() {
                                                         fontWeight: 500,
                                                         fontSize: '0.9rem',
                                                     }}>
-                                                        {pricingMessage.includes('success') ? '✓ ' : '✗ '}{pricingMessage}
+                                                        {pricingMessage.includes('success') ? <Icons.Check /> : <Icons.X />}{pricingMessage}
                                                     </span>
                                                 )}
                                             </div>
@@ -1303,10 +1451,10 @@ function AdminDashboardPage() {
                                         </div>
                                         <div className="panel-body">
                                             <form onSubmit={handleCreateCoupon} style={{ display: 'grid', gap: '1.25rem', maxWidth: '700px' }}>
-                                                <div style={{ 
-                                                    display: 'grid', 
-                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-                                                    gap: '1rem' 
+                                                <div style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                                    gap: '1rem'
                                                 }}>
                                                     <div className="form-group-modal">
                                                         <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Coupon Code *</label>
@@ -1348,9 +1496,9 @@ function AdminDashboardPage() {
                                                                     boxSizing: 'border-box',
                                                                 }}
                                                             />
-                                                            <label style={{ 
-                                                                display: 'flex', 
-                                                                alignItems: 'center', 
+                                                            <label style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
                                                                 gap: '0.35rem',
                                                                 padding: '0.5rem 0.75rem',
                                                                 background: newCoupon.isPercentage ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)' : '#f0f0f0',
@@ -1390,10 +1538,10 @@ function AdminDashboardPage() {
                                                         }}
                                                     />
                                                 </div>
-                                                <div style={{ 
-                                                    display: 'grid', 
-                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
-                                                    gap: '1rem' 
+                                                <div style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                                                    gap: '1rem'
                                                 }}>
                                                     <div className="form-group-modal">
                                                         <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block', color: '#333' }}>Max Redemptions</label>
@@ -1430,17 +1578,17 @@ function AdminDashboardPage() {
                                                         />
                                                     </div>
                                                 </div>
-                                                <div style={{ 
-                                                    display: 'flex', 
-                                                    alignItems: 'center', 
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
                                                     justifyContent: 'space-between',
                                                     flexWrap: 'wrap',
                                                     gap: '1rem',
                                                     marginTop: '0.5rem',
                                                 }}>
-                                                    <label style={{ 
-                                                        display: 'flex', 
-                                                        alignItems: 'center', 
+                                                    <label style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
                                                         gap: '0.5rem',
                                                         cursor: 'pointer',
                                                         fontWeight: 500,
@@ -1452,7 +1600,7 @@ function AdminDashboardPage() {
                                                             style={{ width: '18px', height: '18px', accentColor: '#DD1764' }}
                                                         />
                                                         <span style={{ color: newCoupon.isActive ? '#28a745' : '#888' }}>
-                                                            {newCoupon.isActive ? '✓ Active' : 'Inactive'}
+                                                            {newCoupon.isActive ? 'Active' : 'Inactive'}
                                                         </span>
                                                     </label>
                                                     <button
@@ -1473,11 +1621,11 @@ function AdminDashboardPage() {
                                                             boxShadow: '0 4px 15px rgba(221, 23, 100, 0.3)',
                                                         }}
                                                     >
-                                                        🎟️ {couponSaving ? 'Creating...' : 'Create Coupon'}
+                                                        <Icons.Tag /> {couponSaving ? 'Creating...' : 'Create Coupon'}
                                                     </button>
                                                 </div>
                                                 {couponMessage && (
-                                                    <div style={{ 
+                                                    <div style={{
                                                         padding: '0.75rem 1rem',
                                                         borderRadius: '8px',
                                                         background: couponMessage.includes('success') ? '#d4edda' : '#f8d7da',
@@ -1485,7 +1633,7 @@ function AdminDashboardPage() {
                                                         fontWeight: 500,
                                                         fontSize: '0.9rem',
                                                     }}>
-                                                        {couponMessage.includes('success') ? '✓ ' : '✗ '}{couponMessage}
+                                                        {couponMessage.includes('success') ? <Icons.Check /> : <Icons.X />}{couponMessage}
                                                     </div>
                                                 )}
                                             </form>
@@ -1507,7 +1655,7 @@ function AdminDashboardPage() {
                                                 </div>
                                             ) : coupons.length === 0 ? (
                                                 <div className="empty-state">
-                                                    <div className="empty-icon">🎟️</div>
+                                                    <div className="empty-icon"><Icons.Tag /></div>
                                                     <h3>No coupons yet</h3>
                                                     <p>Create a coupon above</p>
                                                 </div>
@@ -1524,12 +1672,12 @@ function AdminDashboardPage() {
                                                             border: c.isActive ? '2px solid #28a74533' : '2px solid #dc354533',
                                                             transition: 'box-shadow 0.2s',
                                                         }}>
-                                                            <div style={{ 
-                                                                width: '50px', 
-                                                                height: '50px', 
-                                                                borderRadius: '12px', 
-                                                                background: c.isActive 
-                                                                    ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' 
+                                                            <div style={{
+                                                                width: '50px',
+                                                                height: '50px',
+                                                                borderRadius: '12px',
+                                                                background: c.isActive
+                                                                    ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)'
                                                                     : 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
@@ -1538,13 +1686,13 @@ function AdminDashboardPage() {
                                                                 fontSize: '1.25rem',
                                                                 flexShrink: 0,
                                                             }}>
-                                                                🎟️
+                                                                <Icons.Tag />
                                                             </div>
                                                             <div style={{ flex: 1, minWidth: 0 }}>
                                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                                                                    <span style={{ 
-                                                                        fontWeight: 700, 
-                                                                        fontSize: '1.1rem', 
+                                                                    <span style={{
+                                                                        fontWeight: 700,
+                                                                        fontSize: '1.1rem',
                                                                         color: '#333',
                                                                         letterSpacing: '0.5px',
                                                                     }}>{c.code}</span>
@@ -1564,10 +1712,10 @@ function AdminDashboardPage() {
                                                                         {c.description}
                                                                     </div>
                                                                 )}
-                                                                <div style={{ 
-                                                                    display: 'flex', 
-                                                                    alignItems: 'center', 
-                                                                    gap: '1rem', 
+                                                                <div style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '1rem',
                                                                     marginTop: '0.5rem',
                                                                     flexWrap: 'wrap',
                                                                     fontSize: '0.8rem',
@@ -1577,11 +1725,11 @@ function AdminDashboardPage() {
                                                                     {c.expiresAt && <span>📅 Expires: {new Date(c.expiresAt).toLocaleDateString()}</span>}
                                                                 </div>
                                                             </div>
-                                                            <div style={{ 
+                                                            <div style={{
                                                                 textAlign: 'right',
                                                                 padding: '0.5rem 1rem',
-                                                                background: c.isPercentage 
-                                                                    ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)' 
+                                                                background: c.isPercentage
+                                                                    ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)'
                                                                     : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                                 borderRadius: '10px',
                                                                 color: 'white',
@@ -1593,6 +1741,231 @@ function AdminDashboardPage() {
                                                                 <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>
                                                                     {c.isPercentage ? 'OFF' : 'FLAT'}
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Articles Tab */}
+                            {activeTab === 'articles' && (
+                                <div className="content-grid" style={{ gridTemplateColumns: '1fr' }}>
+                                    {/* Create/Edit Article Form */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>{editingArticle ? 'Edit Article' : 'Create New Article'}</h2>
+                                            </div>
+                                            {editingArticle && (
+                                                <button onClick={resetArticleForm} style={{
+                                                    padding: '0.5rem 1rem',
+                                                    background: '#f0f0f0',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem'
+                                                }}>
+                                                    Cancel Edit
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="panel-body">
+                                            <form onSubmit={handleSaveArticle} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Title *</label>
+                                                        <input
+                                                            type="text"
+                                                            required
+                                                            value={articleForm.title}
+                                                            onChange={e => setArticleForm(f => ({ ...f, title: e.target.value }))}
+                                                            placeholder="Article title..."
+                                                            style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box' }}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Category</label>
+                                                        <select
+                                                            value={articleForm.category}
+                                                            onChange={e => setArticleForm(f => ({ ...f, category: e.target.value }))}
+                                                            style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box' }}
+                                                        >
+                                                            <option value="article">Article</option>
+                                                            <option value="blog">Blog Post</option>
+                                                            <option value="video">Video</option>
+                                                            <option value="exercise">Exercise</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group-modal">
+                                                    <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Cover Image URL</label>
+                                                    <input
+                                                        type="text"
+                                                        value={articleForm.coverImage}
+                                                        onChange={e => setArticleForm(f => ({ ...f, coverImage: e.target.value }))}
+                                                        placeholder="https://example.com/image.jpg"
+                                                        style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box' }}
+                                                    />
+                                                </div>
+                                                <div className="form-group-modal">
+                                                    <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Excerpt *</label>
+                                                    <textarea
+                                                        required
+                                                        value={articleForm.excerpt}
+                                                        onChange={e => setArticleForm(f => ({ ...f, excerpt: e.target.value }))}
+                                                        placeholder="Brief description for card preview..."
+                                                        rows={2}
+                                                        style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box', resize: 'vertical' }}
+                                                    />
+                                                </div>
+                                                <div className="form-group-modal">
+                                                    <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Content * (Markdown supported)</label>
+                                                    <textarea
+                                                        required
+                                                        value={articleForm.content}
+                                                        onChange={e => setArticleForm(f => ({ ...f, content: e.target.value }))}
+                                                        placeholder="Write your article content here... Use **bold**, *italic*, ## headings, etc."
+                                                        rows={10}
+                                                        style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'monospace' }}
+                                                    />
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                    <div className="form-group-modal">
+                                                        <label style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Tags (comma-separated)</label>
+                                                        <input
+                                                            type="text"
+                                                            value={articleForm.tags}
+                                                            onChange={e => setArticleForm(f => ({ ...f, tags: e.target.value }))}
+                                                            placeholder="mental-health, anxiety, wellness"
+                                                            style={{ padding: '0.75rem', borderRadius: '8px', border: '2px solid #e0e0e0', width: '100%', boxSizing: 'border-box' }}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group-modal" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingTop: '1.5rem' }}>
+                                                        <input
+                                                            type="checkbox"
+                                                            id="isPublished"
+                                                            checked={articleForm.isPublished}
+                                                            onChange={e => setArticleForm(f => ({ ...f, isPublished: e.target.checked }))}
+                                                            style={{ width: '20px', height: '20px' }}
+                                                        />
+                                                        <label htmlFor="isPublished" style={{ fontWeight: 600, cursor: 'pointer' }}>
+                                                            Publish immediately
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                                                    {articleMessage && (
+                                                        <span style={{ padding: '0.75rem', color: articleMessage.includes('success') || articleMessage.includes('created') || articleMessage.includes('updated') ? '#28a745' : '#dc3545' }}>
+                                                            {articleMessage}
+                                                        </span>
+                                                    )}
+                                                    <button
+                                                        type="submit"
+                                                        disabled={articleSaving}
+                                                        style={{
+                                                            padding: '0.75rem 2rem',
+                                                            background: 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '8px',
+                                                            fontWeight: 600,
+                                                            cursor: articleSaving ? 'not-allowed' : 'pointer',
+                                                            opacity: articleSaving ? 0.7 : 1
+                                                        }}
+                                                    >
+                                                        {articleSaving ? 'Saving...' : (editingArticle ? 'Update Article' : 'Create Article')}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    {/* Articles List */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>All Articles</h2>
+                                                <span className="count">{articles.length}</span>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body no-padding">
+                                            {articlesLoading ? (
+                                                <div style={{ padding: '2rem', textAlign: 'center' }}>Loading articles...</div>
+                                            ) : articles.length === 0 ? (
+                                                <div className="empty-state">
+                                                    <div className="empty-icon">📝</div>
+                                                    <h3>No articles yet</h3>
+                                                    <p>Create your first article above</p>
+                                                </div>
+                                            ) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    {articles.map(article => (
+                                                        <div key={article._id} style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '1rem',
+                                                            padding: '1rem 1.25rem',
+                                                            borderBottom: '1px solid #f0f0f0',
+                                                        }}>
+                                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                                                                    <span style={{ fontWeight: 600, color: '#333' }}>{article.title}</span>
+                                                                    <span style={{
+                                                                        padding: '0.15rem 0.5rem',
+                                                                        borderRadius: '12px',
+                                                                        fontSize: '0.7rem',
+                                                                        fontWeight: 600,
+                                                                        background: article.isPublished ? '#d4edda' : '#fff3cd',
+                                                                        color: article.isPublished ? '#155724' : '#856404'
+                                                                    }}>
+                                                                        {article.isPublished ? 'Published' : 'Draft'}
+                                                                    </span>
+                                                                    <span style={{
+                                                                        padding: '0.15rem 0.5rem',
+                                                                        borderRadius: '12px',
+                                                                        fontSize: '0.7rem',
+                                                                        fontWeight: 500,
+                                                                        background: '#f0f0f0',
+                                                                        color: '#666'
+                                                                    }}>
+                                                                        {article.category}
+                                                                    </span>
+                                                                </div>
+                                                                <div style={{ fontSize: '0.85rem', color: '#666' }}>{article.excerpt}</div>
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                                <button
+                                                                    onClick={() => handleEditArticle(article)}
+                                                                    style={{
+                                                                        padding: '0.5rem 1rem',
+                                                                        background: '#3F2965',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        borderRadius: '6px',
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '0.8rem'
+                                                                    }}
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteArticle(article._id)}
+                                                                    style={{
+                                                                        padding: '0.5rem 1rem',
+                                                                        background: '#dc3545',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        borderRadius: '6px',
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '0.8rem'
+                                                                    }}
+                                                                >
+                                                                    Delete
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     ))}

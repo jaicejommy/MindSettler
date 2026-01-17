@@ -544,7 +544,15 @@ function Header() {
                   <span className="mobile-nav-text">About</span>
                 </a>
 
-
+                <a href="/psycho-education" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/psycho-education') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Resources</span>
+                </a>
 
                 <a href="/booking" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/booking') ? 'active' : ''}`}>
                   <span className="mobile-nav-icon">
@@ -617,6 +625,9 @@ function Header() {
         <nav className="nav-links desktop-nav">
           <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
+          </a>
+          <a href="/psycho-education" onClick={closeMobileMenu}>
+            <button type="button">Resources</button>
           </a>
           <a href="/booking" onClick={closeMobileMenu}>
             <button type="button">Book a session</button>
@@ -891,10 +902,11 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <Heart className="w-6 h-6 text-primary-400 fill-primary-400" />
-              <span className="font-display text-2xl font-bold tracking-tight">MindSettler</span>
-            </div>
+            <img
+              src="/Mindsettler_logo_Final-Photoroom.png"
+              alt="MindSettler"
+              className="w-48 h-auto mb-6 bg-white p-3 rounded-xl"
+            />
             <p className="text-secondary-200 text-sm leading-relaxed mb-8 opacity-80">
               Gentle, structured, and grounded in real life. Making mental health support accessible and understandable for everyone.
             </p>
@@ -934,25 +946,25 @@ function Footer() {
 
           <div className="col-span-1">
             <h4 className="font-bold text-lg mb-6 text-white">Get in touch</h4>
-            <a href="/booking">
+            <a href="/booking" className="footer-cta-btn">
               <button className="w-full py-4 bg-white text-secondary-950 rounded-xl font-bold hover:bg-primary-50 transition-all mb-4 shadow-lg hover:shadow-white/20">
                 Book a Consultation
               </button>
             </a>
             {/* Contact Info */}
             <div className="space-y-2 mb-4">
-              <a href="tel:+919974631313" className="flex items-center gap-2 text-secondary-300 hover:text-white transition-colors text-sm">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <a href="tel:+919974631313" className="footer-contact-link flex items-center gap-2 text-secondary-300 hover:text-white transition-colors text-sm">
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                 </svg>
-                +91 9974631313
+                <span className="underline-text">+91 9974631313</span>
               </a>
-              <a href="mailto:mindsettler.parnika@gmail.com" className="flex items-center gap-2 text-secondary-300 hover:text-white transition-colors text-sm">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <a href="mailto:mindsettler.parnika@gmail.com" className="footer-contact-link flex items-center gap-2 text-secondary-300 hover:text-white transition-colors text-sm">
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                   <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
-                mindsettler.parnika@gmail.com
+                <span className="underline-text">mindsettler.parnika@gmail.com</span>
               </a>
             </div>
             <p className="text-[10px] text-secondary-400 leading-tight">
