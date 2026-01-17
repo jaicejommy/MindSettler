@@ -705,7 +705,7 @@ app.post('/api/coupons', requireAdmin, async (req, res) => {
       return res.status(400).json({ message: 'code and discountAmount are required' })
     }
 
-    const normalizedCode = String(code).trim().toUpperCase()
+    const normalizedCode = String(code).trim()
     const coupon = await Coupon.findOneAndUpdate(
       { code: normalizedCode },
       {
@@ -727,6 +727,23 @@ app.post('/api/coupons', requireAdmin, async (req, res) => {
   }
 })
 
+// Delete coupon (admin)
+app.delete('/api/coupons/:id', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params
+    const coupon = await Coupon.findByIdAndDelete(id)
+
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon not found' })
+    }
+
+    res.json({ message: 'Coupon deleted successfully', coupon })
+  } catch (err) {
+    console.error('Failed to delete coupon', err)
+    res.status(500).json({ message: 'Failed to delete coupon' })
+  }
+})
+
 // Coupon validation (client)
 app.post('/api/coupons/validate', async (req, res) => {
   try {
@@ -735,7 +752,7 @@ app.post('/api/coupons/validate', async (req, res) => {
       return res.status(400).json({ message: 'Coupon code is required' })
     }
 
-    const normalizedCode = String(code).trim().toUpperCase()
+    const normalizedCode = String(code).trim()
     const coupon = await Coupon.findOne({ code: normalizedCode })
 
     if (!coupon || !coupon.isValid()) {
@@ -889,7 +906,7 @@ app.post('/api/bookings', firebaseAuth, paymentUpload.single('paymentScreenshot'
     let appliedCouponCode = ''
 
     if (couponCode) {
-      const normalizedCode = String(couponCode).trim().toUpperCase()
+      const normalizedCode = String(couponCode).trim()
       const coupon = await Coupon.findOne({ code: normalizedCode })
 
       if (!coupon || !coupon.isValid()) {
