@@ -399,7 +399,7 @@ const About = () => {
                 </p>
                 <div className="flex items-center gap-4 relative z-10">
                   <div className="w-12 h-12 rounded-full border-2 border-primary-100 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop" className="w-full h-full object-cover" alt="Founder" />
+                    <img src="/parnika_p.png" className="w-full h-full object-cover" alt="Parnika - Founder of MindSettler" />
                   </div>
                   <div>
                     <p className="text-secondary-900 font-bold">Parnika</p>
