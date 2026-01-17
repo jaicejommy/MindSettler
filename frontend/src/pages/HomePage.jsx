@@ -650,7 +650,7 @@ const Services = () => {
 
         {/* Single Learn More Button */}
         <FadeIn delay={0.3} className="mt-12 text-center">
-          <a href="/therapies" className="inline-block px-12 py-5 rounded-2xl bg-secondary-900 text-white font-bold hover:bg-secondary-800 transition-all duration-300 text-lg shadow-lg hover:shadow-xl">
+          <a href="/therapies" className="btn btn-primary text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl">
             Learn More About Our Therapies
           </a>
         </FadeIn>
