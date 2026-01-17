@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom'
 import { FloatingBlobs } from '../components/FloatingBlobs'
 import { FadeIn } from '../components/FadeIn'
 import CircularGallerySection from '../components/CircularGallerySection'
+import CursorGlitter from '../components/CursorGlitter'
 
 // --- Data ---
 const NAV_LINKS = [
@@ -333,7 +334,7 @@ const About = () => {
         </div>
 
         {/* Right Side - Content */}
-        <div className="flex items-center p-8 lg:p-24 order-2 lg:order-2 bg-gradient-to-br from-white to-secondary-50/30">
+        <div className="flex items-center p-8 lg:p-24 order-2 lg:order-2 bg-gradient-to-br from-white to-secondary-50/30 relative z-10">
           <div className="max-w-xl">
             <FadeIn>
               <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">About MindSettler</div>
@@ -792,6 +793,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 selection:bg-primary-200 selection:text-secondary-900 overflow-x-hidden">
+      <CursorGlitter />
       <main>
         <Hero navigate={navigate} />
         <Stats />
