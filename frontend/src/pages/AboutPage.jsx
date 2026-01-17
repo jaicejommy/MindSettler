@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { CheckCircle2, Quote } from 'lucide-react'
+import { CheckCircle2, Quote, RefreshCw, Shield, Target } from 'lucide-react'
 import { FadeIn } from '../components/FadeIn'
 
 export default function AboutPage() {
@@ -227,29 +227,53 @@ export default function AboutPage() {
               {
                 title: "Structured Sessions",
                 description: "Each session follows a clear flow – check-in, exploration, psycho-education, and grounding – so you do not feel lost or rushed.",
-                icon: "🔄"
+                icon: RefreshCw,
+                gradient: "from-primary-500 to-pink-500",
+                bgGradient: "from-primary-50 to-pink-50"
               },
               {
                 title: "Confidential & Boundaried",
                 description: "You know what is confidential and what the limits are, right from the first session.",
-                icon: "🔒"
+                icon: Shield,
+                gradient: "from-secondary-600 to-primary-600",
+                bgGradient: "from-secondary-50 to-primary-50"
               },
               {
                 title: "Personalized Guidance",
                 description: "The work adapts to your pace, your story, and the realities of your everyday life.",
-                icon: "🎯"
+                icon: Target,
+                gradient: "from-pink-500 to-primary-500",
+                bgGradient: "from-pink-50 to-primary-50"
               }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="bg-white p-8 rounded-3xl border border-secondary-100 hover:border-primary-200 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <div className="text-5xl mb-4">{item.icon}</div>
-                <h3 className="text-2xl font-display font-bold text-secondary-900 mb-4">{item.title}</h3>
-                <p className="text-secondary-600 leading-relaxed">{item.description}</p>
-              </motion.div>
-            ))}
+            ].map((item, idx) => {
+              const IconComponent = item.icon
+              return (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group relative bg-white p-8 rounded-3xl border border-secondary-100 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
+                >
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10`}></div>
+                  
+                  {/* Decorative corner gradient */}
+                  <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${item.gradient} rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-150 transition-all duration-700`}></div>
+                  
+                  {/* Icon container */}
+                  <div className={`relative w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                    <IconComponent className="w-8 h-8 text-white" strokeWidth={2} />
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-2xl font-display font-bold text-secondary-900 mb-4 group-hover:text-primary-700 transition-colors duration-300">{item.title}</h3>
+                  <p className="text-secondary-600 leading-relaxed group-hover:text-secondary-700 transition-colors duration-300">{item.description}</p>
+                  
+                  {/* Bottom accent line */}
+                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${item.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
+                </motion.div>
+              )
+            })}
           </motion.div>
         </div>
       </section>
