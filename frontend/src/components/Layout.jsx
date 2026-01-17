@@ -621,8 +621,8 @@ function Header() {
           </div>
         )}
 
-        {/* Desktop Navigation */}
-        <nav className="nav-links desktop-nav">
+        {/* Desktop Navigation - Center Links */}
+        <nav className="nav-center desktop-nav">
           <a href="/about" onClick={closeMobileMenu}>
             <button type="button">About</button>
           </a>
@@ -638,29 +638,10 @@ function Header() {
           <a href="/contact" onClick={closeMobileMenu}>
             <button type="button">Contact</button>
           </a>
+        </nav>
 
-          {/* User profile / auth */}
-          {firebaseUser ? (
-            <>
-              <a
-                href="/auth"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/auth')
-                }}
-              >
-                <button type="button">Profile</button>
-              </a>
-              <button type="button" onClick={handleLogout} className="nav-logout-btn">
-                Logout
-              </button>
-            </>
-          ) : (
-            <a href="/auth">
-              <button type="button">Sign in</button>
-            </a>
-          )}
-
+        {/* Desktop Navigation - Right Section (Profile, Notifications, Auth) */}
+        <div className="nav-right desktop-nav">
           {/* Notification Bell */}
           {firebaseUser && (
             <div className="notif-dropdown-container" style={{ position: 'relative' }}>
@@ -883,7 +864,31 @@ function Header() {
               )}
             </div>
           )}
-        </nav>
+
+          {/* Profile Button */}
+          {firebaseUser && (
+            <a
+              href="/auth"
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/auth')
+              }}
+            >
+              <button type="button" className="nav-profile-btn">Profile</button>
+            </a>
+          )}
+
+          {/* Sign in / Logout */}
+          {firebaseUser ? (
+            <button type="button" onClick={handleLogout} className="nav-logout-btn">
+              Logout
+            </button>
+          ) : (
+            <a href="/auth">
+              <button type="button" className="nav-signin-btn">Sign in</button>
+            </a>
+          )}
+        </div>
       </div>
     </header>
   )
