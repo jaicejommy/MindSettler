@@ -24,6 +24,7 @@ import AuthPage from './pages/AuthPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import ArticlePage from './pages/ArticlePage'
 import TherapiesPage from './pages/TherapiesPage'
+import TherapyArticlePage from './pages/TherapyArticlePage'
 import ChatBot from './components/ChatBot'
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
         <Route path="/reset-password" element={<Layout><ResetPasswordPage /></Layout>} />
         <Route path="/article/:slug" element={<Layout><ArticlePage /></Layout>} />
         <Route path="/therapies" element={<Layout><TherapiesPage /></Layout>} />
+        <Route path="/therapy/:id" element={<Layout><TherapyArticlePage /></Layout>} />
       </Routes>
       <ChatBot />
     </>

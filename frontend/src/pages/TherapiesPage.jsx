@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, ArrowRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const THERAPIES = [
   {
     id: 'cbt',
     name: 'Cognitive Behavioural Therapy (CBT)',
-    image: '/therapies/cbt.png',
+    image: '/CBT.png',
     gradient: 'from-blue-100 via-purple-50 to-pink-50',
+    color: '#3B82F6',
     benefits: [
       'Identify and change unhelpful thought patterns',
       'Develop better coping skills and emotional regulation',
@@ -17,8 +19,9 @@ const THERAPIES = [
   {
     id: 'dbt',
     name: 'Dialectical Behavioural Therapy (DBT)',
-    image: '/therapies/dbt.png',
+    image: '/DBT.png',
     gradient: 'from-purple-100 via-indigo-50 to-blue-50',
+    color: '#8B5CF6',
     benefits: [
       'Build emotional regulation skills',
       'Develop distress tolerance techniques',
@@ -29,8 +32,9 @@ const THERAPIES = [
   {
     id: 'act',
     name: 'Acceptance & Commitment Therapy (ACT)',
-    image: '/therapies/act.png',
+    image: '/ACT.png',
     gradient: 'from-amber-50 via-orange-50 to-rose-50',
+    color: '#F59E0B',
     benefits: [
       'Develop psychological flexibility',
       'Learn to accept difficult thoughts and feelings',
@@ -41,8 +45,9 @@ const THERAPIES = [
   {
     id: 'schema',
     name: 'Schema Therapy',
-    image: '/therapies/schema.png',
+    image: '/ST.png',
     gradient: 'from-emerald-50 via-teal-50 to-cyan-50',
+    color: '#14B8A6',
     benefits: [
       'Explore deep-rooted patterns from early life',
       'Understand long-standing emotional challenges',
@@ -53,8 +58,9 @@ const THERAPIES = [
   {
     id: 'eft',
     name: 'Emotion-Focused Therapy (EFT)',
-    image: '/therapies/eft.png',
+    image: '/EFT.png',
     gradient: 'from-orange-100 via-amber-50 to-yellow-50',
+    color: '#EC4899',
     benefits: [
       'Understand and process emotions effectively',
       'Build emotional awareness and resilience',
@@ -65,8 +71,9 @@ const THERAPIES = [
   {
     id: 'efct',
     name: 'Emotion-Focused Couples Therapy',
-    image: '/therapies/efct.png',
+    image: '/EFCT.png',
     gradient: 'from-teal-50 via-emerald-50 to-green-50',
+    color: '#10B981',
     benefits: [
       'Strengthen emotional bonds between partners',
       'Improve communication and rebuild trust',
@@ -77,8 +84,9 @@ const THERAPIES = [
   {
     id: 'mbct',
     name: 'Mindfulness-Based Cognitive Therapy (MBCT)',
-    image: '/therapies/mbct.png',
+    image: '/MBCT.png',
     gradient: 'from-violet-100 via-purple-50 to-fuchsia-50',
+    color: '#6366F1',
     benefits: [
       'Combine cognitive techniques with mindfulness',
       'Increase awareness of thoughts and emotions',
@@ -89,8 +97,9 @@ const THERAPIES = [
   {
     id: 'cct',
     name: 'Client-Centred Therapy',
-    image: '/therapies/cct.png',
+    image: '/CCT.png',
     gradient: 'from-rose-50 via-pink-50 to-red-50',
+    color: '#F43F5E',
     benefits: [
       'Person-centered therapeutic process',
       'Emphasis on empathy and acceptance',
@@ -101,19 +110,21 @@ const THERAPIES = [
   {
     id: 'custom',
     name: 'Custom Therapy Plan',
-    image: '/therapies/custom.png',
+    image: '/Custom.png',
     gradient: 'from-green-50 via-emerald-50 to-teal-50',
+    color: '#84CC16',
     benefits: [
       'Personalized approach tailored to your unique needs',
       'Combine multiple therapeutic techniques',
       'Flexible scheduling based on your availability',
-      'Continuous adaptation to your progress',
-      'Holistic integration of mind, body, and spirit'
+      'Continuous adaptation to your progress'
     ],
   },
 ]
 
 function TherapyCard({ therapy, index }) {
+  const navigate = useNavigate()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -122,7 +133,7 @@ function TherapyCard({ therapy, index }) {
       transition={{ duration: 0.5, delay: index * 0.08 }}
       className="group"
     >
-      <div className="bg-white rounded-3xl overflow-hidden h-full shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-secondary-100/50">
+      <div className="bg-white rounded-3xl overflow-hidden h-full shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-secondary-100/50 flex flex-col">
         {/* Image Area */}
         <div className={`h-48 bg-gradient-to-br ${therapy.gradient} relative overflow-hidden`}>
           <img 
@@ -140,19 +151,37 @@ function TherapyCard({ therapy, index }) {
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-secondary-900 text-center mb-5 leading-tight min-h-[3.5rem] flex items-center justify-center">
+        <div className="p-6 flex flex-col flex-grow">
+          <h3 className="text-xl font-bold text-secondary-900 text-center mb-5 leading-tight">
             {therapy.name}
           </h3>
 
           {/* Benefits with checkmarks */}
-          <div className="space-y-3">
+          <div className="space-y-3 flex-grow mb-6">
             {therapy.benefits.map((benefit, i) => (
               <div key={i} className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: therapy.color }} />
                 <span className="text-secondary-600 text-sm leading-relaxed">{benefit}</span>
               </div>
             ))}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate(`/therapy/${therapy.id}`)}
+              className="flex-1 px-4 py-3 rounded-full font-medium text-sm transition-all shadow-lg hover:shadow-primary-400/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 border-2 border-primary-500 text-primary-500 bg-white hover:bg-primary-500 hover:text-white hover:border-primary-500 no-underline"
+            >
+              Learn More
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <a
+              href="/booking"
+              className="flex-1 px-4 py-3 rounded-full font-medium text-sm text-white bg-secondary-900 transition-all shadow-lg hover:shadow-primary-400/50 hover:-translate-y-0.5 flex items-center justify-center hover:bg-secondary-800"
+              style={{ textDecoration: 'none' }}
+            >
+              Book Session
+            </a>
           </div>
         </div>
       </div>
