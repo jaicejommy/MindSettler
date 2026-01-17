@@ -152,7 +152,7 @@ export default function CorporatePage() {
                 Thank you. We will write back to explore a suitable format for your organisation.
               </p>
             )}
-            <button type="submit" className="primary-btn" disabled={submitting}>
+            <button type="submit" className="primary-btn mt-6" disabled={submitting}>
               {submitting ? 'Sending…' : 'Send request'}
             </button>
           </form>
