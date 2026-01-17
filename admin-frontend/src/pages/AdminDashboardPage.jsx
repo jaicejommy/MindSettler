@@ -168,6 +168,24 @@ const Icons = {
             <circle cx="17.5" cy="17.5" r="2.5" />
         </svg>
     ),
+    Trash: () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
+        </svg>
+    ),
+    ChevronLeft: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+        </svg>
+    ),
+    ChevronRight: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+        </svg>
+    ),
 }
 
 function AdminDashboardPage() {
@@ -231,6 +249,10 @@ function AdminDashboardPage() {
     const [emailModal, setEmailModal] = useState({ open: false, contact: null })
     const [callMessage, setCallMessage] = useState('')
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+    // Calendar state
+    const [calendarDate, setCalendarDate] = useState(new Date())
+    const [selectedDate, setSelectedDate] = useState(null)
 
     const token = localStorage.getItem('mindsettler_admin_token')
 
@@ -419,6 +441,28 @@ function AdminDashboardPage() {
             setCouponMessage('Failed to create coupon')
         } finally {
             setCouponSaving(false)
+            setTimeout(() => setCouponMessage(''), 3000)
+        }
+    }
+
+    async function handleDeleteCoupon(id) {
+        if (!window.confirm('Are you sure you want to delete this coupon?')) return
+        try {
+            const res = await fetch(`${API_BASE_URL}/coupons/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            if (res.ok) {
+                setCouponMessage('Coupon deleted successfully!')
+                fetchCoupons()
+            } else {
+                const data = await res.json()
+                setCouponMessage(data.message || 'Failed to delete coupon')
+            }
+        } catch (err) {
+            console.error('Failed to delete coupon', err)
+            setCouponMessage('Failed to delete coupon')
+        } finally {
             setTimeout(() => setCouponMessage(''), 3000)
         }
     }
@@ -679,6 +723,61 @@ function AdminDashboardPage() {
         })
     }
 
+    // Calendar helper functions
+    const getCalendarDays = () => {
+        const year = calendarDate.getFullYear()
+        const month = calendarDate.getMonth()
+        const firstDay = new Date(year, month, 1)
+        const lastDay = new Date(year, month + 1, 0)
+        const startPadding = firstDay.getDay()
+        const daysInMonth = lastDay.getDate()
+
+        const days = []
+        // Add padding for days before the 1st
+        for (let i = 0; i < startPadding; i++) {
+            days.push(null)
+        }
+        // Add actual days
+        for (let i = 1; i <= daysInMonth; i++) {
+            days.push(i)
+        }
+        return days
+    }
+
+    const formatCalendarDate = (day) => {
+        if (!day) return null
+        const year = calendarDate.getFullYear()
+        const month = String(calendarDate.getMonth() + 1).padStart(2, '0')
+        const dayStr = String(day).padStart(2, '0')
+        return `${year}-${month}-${dayStr}`
+    }
+
+    const getBookingsForDate = (dateStr) => {
+        return bookings.filter(b => b.date === dateStr)
+    }
+
+    const getCalendarMonthLabel = () => {
+        return calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    }
+
+    const prevMonth = () => {
+        setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))
+    }
+
+    const nextMonth = () => {
+        setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))
+    }
+
+    const isToday = (day) => {
+        if (!day) return false
+        const today = new Date()
+        return (
+            day === today.getDate() &&
+            calendarDate.getMonth() === today.getMonth() &&
+            calendarDate.getFullYear() === today.getFullYear()
+        )
+    }
+
     return (
         <main className="admin-dashboard-page">
             <div className="admin-layout">
@@ -714,6 +813,13 @@ function AdminDashboardPage() {
                             <span className="icon"><Icons.Calendar /></span>
                             Appointments
                             {pending.length > 0 && <span className="badge-count">{pending.length}</span>}
+                        </button>
+                        <button
+                            className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('calendar')}
+                        >
+                            <span className="icon"><Icons.CalendarClock /></span>
+                            Calendar
                         </button>
                         <button
                             className={`nav-item ${activeTab === 'messages' ? 'active' : ''}`}
@@ -803,6 +909,7 @@ function AdminDashboardPage() {
                         <h1>
                             {activeTab === 'dashboard' && 'Dashboard'}
                             {activeTab === 'appointments' && 'Appointments'}
+                            {activeTab === 'calendar' && 'Appointment Calendar'}
                             {activeTab === 'messages' && 'Messages'}
                             {activeTab === 'pricing' && 'Session Pricing'}
                             {activeTab === 'coupons' && 'Discount Coupons'}
@@ -1140,6 +1247,237 @@ function AdminDashboardPage() {
                                 </div>
                             )}
 
+                            {/* Calendar View */}
+                            {activeTab === 'calendar' && (
+                                <div className="content-grid full" style={{ gap: '1.5rem' }}>
+                                    {/* Calendar Panel */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>Monthly Overview</h2>
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <button
+                                                    onClick={prevMonth}
+                                                    style={{
+                                                        background: 'linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%)',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        padding: '0.5rem',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <Icons.ChevronLeft />
+                                                </button>
+                                                <span style={{ fontWeight: 600, fontSize: '1.1rem', minWidth: '160px', textAlign: 'center' }}>
+                                                    {getCalendarMonthLabel()}
+                                                </span>
+                                                <button
+                                                    onClick={nextMonth}
+                                                    style={{
+                                                        background: 'linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%)',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        padding: '0.5rem',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <Icons.ChevronRight />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="panel-body">
+                                            {/* Calendar Grid */}
+                                            <div className="calendar-grid" style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(7, 1fr)',
+                                                gap: '4px',
+                                            }}>
+                                                {/* Day Headers */}
+                                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                                                    <div key={day} style={{
+                                                        padding: '0.75rem 0.5rem',
+                                                        textAlign: 'center',
+                                                        fontWeight: 600,
+                                                        color: '#666',
+                                                        fontSize: '0.85rem',
+                                                    }}>
+                                                        {day}
+                                                    </div>
+                                                ))}
+                                                {/* Calendar Days */}
+                                                {getCalendarDays().map((day, idx) => {
+                                                    const dateStr = formatCalendarDate(day)
+                                                    const dayBookings = dateStr ? getBookingsForDate(dateStr) : []
+                                                    const pendingCount = dayBookings.filter(b => b.status === 'pending').length
+                                                    const confirmedCount = dayBookings.filter(b => b.status === 'confirmed').length
+                                                    const isSelected = selectedDate === dateStr
+
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            onClick={() => day && setSelectedDate(dateStr)}
+                                                            style={{
+                                                                padding: '0.75rem 0.5rem',
+                                                                minHeight: '70px',
+                                                                textAlign: 'center',
+                                                                borderRadius: '10px',
+                                                                cursor: day ? 'pointer' : 'default',
+                                                                background: isSelected
+                                                                    ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)'
+                                                                    : isToday(day)
+                                                                        ? 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
+                                                                        : day
+                                                                            ? '#fff'
+                                                                            : 'transparent',
+                                                                border: isToday(day) && !isSelected ? '2px solid #DD1764' : '1px solid #eee',
+                                                                color: isSelected ? '#fff' : '#333',
+                                                                transition: 'all 0.2s',
+                                                            }}
+                                                        >
+                                                            {day && (
+                                                                <>
+                                                                    <div style={{ fontWeight: isToday(day) || isSelected ? 700 : 500, fontSize: '1rem' }}>
+                                                                        {day}
+                                                                    </div>
+                                                                    {dayBookings.length > 0 && (
+                                                                        <div style={{
+                                                                            display: 'flex',
+                                                                            justifyContent: 'center',
+                                                                            gap: '4px',
+                                                                            marginTop: '6px',
+                                                                        }}>
+                                                                            {pendingCount > 0 && (
+                                                                                <span style={{
+                                                                                    width: '8px',
+                                                                                    height: '8px',
+                                                                                    borderRadius: '50%',
+                                                                                    background: isSelected ? '#fff' : '#f59e0b',
+                                                                                    opacity: isSelected ? 0.8 : 1,
+                                                                                }}></span>
+                                                                            )}
+                                                                            {confirmedCount > 0 && (
+                                                                                <span style={{
+                                                                                    width: '8px',
+                                                                                    height: '8px',
+                                                                                    borderRadius: '50%',
+                                                                                    background: isSelected ? '#fff' : '#22c55e',
+                                                                                    opacity: isSelected ? 0.8 : 1,
+                                                                                }}></span>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            {/* Legend */}
+                                            <div style={{
+                                                display: 'flex',
+                                                gap: '1.5rem',
+                                                marginTop: '1.5rem',
+                                                justifyContent: 'center',
+                                                fontSize: '0.85rem',
+                                                color: '#666',
+                                            }}>
+                                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }}></span>
+                                                    Pending
+                                                </span>
+                                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e' }}></span>
+                                                    Confirmed
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Selected Date Appointments Panel */}
+                                    <div className="panel">
+                                        <div className="panel-header">
+                                            <div className="panel-title">
+                                                <h2>
+                                                    {selectedDate
+                                                        ? `Appointments on ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`
+                                                        : 'Select a Date'}
+                                                </h2>
+                                                {selectedDate && (
+                                                    <span className="count">{getBookingsForDate(selectedDate).length}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="panel-body no-padding">
+                                            {!selectedDate ? (
+                                                <div className="empty-state">
+                                                    <div className="empty-icon">📅</div>
+                                                    <h3>Click on a date</h3>
+                                                    <p>Select a date from the calendar to view appointments</p>
+                                                </div>
+                                            ) : getBookingsForDate(selectedDate).length === 0 ? (
+                                                <div className="empty-state">
+                                                    <div className="empty-icon">✨</div>
+                                                    <h3>No appointments</h3>
+                                                    <p>No appointments scheduled for this date</p>
+                                                </div>
+                                            ) : (
+                                                <div className="booking-list">
+                                                    {getBookingsForDate(selectedDate).map(b => (
+                                                        <div className="booking-card" key={b._id}>
+                                                            <div className="booking-avatar">
+                                                                {getInitials(b.name)}
+                                                            </div>
+                                                            <div className="booking-info">
+                                                                <div className="booking-name">{b.name}</div>
+                                                                <div className="booking-email">{b.email}</div>
+                                                                <div className="booking-meta">
+                                                                    <span><Icons.Clock /> {b.time}</span>
+                                                                    {b.mode && (
+                                                                        <span className="mode-badge">
+                                                                            {b.mode === 'video' ? <Icons.Video /> : <Icons.User />}
+                                                                            {b.mode}
+                                                                        </span>
+                                                                    )}
+                                                                    <span className={`status-badge ${b.status}`}>
+                                                                        <span className="dot"></span>
+                                                                        {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {b.status === 'pending' && (
+                                                                <div className="booking-actions">
+                                                                    <button
+                                                                        className="btn-action confirm"
+                                                                        onClick={() => updateBookingStatus(b._id, 'confirmed')}
+                                                                        title="Confirm"
+                                                                    >
+                                                                        <Icons.Check />
+                                                                    </button>
+                                                                    <button
+                                                                        className="btn-action reject"
+                                                                        onClick={() => openRejectModal(b._id)}
+                                                                        title="Reject"
+                                                                    >
+                                                                        <Icons.X />
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Messages View */}
                             {activeTab === 'messages' && (
                                 <div className="content-grid full">
@@ -1462,8 +1800,8 @@ function AdminDashboardPage() {
                                                             type="text"
                                                             required
                                                             value={newCoupon.code}
-                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, code: e.target.value.toUpperCase() }))}
-                                                            placeholder="e.g. WELCOME20"
+                                                            onChange={(e) => setNewCoupon((c) => ({ ...c, code: e.target.value }))}
+                                                            placeholder="e.g. Happy20"
                                                             style={{
                                                                 padding: '0.75rem 1rem',
                                                                 borderRadius: '8px',
@@ -1496,20 +1834,28 @@ function AdminDashboardPage() {
                                                                     boxSizing: 'border-box',
                                                                 }}
                                                             />
-                                                            <label style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '0.35rem',
-                                                                padding: '0.5rem 0.75rem',
-                                                                background: newCoupon.isPercentage ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)' : '#f0f0f0',
-                                                                color: newCoupon.isPercentage ? '#fff' : '#666',
-                                                                borderRadius: '8px',
-                                                                cursor: 'pointer',
-                                                                fontWeight: 600,
-                                                                fontSize: '0.9rem',
-                                                                transition: 'all 0.2s',
-                                                                whiteSpace: 'nowrap',
-                                                            }}>
+                                                            <label
+                                                                title="Click to toggle percentage discount"
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '0.35rem',
+                                                                    padding: '0.5rem 0.75rem',
+                                                                    background: newCoupon.isPercentage
+                                                                        ? 'linear-gradient(135deg, #3F2965 0%, #DD1764 100%)'
+                                                                        : 'linear-gradient(135deg, #e8e4f0 0%, #f5e6f0 100%)',
+                                                                    color: newCoupon.isPercentage ? '#fff' : '#3F2965',
+                                                                    borderRadius: '8px',
+                                                                    cursor: 'pointer',
+                                                                    fontWeight: 600,
+                                                                    fontSize: '0.9rem',
+                                                                    transition: 'all 0.2s',
+                                                                    whiteSpace: 'nowrap',
+                                                                    border: newCoupon.isPercentage ? 'none' : '2px dashed #DD1764',
+                                                                    boxShadow: newCoupon.isPercentage
+                                                                        ? '0 4px 12px rgba(221, 23, 100, 0.3)'
+                                                                        : '0 2px 8px rgba(63, 41, 101, 0.15)',
+                                                                }}>
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={newCoupon.isPercentage}
@@ -1742,6 +2088,27 @@ function AdminDashboardPage() {
                                                                     {c.isPercentage ? 'OFF' : 'FLAT'}
                                                                 </div>
                                                             </div>
+                                                            <button
+                                                                onClick={() => handleDeleteCoupon(c._id)}
+                                                                title="Delete Coupon"
+                                                                style={{
+                                                                    background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                                                                    border: 'none',
+                                                                    borderRadius: '8px',
+                                                                    padding: '0.6rem',
+                                                                    cursor: 'pointer',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    color: 'white',
+                                                                    flexShrink: 0,
+                                                                    transition: 'transform 0.2s, box-shadow 0.2s',
+                                                                }}
+                                                                onMouseEnter={(e) => { e.target.style.transform = 'scale(1.1)'; e.target.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.4)' }}
+                                                                onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = 'none' }}
+                                                            >
+                                                                <Icons.Trash />
+                                                            </button>
                                                         </div>
                                                     ))}
                                                 </div>
