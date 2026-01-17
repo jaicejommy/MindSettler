@@ -259,7 +259,10 @@ const Hero = ({ navigate }) => {
           <FadeIn delay={0.4}>
             <button
               onClick={() => navigate('/booking')}
-              className="px-8 py-4 bg-secondary-900 text-white rounded-full font-medium text-lg hover:bg-secondary-800 transition-all shadow-xl hover:shadow-2xl hover:shadow-primary-900/20 hover:-translate-y-1 flex items-center justify-center gap-2 group"
+              className="px-8 py-4 text-white rounded-full font-medium text-lg transition-all shadow-xl hover:shadow-2xl hover:shadow-primary-900/20 hover:-translate-y-1 flex items-center justify-center gap-2 group"
+              style={{ background: '#3F2965' }}
+              onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+              onMouseLeave={(e) => e.target.style.background = '#3F2965'}
             >
               Start your journey
               <div className="bg-white/20 rounded-full p-1 group-hover:bg-white/30 transition-colors">
@@ -538,9 +541,9 @@ const InnerState = () => {
               <p className="text-slate-300 text-lg mb-10 leading-relaxed">
                 Select a dimension of mental well-being to understand common patterns. We believe that naming a feeling is the first step to taming it.
               </p>
-              <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-primary-50 transition-colors">
+              <a href="/psycho-education" className="primary-btn inline-block px-8 py-4 bg-[#3F2965] text-white rounded-full font-bold shadow-lg hover:bg-[#DD1764] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                 View All Resources
-              </button>
+              </a>
             </FadeIn>
           </div>
 
@@ -650,7 +653,7 @@ const Services = () => {
 
         {/* Single Learn More Button */}
         <FadeIn delay={0.3} className="mt-12 text-center">
-          <a href="/therapies" className="btn btn-primary text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl">
+          <a href="/therapies" className="inline-block text-lg px-8 py-4 rounded-full shadow-lg font-bold hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 no-underline" style={{ background: '#3F2965', color: '#ffffff' }} onMouseEnter={(e) => e.target.style.background = '#DD1764'} onMouseLeave={(e) => e.target.style.background = '#3F2965'}>
             Learn More About Our Therapies
           </a>
         </FadeIn>
@@ -685,7 +688,7 @@ const Process = () => {
                     </div>
                   </div>
                   <button
-                    className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium hover:bg-secondary-800 transition-colors"
+                    className="w-full py-3 bg-[#3F2965] text-white rounded-xl font-medium shadow-md hover:bg-[#DD1764] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                     onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
                   >Start Chat</button>
                 </div>
@@ -733,7 +736,7 @@ const FAQ = () => {
               <p className="text-lg text-secondary-600 mb-8">
                 Can't find what you're looking for? Reach out to our support team directly.
               </p>
-              <a href="#contact" className="inline-flex items-center text-primary-600 font-bold hover:text-primary-800 transition-colors">
+              <a href="/contact" className="inline-flex items-center px-6 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 no-underline" style={{ background: '#3F2965', color: '#ffffff' }} onMouseEnter={(e) => e.target.style.background = '#DD1764'} onMouseLeave={(e) => e.target.style.background = '#3F2965'}>
                 Contact Support <ArrowRight className="w-4 h-4 ml-2" />
               </a>
             </FadeIn>

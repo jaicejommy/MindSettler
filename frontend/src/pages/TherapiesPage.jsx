@@ -136,8 +136,8 @@ function TherapyCard({ therapy, index }) {
       <div className="bg-white rounded-3xl overflow-hidden h-full shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-secondary-100/50 flex flex-col">
         {/* Image Area */}
         <div className={`h-48 bg-gradient-to-br ${therapy.gradient} relative overflow-hidden`}>
-          <img 
-            src={therapy.image} 
+          <img
+            src={therapy.image}
             alt={therapy.name}
             className="w-full h-full object-cover object-center"
             onError={(e) => {
@@ -170,15 +170,20 @@ function TherapyCard({ therapy, index }) {
           <div className="flex gap-3">
             <button
               onClick={() => navigate(`/therapy/${therapy.id}`)}
-              className="flex-1 px-4 py-3 rounded-full font-medium text-sm transition-all shadow-lg hover:shadow-primary-400/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 border-2 border-primary-500 text-primary-500 bg-white hover:bg-primary-500 hover:text-white hover:border-primary-500 no-underline"
+              className="flex-1 px-4 py-3 rounded-full font-medium text-sm transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 no-underline"
+              style={{ background: '#DD1764', color: '#ffffff' }}
+              onMouseEnter={(e) => e.target.style.background = '#3F2965'}
+              onMouseLeave={(e) => e.target.style.background = '#DD1764'}
             >
               Learn More
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
               href="/booking"
-              className="flex-1 px-4 py-3 rounded-full font-medium text-sm text-white bg-secondary-900 transition-all shadow-lg hover:shadow-primary-400/50 hover:-translate-y-0.5 flex items-center justify-center hover:bg-secondary-800"
-              style={{ textDecoration: 'none' }}
+              className="flex-1 px-4 py-3 rounded-full font-medium text-sm transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center no-underline"
+              style={{ background: '#3F2965', color: '#ffffff', textDecoration: 'none' }}
+              onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+              onMouseLeave={(e) => e.target.style.background = '#3F2965'}
             >
               Book Session
             </a>
@@ -217,8 +222,8 @@ export default function TherapiesPage() {
               </span>
             </h1>
             <p className="text-lg text-secondary-600 leading-relaxed max-w-3xl mx-auto">
-              At MindSettler, we use a range of proven therapeutic approaches, carefully selected and adapted 
-              to meet your individual needs. Each therapy offers unique tools for understanding yourself 
+              At MindSettler, we use a range of proven therapeutic approaches, carefully selected and adapted
+              to meet your individual needs. Each therapy offers unique tools for understanding yourself
               and creating lasting change.
             </p>
           </motion.div>
@@ -250,19 +255,20 @@ export default function TherapiesPage() {
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
-              
+
               <div className="relative z-10">
                 <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
                   Not Sure Which Approach is Right for You?
                 </h2>
                 <p className="text-secondary-300 text-lg mb-8 max-w-2xl mx-auto">
-                  That's completely okay. During your first session, we'll explore your needs together 
+                  That's completely okay. During your first session, we'll explore your needs together
                   and find the therapeutic approach that resonates with you.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
                     href="/booking"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/25"
+                    className="inline-flex items-center justify-center px-8 py-4 font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 no-underline"
+                    style={{ background: '#DD1764', color: '#ffffff' }}
                   >
                     Book a Session
                   </a>
@@ -293,16 +299,16 @@ export default function TherapiesPage() {
               <h3 className="text-2xl font-bold text-secondary-900 mb-4">How We Work</h3>
               <div className="space-y-4 text-secondary-600">
                 <p>
-                  Our approach is integrative – meaning we don't rigidly stick to one model. Instead, we draw 
+                  Our approach is integrative – meaning we don't rigidly stick to one model. Instead, we draw
                   from various evidence-based therapies to create a personalized experience that works for you.
                 </p>
                 <p>
-                  Each session is a collaborative space where you set the pace. Whether you're dealing with 
-                  anxiety, navigating relationships, processing past experiences, or simply seeking clarity, 
+                  Each session is a collaborative space where you set the pace. Whether you're dealing with
+                  anxiety, navigating relationships, processing past experiences, or simply seeking clarity,
                   we meet you where you are.
                 </p>
                 <p className="font-medium text-secondary-800">
-                  Remember: Choosing to seek support is a sign of strength, not weakness. You don't have to 
+                  Remember: Choosing to seek support is a sign of strength, not weakness. You don't have to
                   have everything figured out before reaching out.
                 </p>
               </div>

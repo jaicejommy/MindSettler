@@ -181,6 +181,27 @@ a:not(.primary-btn):not(.secondary-btn):hover::after {
   display: none !important;
 }
 
+/* No underline utility class */
+.no-underline::after {
+  display: none !important;
+}
+
+.no-underline:hover::after {
+  display: none !important;
+}
+
+/* Active navigation link - purple button for current page */
+.nav-active button {
+  background: #3F2965 !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.nav-active::after {
+  display: none !important;
+}
+
 /* Footer contact links - underline only on text, not icon */
 .footer-contact-link::after {
   display: none !important;
@@ -288,10 +309,10 @@ a:not(.primary-btn):not(.secondary-btn):hover::after {
 
 .btn-secondary:hover,
 .secondary-btn:hover {
-  background: linear-gradient(135deg, #3F2965 0%, #5a3d7d 100%);
-  color: #ffffff !important;
-  border-color: transparent;
-  box-shadow: 0 6px 20px rgba(63, 41, 101, 0.3);
+  background: rgba(63, 41, 101, 0.1);
+  color: #3F2965 !important;
+  border-color: #3F2965;
+  box-shadow: 0 4px 12px rgba(63, 41, 101, 0.15);
   transform: translateY(-2px);
 }
 
@@ -2415,9 +2436,9 @@ textarea {
 
 .pill {
   border-radius: var(--radius-pill);
-  border: none;
-  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
-  color: #FFFFFF;
+  border: 2px solid #3F2965;
+  background: transparent;
+  color: #3F2965;
   padding: 0.35rem 0.9rem;
   font-size: 0.8rem;
   cursor: pointer;
@@ -2446,16 +2467,16 @@ textarea {
 }
 
 .pill:hover {
-  background: linear-gradient(135deg, #a855f7 0%, #f472b6 100%);
+  background: rgba(63, 41, 101, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(63, 41, 101, 0.15);
 }
 
 .pill.active {
-  border-color: rgba(221, 23, 100, 0.8);
+  border-color: #3F2965;
   color: #FFFFFF;
-  background: linear-gradient(to right, #DD1764, #D81260);
-  box-shadow: 0 8px 20px rgba(221, 23, 100, 0.3);
+  background: #3F2965;
+  box-shadow: 0 4px 12px rgba(63, 41, 101, 0.25);
   animation: slideInUp 0.3s ease-out;
 }
 
