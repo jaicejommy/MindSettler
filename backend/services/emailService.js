@@ -2,10 +2,18 @@ const nodemailer = require('nodemailer');
 
 // Create transporter with environment variables
 const createTransporter = () => {
+  // Debug logging for email config (hiding password)
+  console.log('📧 configuring email transport with:', {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER,
+    hasPassword: !!process.env.SMTP_PASS
+  });
+
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false, // true for 465, false for other ports
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_PORT === '465', // true for 465, false for other ports
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
