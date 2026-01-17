@@ -25,6 +25,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'fra
 import { useNavigate } from 'react-router-dom'
 import { FloatingBlobs } from '../components/FloatingBlobs'
 import { FadeIn } from '../components/FadeIn'
+import CircularGallerySection from '../components/CircularGallerySection'
 
 // --- Data ---
 const NAV_LINKS = [
@@ -397,17 +398,12 @@ const About = () => {
                   "MindSettler began as a quiet question: what if there was a soft corner of the internet where people could slow down?"
                 </p>
                 <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-12 h-12 rounded-full border-2 border-primary-100 overflow-hidden bg-white">
-                    <img
-                      src="/parnika_p.png"
-                      className="w-full h-full object-cover"
-                      alt="Parnika - Founder"
-                      style={{ objectPosition: 'center center', transform: 'scale(1.3)', transformOrigin: 'center 30%' }}
-                    />
+                  <div className="w-12 h-12 rounded-full border-2 border-primary-100 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop" className="w-full h-full object-cover" alt="Founder" />
                   </div>
                   <div>
                     <p className="text-secondary-900 font-bold">Parnika</p>
-                    <p className="text-primary-600 text-sm uppercase tracking-wide font-semibold">Founder, MindSettler</p>
+                    <p className="text-secondary-500 text-sm uppercase tracking-wide">Founder</p>
                   </div>
                 </div>
               </motion.div>
@@ -542,10 +538,7 @@ const InnerState = () => {
               <p className="text-slate-300 text-lg mb-10 leading-relaxed">
                 Select a dimension of mental well-being to understand common patterns. We believe that naming a feeling is the first step to taming it.
               </p>
-              <button
-                onClick={() => window.location.href = '/psycho-education'}
-                className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-primary-50 transition-colors"
-              >
+              <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-primary-50 transition-colors">
                 View All Resources
               </button>
             </FadeIn>
@@ -692,7 +685,7 @@ const Process = () => {
                     </div>
                   </div>
                   <button
-                    className="btn btn-primary w-full py-3 rounded-xl"
+                    className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium hover:bg-secondary-800 transition-colors"
                     onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
                   >Start Chat</button>
                 </div>
@@ -740,8 +733,8 @@ const FAQ = () => {
               <p className="text-lg text-secondary-600 mb-8">
                 Can't find what you're looking for? Reach out to our support team directly.
               </p>
-              <a href="/contact" className="btn btn-primary inline-flex items-center gap-2">
-                Contact Support <ArrowRight className="w-4 h-4" />
+              <a href="#contact" className="inline-flex items-center text-primary-600 font-bold hover:text-primary-800 transition-colors">
+                Contact Support <ArrowRight className="w-4 h-4 ml-2" />
               </a>
             </FadeIn>
           </div>
@@ -803,6 +796,7 @@ export default function HomePage() {
         <Hero navigate={navigate} />
         <Stats />
         <About />
+        <CircularGallerySection />
         <Journey />
         <InnerState />
         <Services />
