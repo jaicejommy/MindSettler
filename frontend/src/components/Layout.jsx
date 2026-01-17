@@ -625,19 +625,19 @@ function Header() {
 
         {/* Desktop Navigation - Center Links */}
         <nav className="nav-center desktop-nav">
-          <a href="/about" onClick={closeMobileMenu}>
+          <a href="/about" onClick={closeMobileMenu} className={isActive('/about') ? 'nav-active' : ''}>
             <button type="button">About</button>
           </a>
-          <a href="/psycho-education" onClick={closeMobileMenu}>
+          <a href="/psycho-education" onClick={closeMobileMenu} className={isActive('/psycho-education') ? 'nav-active' : ''}>
             <button type="button">Resources</button>
           </a>
-          <a href="/booking" onClick={closeMobileMenu}>
+          <a href="/booking" onClick={closeMobileMenu} className={isActive('/booking') ? 'nav-active' : ''}>
             <button type="button">Book a session</button>
           </a>
-          <a href="/corporate" onClick={closeMobileMenu}>
+          <a href="/corporate" onClick={closeMobileMenu} className={isActive('/corporate') ? 'nav-active' : ''}>
             <button type="button">Corporate</button>
           </a>
-          <a href="/contact" onClick={closeMobileMenu}>
+          <a href="/contact" onClick={closeMobileMenu} className={isActive('/contact') ? 'nav-active' : ''}>
             <button type="button">Contact</button>
           </a>
         </nav>
