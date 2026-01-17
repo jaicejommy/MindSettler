@@ -29,7 +29,22 @@ const firebaseAuth = require('./middleware/firebaseAuth')
 const firebaseAdminAuth = require('./middleware/firebaseAdminAuth')
 
 dotenv.config()
-connectDB()
+connectDB().then(() => {
+  // Optional: Auto-seed if needed, or expose endpoint
+  console.log('🔌 DB Connected. Ready to seed if needed.')
+})
+
+const { seedArticles } = require('./seedArticles')
+
+// Temporary endpoint to seed DB in production
+app.get('/api/seed-articles', async (req, res) => {
+  try {
+    await seedArticles()
+    res.json({ message: 'Database seeded successfully' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
 
 const app = express()
 const PORT = process.env.PORT || 5000

@@ -328,4 +328,4 @@ async function seedArticles() {
     }
 }
 
-seedArticles()
+module.exports = { seedArticles, sampleArticles }
