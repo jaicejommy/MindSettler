@@ -109,13 +109,15 @@ app.use(
       // Allow requests with no origin (like mobile apps, Postman, curl)
       if (!origin) return callback(null, true)
 
+      const normalizeOrigin = (url) => (url ? url.replace(/\/$/, '') : '')
+
       const allowedOrigins = [
         'http://localhost:5173',
         'http://localhost:5174',
         'http://127.0.0.1:5173',
         'http://127.0.0.1:5174',
-        process.env.FRONTEND_ORIGIN,
-        process.env.ADMIN_FRONTEND_URL,
+        normalizeOrigin(process.env.FRONTEND_ORIGIN),
+        normalizeOrigin(process.env.ADMIN_FRONTEND_URL),
       ].filter(Boolean)
 
       if (allowedOrigins.includes(origin)) {
