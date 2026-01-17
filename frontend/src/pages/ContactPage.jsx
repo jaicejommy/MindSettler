@@ -108,7 +108,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="field">
+            <div className="field mt-6">
               <label htmlFor="preferredChannel">Preferred way to reach you</label>
               <select
                 id="preferredChannel"
@@ -122,7 +122,7 @@ export default function ContactPage() {
               </select>
             </div>
 
-            <div className="field">
+            <div className="field mt-6">
               <label htmlFor="c-message">Message *</label>
               <textarea
                 id="c-message"
@@ -137,7 +137,7 @@ export default function ContactPage() {
             {error && <p className="form-error">{error}</p>}
             {done && <p className="form-success">Thank you for writing in. We will get back to you soon.</p>}
 
-            <button type="submit" className="primary-btn" disabled={submitting}>
+            <button type="submit" className="primary-btn mt-6" disabled={submitting}>
               {submitting ? 'Sending…' : 'Send message'}
             </button>
           </form>

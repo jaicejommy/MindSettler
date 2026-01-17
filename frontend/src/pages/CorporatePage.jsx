@@ -100,7 +100,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field-grid">
+            <div className="field-grid mt-6">
               <div className="field">
                 <label htmlFor="corp-email">Email *</label>
                 <input
@@ -123,7 +123,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field-grid">
+            <div className="field-grid mt-6">
               <div className="field">
                 <label htmlFor="groupSize">Approximate group size</label>
                 <input
@@ -135,7 +135,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field">
+            <div className="field mt-6">
               <label htmlFor="requirements">Tell us a little about what you need *</label>
               <textarea
                 id="requirements"
@@ -152,7 +152,7 @@ export default function CorporatePage() {
                 Thank you. We will write back to explore a suitable format for your organisation.
               </p>
             )}
-            <button type="submit" className="primary-btn" disabled={submitting}>
+            <button type="submit" className="primary-btn mt-6" disabled={submitting}>
               {submitting ? 'Sending…' : 'Send request'}
             </button>
           </form>
