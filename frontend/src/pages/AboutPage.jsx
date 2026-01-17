@@ -279,8 +279,12 @@ export default function AboutPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-24 bg-gradient-to-b from-white via-secondary-50/30 to-white relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-pink-100/40 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <motion.div
             variants={revealUp}
             initial="hidden"
@@ -300,51 +304,63 @@ export default function AboutPage() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="space-y-6"
+            className="relative"
           >
-            {[
-              {
-                number: "1",
-                title: "Share what brings you here",
-                description: "Use the booking or contact form to tell us a little about why you are seeking support now."
-              },
-              {
-                number: "2",
-                title: "Choose a 60-minute slot",
-                description: "Select an online or offline session and pick from the available time slots."
-              },
-              {
-                number: "3",
-                title: "Confirmation & Payment",
-                description: "Your appointment is reviewed and confirmed. You receive UPI or cash details for payment."
-              },
-              {
-                number: "4",
-                title: "Your First Session",
-                description: "A contained, confidential space to slow down, make sense of things, and feel a little more grounded."
-              },
-              {
-                number: "5",
-                title: "Designing Your Journey",
-                description: "Together, you decide if you want to continue with follow-up sessions or a structured journey."
-              }
-            ].map((step, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="flex gap-6 lg:gap-10 items-start p-8 bg-gradient-to-br from-white to-secondary-50/50 rounded-3xl border border-secondary-100 hover:border-primary-200 shadow-sm hover:shadow-md transition-all duration-300 group"
-              >
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white font-display font-bold text-xl shadow-md group-hover:scale-110 transition-transform">
-                    {step.number}
+            {/* Vertical connecting line */}
+            <div className="absolute left-7 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary-300 via-pink-300 to-primary-300 hidden md:block"></div>
+            
+            <div className="space-y-4">
+              {[
+                {
+                  number: "1",
+                  title: "Share what brings you here",
+                  description: "Use the booking or contact form to tell us a little about why you are seeking support now."
+                },
+                {
+                  number: "2",
+                  title: "Choose a 60-minute slot",
+                  description: "Select an online or offline session and pick from the available time slots."
+                },
+                {
+                  number: "3",
+                  title: "Confirmation & Payment",
+                  description: "Your appointment is reviewed and confirmed. You receive UPI or cash details for payment."
+                },
+                {
+                  number: "4",
+                  title: "Your First Session",
+                  description: "A contained, confidential space to slow down, make sense of things, and feel a little more grounded."
+                },
+                {
+                  number: "5",
+                  title: "Designing Your Journey",
+                  description: "Together, you decide if you want to continue with follow-up sessions or a structured journey."
+                }
+              ].map((step, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  whileHover={{ x: 4 }}
+                  className="group relative flex gap-6 lg:gap-8 items-start p-6 lg:p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-secondary-100 hover:border-primary-300 shadow-sm hover:shadow-lg transition-all duration-300"
+                >
+                  {/* Number badge */}
+                  <div className="flex-shrink-0 relative z-10">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-pink-500 text-white font-display font-bold text-xl shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      {step.number}
+                    </div>
                   </div>
-                </div>
-                <div className="flex-grow">
-                  <h3 className="text-xl lg:text-2xl font-display font-bold text-secondary-900 mb-2">{step.title}</h3>
-                  <p className="text-secondary-600 leading-relaxed">{step.description}</p>
-                </div>
-              </motion.div>
-            ))}
+                  
+                  {/* Content */}
+                  <div className="flex-grow pt-1">
+                    <h3 className="text-xl lg:text-2xl font-display font-bold text-secondary-900 mb-2 group-hover:text-primary-700 transition-colors duration-300">{step.title}</h3>
+                    <p className="text-secondary-600 leading-relaxed">{step.description}</p>
+                  </div>
+                  
+                  {/* Hover accent */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-pink-500 rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
