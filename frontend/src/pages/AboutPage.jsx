@@ -80,13 +80,13 @@ export default function AboutPage() {
                 {/* Gradient border effect */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-pink-400 to-primary-500 rounded-[2.2rem] opacity-50 blur group-hover:opacity-70 transition-opacity duration-500"></div>
 
-                <div className="relative rounded-[2rem] overflow-hidden">
+                <div className="relative rounded-[2rem] overflow-hidden bg-black">
                   <video
                     src="/mindsettler_intro.mp4"
                     controls
                     muted
                     playsInline
-                    poster="/video-poster.jpg"
+                    preload="metadata"
                     className="w-full h-full rounded-[2rem] object-cover"
                     style={{ maxHeight: '600px', aspectRatio: '9/16' }}
                   >
@@ -94,17 +94,6 @@ export default function AboutPage() {
                   </video>
                 </div>
               </div>
-
-              {/* Play hint badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg border border-primary-100 flex items-center gap-2"
-              >
-                <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
-                <span className="text-sm font-medium text-secondary-700">Watch our story</span>
-              </motion.div>
             </motion.div>
           </div>
 
