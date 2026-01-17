@@ -323,7 +323,7 @@ const About = () => {
       <div className="grid lg:grid-cols-2 min-h-[800px]">
 
         {/* Left Side - Image Container */}
-        <div className="relative h-[600px] lg:h-full order-1 lg:order-1 overflow-hidden group bg-primary-50 flex items-center justify-center p-8 lg:p-16">
+        <div className="relative aspect-[4/3] lg:aspect-auto lg:h-full order-1 lg:order-1 overflow-hidden group bg-primary-50 flex items-center justify-center p-8 lg:p-16">
           <motion.div style={{ y }} className="w-full h-full relative z-10">
             <img
               src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=2560&auto=format&fit=crop"

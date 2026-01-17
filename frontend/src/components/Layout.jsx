@@ -899,7 +899,7 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-secondary-950 text-white pt-24 pb-12 rounded-t-[3rem] mt-10 relative overflow-hidden">
+    <footer className="bg-secondary-950 text-white pt-12 md:pt-24 pb-8 md:pb-12 rounded-t-[3rem] mt-10 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-secondary-900 to-secondary-950 z-0"></div>
 
       {/* Abstract Shapes */}
@@ -907,7 +907,7 @@ function Footer() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-800/20 rounded-full blur-[100px]"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-16">
           <div className="col-span-1 md:col-span-1">
             <img
               src="/Mindsettler_logo_Final-Photoroom.png"
