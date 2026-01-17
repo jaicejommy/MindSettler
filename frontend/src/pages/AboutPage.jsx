@@ -366,10 +366,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-primary-100 via-pink-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-pink-200/30 rounded-full blur-3xl"></div>
-
+      <section className="py-28 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.div
             variants={revealScale}
@@ -377,20 +374,74 @@ export default function AboutPage() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">
-              Ready to settle in?
+            {/* Decorative badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 border border-primary-200 mb-8"
+            >
+              <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
+              <span className="text-sm font-medium text-primary-700">Your Journey Starts Here</span>
+            </motion.div>
+            
+            <h2 className="text-4xl lg:text-6xl font-display font-bold text-secondary-900 mb-6 leading-tight">
+              Ready to{' '}
+              <span className="relative inline-block">
+                <span className="bg-gradient-to-r from-primary-600 via-pink-500 to-primary-600 bg-clip-text text-transparent">settle in</span>
+                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                  <path d="M2 6C50 2 150 2 198 6" stroke="url(#underline-gradient-light)" strokeWidth="3" strokeLinecap="round"/>
+                  <defs>
+                    <linearGradient id="underline-gradient-light" x1="0" y1="0" x2="200" y2="0">
+                      <stop stopColor="#a855f7"/>
+                      <stop offset="0.5" stopColor="#ec4899"/>
+                      <stop offset="1" stopColor="#a855f7"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
+              ?
             </h2>
-            <p className="text-xl text-secondary-700 mb-10 max-w-2xl mx-auto font-medium">
+            <p className="text-xl text-secondary-600 mb-12 max-w-2xl mx-auto leading-relaxed">
               Take the first step towards understanding yourself better. Book a session with us today.
             </p>
+            
+            {/* CTA Button */}
             <motion.a
               href="/booking"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-block px-10 py-4 bg-gradient-to-r from-secondary-900 to-secondary-800 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:from-secondary-800 hover:to-secondary-700"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-secondary-900 to-secondary-800 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
             >
-              Book a Session
+              {/* Button shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              
+              <span className="relative z-10">Book a Session</span>
+              <svg className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </motion.a>
+            
+            {/* Trust indicators */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 flex flex-wrap justify-center gap-6 text-secondary-600 text-sm"
+            >
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary-500" />
+                <span>Confidential & Safe</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary-500" />
+                <span>Online & Offline Sessions</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary-500" />
+                <span>Flexible Scheduling</span>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
