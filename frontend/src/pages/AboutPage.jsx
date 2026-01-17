@@ -185,7 +185,10 @@ export default function AboutPage() {
                   transition={{ delay: 0.3 }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-secondary-900 to-secondary-800 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:from-secondary-800 hover:to-secondary-700"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 no-underline"
+                  style={{ background: '#3F2965', color: '#ffffff' }}
+                  onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+                  onMouseLeave={(e) => e.target.style.background = '#3F2965'}
                 >
                   <span>Begin Your Journey</span>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,19 +259,19 @@ export default function AboutPage() {
                 >
                   {/* Gradient overlay on hover */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10`}></div>
-                  
+
                   {/* Decorative corner gradient */}
                   <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${item.gradient} rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-150 transition-all duration-700`}></div>
-                  
+
                   {/* Icon container */}
                   <div className={`relative w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
                     <IconComponent className="w-8 h-8 text-white" strokeWidth={2} />
                   </div>
-                  
+
                   {/* Content */}
                   <h3 className="text-2xl font-display font-bold text-secondary-900 mb-4 group-hover:text-primary-700 transition-colors duration-300">{item.title}</h3>
                   <p className="text-secondary-600 leading-relaxed group-hover:text-secondary-700 transition-colors duration-300">{item.description}</p>
-                  
+
                   {/* Bottom accent line */}
                   <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${item.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
                 </motion.div>
@@ -283,7 +286,7 @@ export default function AboutPage() {
         {/* Decorative background elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary-100/40 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-64 h-64 bg-pink-100/40 rounded-full blur-3xl"></div>
-        
+
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <motion.div
             variants={revealUp}
@@ -308,7 +311,7 @@ export default function AboutPage() {
           >
             {/* Vertical connecting line */}
             <div className="absolute left-7 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary-300 via-pink-300 to-primary-300"></div>
-            
+
             <div className="space-y-4">
               {[
                 {
@@ -349,13 +352,13 @@ export default function AboutPage() {
                       {step.number}
                     </div>
                   </div>
-                  
+
                   {/* Content */}
                   <div className="flex-grow pt-1">
                     <h3 className="text-xl lg:text-2xl font-display font-bold text-secondary-900 mb-2 group-hover:text-primary-700 transition-colors duration-300">{step.title}</h3>
                     <p className="text-secondary-600 leading-relaxed">{step.description}</p>
                   </div>
-                  
+
                   {/* Hover accent */}
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-pink-500 rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </motion.div>
@@ -384,18 +387,18 @@ export default function AboutPage() {
               <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
               <span className="text-sm font-medium text-primary-700">Your Journey Starts Here</span>
             </motion.div>
-            
+
             <h2 className="text-4xl lg:text-6xl font-display font-bold text-secondary-900 mb-6 leading-tight">
               Ready to{' '}
               <span className="relative inline-block">
                 <span className="bg-gradient-to-r from-primary-600 via-pink-500 to-primary-600 bg-clip-text text-transparent">settle in</span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
-                  <path d="M2 6C50 2 150 2 198 6" stroke="url(#underline-gradient-light)" strokeWidth="3" strokeLinecap="round"/>
+                  <path d="M2 6C50 2 150 2 198 6" stroke="url(#underline-gradient-light)" strokeWidth="3" strokeLinecap="round" />
                   <defs>
                     <linearGradient id="underline-gradient-light" x1="0" y1="0" x2="200" y2="0">
-                      <stop stopColor="#a855f7"/>
-                      <stop offset="0.5" stopColor="#ec4899"/>
-                      <stop offset="1" stopColor="#a855f7"/>
+                      <stop stopColor="#a855f7" />
+                      <stop offset="0.5" stopColor="#ec4899" />
+                      <stop offset="1" stopColor="#a855f7" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -405,7 +408,7 @@ export default function AboutPage() {
             <p className="text-xl text-secondary-600 mb-12 max-w-2xl mx-auto leading-relaxed">
               Take the first step towards understanding yourself better. Book a session with us today.
             </p>
-            
+
             {/* CTA Button */}
             <motion.a
               href="/booking"
@@ -415,13 +418,13 @@ export default function AboutPage() {
             >
               {/* Button shine effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              
+
               <span className="relative z-10">Book a Session</span>
               <svg className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </motion.a>
-            
+
             {/* Trust indicators */}
             <motion.div
               initial={{ opacity: 0 }}
