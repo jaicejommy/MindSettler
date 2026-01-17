@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { 
-  Heart, 
-  Brain, 
-  Menu, 
-  X, 
-  ArrowRight, 
-  MessageCircle, 
+import {
+  Heart,
+  Brain,
+  Menu,
+  X,
+  ArrowRight,
+  MessageCircle,
   CheckCircle2,
   Sparkles,
   Users,
@@ -139,7 +139,7 @@ const Navbar = ({ navigate }) => {
         {/* Logo */}
         <a href="/" className="flex items-center gap-3 group">
           <div className="relative w-10 h-10 flex items-center justify-center bg-white/80 rounded-full shadow-lg backdrop-blur-sm group-hover:bg-white transition-colors">
-             <Heart className={`w-5 h-5 text-secondary-600 fill-primary-200 transition-transform duration-500 group-hover:scale-110`} strokeWidth={2} />
+            <Heart className={`w-5 h-5 text-secondary-600 fill-primary-200 transition-transform duration-500 group-hover:scale-110`} strokeWidth={2} />
           </div>
           <div className="flex flex-col">
             <span className="font-display text-2xl font-bold text-secondary-900 leading-none tracking-tight drop-shadow-sm">MindSettler</span>
@@ -151,9 +151,9 @@ const Navbar = ({ navigate }) => {
         <div className="hidden lg:flex items-center gap-8">
           <div className="flex items-center gap-1 bg-white/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/40 shadow-sm">
             {NAV_LINKS.map((link) => (
-              <a 
-                key={link.label} 
-                href={link.href} 
+              <a
+                key={link.label}
+                href={link.href}
                 className="text-sm font-medium text-secondary-900 hover:text-primary-700 transition-colors px-3 py-1 rounded-full hover:bg-white/50"
               >
                 {link.label}
@@ -175,7 +175,7 @@ const Navbar = ({ navigate }) => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: '100vh' }}
             exit={{ opacity: 0, height: 0 }}
@@ -188,12 +188,12 @@ const Navbar = ({ navigate }) => {
             </div>
             <div className="px-6 py-6 flex flex-col gap-6 items-center justify-center flex-1">
               {NAV_LINKS.map((link, idx) => (
-                <motion.a 
+                <motion.a
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  key={link.label} 
-                  href={link.href} 
+                  key={link.label}
+                  href={link.href}
                   className="text-2xl font-display font-medium text-secondary-900"
                   onClick={() => setIsOpen(false)}
                 >
@@ -219,17 +219,17 @@ const Hero = ({ navigate }) => {
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
           className="w-full h-full object-cover scale-105"
           poster="https://images.unsplash.com/photo-1497436072909-60f360e1d4b0?q=80&w=2560&auto=format&fit=crop"
         >
           <source src="/main_page_vid.mp4" type="video/mp4" />
         </video>
-        
+
         {/* Gradients to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-secondary-50/90 via-white/70 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
@@ -248,15 +248,15 @@ const Hero = ({ navigate }) => {
               </span>
             </h1>
           </FadeIn>
-          
+
           <FadeIn delay={0.3}>
             <p className="text-xl text-secondary-800 font-medium leading-relaxed mb-10 max-w-lg">
               A calm space to pause, understand yourself better, and move forward—gently, at your own pace.
             </p>
           </FadeIn>
-          
+
           <FadeIn delay={0.4}>
-            <button 
+            <button
               onClick={() => navigate('/booking')}
               className="px-8 py-4 bg-secondary-900 text-white rounded-full font-medium text-lg hover:bg-secondary-800 transition-all shadow-xl hover:shadow-2xl hover:shadow-primary-900/20 hover:-translate-y-1 flex items-center justify-center gap-2 group"
             >
@@ -275,9 +275,9 @@ const Hero = ({ navigate }) => {
 const Stats = () => {
   return (
     <section className="py-24 relative overflow-hidden">
-       <div className="absolute inset-0 bg-gradient-to-b from-white via-primary-50/20 to-white"></div>
-       {/* Background Grid Pattern */}
-       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-primary-50/20 to-white"></div>
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40"></div>
 
       <div className="max-w-screen-xl mx-auto px-6 relative z-10">
         <FadeIn className="text-center mb-16">
@@ -310,105 +310,110 @@ const About = () => {
     target: containerRef,
     offset: ["start end", "end start"]
   })
-  
+
   const y = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"])
 
   return (
     <section id="about" ref={containerRef} className="relative bg-white overflow-hidden">
       <div className="grid lg:grid-cols-2 min-h-[800px]">
-        
+
         {/* Left Side - Image Container */}
         <div className="relative h-[600px] lg:h-full order-1 lg:order-1 overflow-hidden group bg-primary-50 flex items-center justify-center p-8 lg:p-16">
-           <motion.div style={{ y }} className="w-full h-full relative z-10">
-             <img 
-               src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=2560&auto=format&fit=crop"
-               alt="Aesthetic calming plant and light" 
-               className="w-full h-full object-cover drop-shadow-2xl rounded-3xl"
-             />
-           </motion.div>
-           
-           {/* Decorative elements behind the image */}
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-white/40 blur-3xl rounded-full -z-0"></div>
+          <motion.div style={{ y }} className="w-full h-full relative z-10">
+            <img
+              src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=2560&auto=format&fit=crop"
+              alt="Aesthetic calming plant and light"
+              className="w-full h-full object-cover drop-shadow-2xl rounded-3xl"
+            />
+          </motion.div>
+
+          {/* Decorative elements behind the image */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-white/40 blur-3xl rounded-full -z-0"></div>
         </div>
 
         {/* Right Side - Content */}
         <div className="flex items-center p-8 lg:p-24 order-2 lg:order-2 bg-gradient-to-br from-white to-secondary-50/30">
-           <div className="max-w-xl">
-             <FadeIn>
-               <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">About MindSettler</div>
-               <h2 className="text-4xl lg:text-6xl font-display font-bold text-secondary-900 mb-8">
-                 A psycho-education <span className="text-primary-600">studio</span> for everyday life
-               </h2>
-               <p className="text-lg text-secondary-700 leading-relaxed mb-6 font-medium">
-                 Explore our approach designed to help you find clarity, understanding, and peace of mind. Many of us sense that something inside is unsettled — but we do not always have the language to describe it.
-               </p>
-               <p className="text-lg text-secondary-600 leading-relaxed mb-10">
-                 MindSettler exists to make mental health understandable, relatable, and workable. Through structured conversations and simple frameworks, we help you see patterns clearly.
-               </p>
-               
-               <motion.div 
-                 initial="hidden"
-                 whileInView="show"
-                 viewport={{ once: true, margin: "-50px" }}
-                 variants={{
-                   hidden: { opacity: 0 },
-                   show: {
-                     opacity: 1,
-                     transition: {
-                       staggerChildren: 0.15
-                     }
-                   }
-                 }}
-                 className="space-y-4 mb-12"
-               >
-                  {[
-                    "60-minute one-on-one or small group sessions",
-                    "Blend of conversation, reflection, and psycho-education",
-                    "Online or at a calm, contained physical studio"
-                  ].map((item, i) => (
-                    <motion.div 
-                      key={i} 
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 50 } }
-                      }}
-                      className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-secondary-50 hover:border-primary-200 transition-colors"
-                    >
-                      <div className="bg-green-100 p-1.5 rounded-full mt-0.5 shrink-0">
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      </div>
-                      <span className="text-secondary-800 font-medium">{item}</span>
-                    </motion.div>
-                  ))}
-               </motion.div>
+          <div className="max-w-xl">
+            <FadeIn>
+              <div className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-bold tracking-widest uppercase mb-6">About MindSettler</div>
+              <h2 className="text-4xl lg:text-6xl font-display font-bold text-secondary-900 mb-8">
+                A psycho-education <span className="text-primary-600">studio</span> for everyday life
+              </h2>
+              <p className="text-lg text-secondary-700 leading-relaxed mb-6 font-medium">
+                Explore our approach designed to help you find clarity, understanding, and peace of mind. Many of us sense that something inside is unsettled — but we do not always have the language to describe it.
+              </p>
+              <p className="text-lg text-secondary-600 leading-relaxed mb-10">
+                MindSettler exists to make mental health understandable, relatable, and workable. Through structured conversations and simple frameworks, we help you see patterns clearly.
+              </p>
 
-               {/* Quote Card */}
-               <motion.div 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.4 }}
-                 className="bg-white p-8 rounded-3xl border border-secondary-100 shadow-sm relative overflow-hidden"
-               >
-                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                    <Quote className="w-16 h-16 text-secondary-900" />
-                  </div>
-                  <p className="text-secondary-800 text-lg font-medium italic mb-6 leading-relaxed relative z-10">
-                    "MindSettler began as a quiet question: what if there was a soft corner of the internet where people could slow down?"
-                  </p>
-                  <div className="flex items-center gap-4 relative z-10">
-                     <div className="w-12 h-12 rounded-full border-2 border-primary-100 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop" className="w-full h-full object-cover" alt="Founder" />
-                     </div>
-                     <div>
-                        <p className="text-secondary-900 font-bold">Parnika</p>
-                        <p className="text-secondary-500 text-sm uppercase tracking-wide">Founder</p>
-                     </div>
-                  </div>
-               </motion.div>
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.15
+                    }
+                  }
+                }}
+                className="space-y-4 mb-12"
+              >
+                {[
+                  "60-minute one-on-one or small group sessions",
+                  "Blend of conversation, reflection, and psycho-education",
+                  "Online or at a calm, contained physical studio"
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 50 } }
+                    }}
+                    className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-secondary-50 hover:border-primary-200 transition-colors"
+                  >
+                    <div className="bg-green-100 p-1.5 rounded-full mt-0.5 shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    </div>
+                    <span className="text-secondary-800 font-medium">{item}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
 
-             </FadeIn>
-           </div>
+              {/* Quote Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="bg-white p-8 rounded-3xl border border-secondary-100 shadow-sm relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Quote className="w-16 h-16 text-secondary-900" />
+                </div>
+                <p className="text-secondary-800 text-lg font-medium italic mb-6 leading-relaxed relative z-10">
+                  "MindSettler began as a quiet question: what if there was a soft corner of the internet where people could slow down?"
+                </p>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-12 h-12 rounded-full border-2 border-primary-100 overflow-hidden bg-white">
+                    <img
+                      src="/parnika_p.png"
+                      className="w-full h-full object-cover"
+                      alt="Parnika - Founder"
+                      style={{ objectPosition: 'center center', transform: 'scale(1.3)', transformOrigin: 'center 30%' }}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-secondary-900 font-bold">Parnika</p>
+                    <p className="text-primary-600 text-sm uppercase tracking-wide font-semibold">Founder, MindSettler</p>
+                  </div>
+                </div>
+              </motion.div>
+
+            </FadeIn>
+          </div>
         </div>
 
       </div>
@@ -427,90 +432,90 @@ const Journey = () => {
 
   return (
     <section id="journey" className="py-32 relative bg-white overflow-hidden">
-       {/* Background Decoration */}
-       <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-50/50 via-transparent to-transparent -z-10"></div>
-       <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-secondary-50/50 via-transparent to-transparent -z-10"></div>
+      {/* Background Decoration */}
+      <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-50/50 via-transparent to-transparent -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-secondary-50/50 via-transparent to-transparent -z-10"></div>
 
-       <div ref={containerRef} className="max-w-6xl mx-auto px-6 relative z-10">
-          <FadeIn className="text-center mb-24">
-            <span className="text-primary-600 font-bold tracking-widest text-sm uppercase mb-3 block">Your journey with MindSettler</span>
-            <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">From foggy to a little more clear</h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">We walk this path together, transforming uncertainty into understanding through four key stages.</p>
-          </FadeIn>
+      <div ref={containerRef} className="max-w-6xl mx-auto px-6 relative z-10">
+        <FadeIn className="text-center mb-24">
+          <span className="text-primary-600 font-bold tracking-widest text-sm uppercase mb-3 block">Your journey with MindSettler</span>
+          <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900 mb-6">From foggy to a little more clear</h2>
+          <p className="text-lg text-secondary-600 max-w-2xl mx-auto">We walk this path together, transforming uncertainty into understanding through four key stages.</p>
+        </FadeIn>
 
-          <div className="relative">
-             {/* The Organic Winding Path (Desktop) */}
-             <div className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-[600px] hidden md:block pointer-events-none">
-                <svg className="w-full h-full" viewBox="0 0 600 1200" preserveAspectRatio="none">
-                  {/* Background Path (Dotted) */}
-                  <path 
-                    d="M 300 0 C 300 100, 100 100, 100 300 C 100 500, 500 500, 500 700 C 500 900, 300 900, 300 1200"
-                    fill="none"
-                    stroke="#e5e7eb"
-                    strokeWidth="4"
-                    strokeDasharray="10 10"
-                    strokeLinecap="round"
-                  />
-                  {/* Animated Foreground Path (Gradient) */}
-                  <motion.path 
-                    d="M 300 0 C 300 100, 100 100, 100 300 C 100 500, 500 500, 500 700 C 500 900, 300 900, 300 1200"
-                    fill="none"
-                    stroke="url(#gradient-path)"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    style={{ pathLength }}
-                  />
-                  <defs>
-                    <linearGradient id="gradient-path" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#db2777" />
-                      <stop offset="50%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#db2777" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-             </div>
-
-             {/* Mobile Line */}
-             <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-200 via-secondary-300 to-primary-200 md:hidden rounded-full"></div>
-
-             <div className="space-y-16 md:space-y-32 py-12">
-               {JOURNEY_STAGES.map((stage, i) => {
-                 const isEven = i % 2 === 0
-                 const Icon = stage.icon
-                 return (
-                    <div key={i} className={`relative flex items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}>
-                       
-                       {/* Mobile Node */}
-                       <div className="absolute left-6 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary-500 border-4 border-white shadow-sm z-20 md:hidden"></div>
-
-                       {/* Spacer for Desktop Grid */}
-                       <div className="flex-1 hidden md:block"></div>
-
-                       {/* Card Content */}
-                       <div className={`flex-1 pl-12 md:pl-0 ${isEven ? 'md:pr-24' : 'md:pl-24'}`}>
-                         <FadeIn delay={i * 0.1}>
-                           <motion.div 
-                              whileHover={{ y: -8, scale: 1.02 }}
-                              className="glass-card p-8 rounded-[2rem] relative group border border-white/60 hover:border-primary-300 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-primary-900/10 bg-white/40"
-                           >
-                              {/* Step Badge */}
-                              <div className="absolute -top-6 left-8 bg-gradient-to-r from-secondary-600 to-primary-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg flex items-center gap-2">
-                                <Icon className="w-4 h-4" />
-                                <span>Step {stage.step}</span>
-                              </div>
-
-                              <h3 className="text-2xl font-display font-bold text-secondary-900 mt-4 mb-3">{stage.title}</h3>
-                              <p className="text-secondary-600 leading-relaxed text-lg">{stage.description}</p>
-                           </motion.div>
-                         </FadeIn>
-                       </div>
-
-                    </div>
-                 )
-               })}
-             </div>
+        <div className="relative">
+          {/* The Organic Winding Path (Desktop) */}
+          <div className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-[600px] hidden md:block pointer-events-none">
+            <svg className="w-full h-full" viewBox="0 0 600 1200" preserveAspectRatio="none">
+              {/* Background Path (Dotted) */}
+              <path
+                d="M 300 0 C 300 100, 100 100, 100 300 C 100 500, 500 500, 500 700 C 500 900, 300 900, 300 1200"
+                fill="none"
+                stroke="#e5e7eb"
+                strokeWidth="4"
+                strokeDasharray="10 10"
+                strokeLinecap="round"
+              />
+              {/* Animated Foreground Path (Gradient) */}
+              <motion.path
+                d="M 300 0 C 300 100, 100 100, 100 300 C 100 500, 500 500, 500 700 C 500 900, 300 900, 300 1200"
+                fill="none"
+                stroke="url(#gradient-path)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                style={{ pathLength }}
+              />
+              <defs>
+                <linearGradient id="gradient-path" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#db2777" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#db2777" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-       </div>
+
+          {/* Mobile Line */}
+          <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-200 via-secondary-300 to-primary-200 md:hidden rounded-full"></div>
+
+          <div className="space-y-16 md:space-y-32 py-12">
+            {JOURNEY_STAGES.map((stage, i) => {
+              const isEven = i % 2 === 0
+              const Icon = stage.icon
+              return (
+                <div key={i} className={`relative flex items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}>
+
+                  {/* Mobile Node */}
+                  <div className="absolute left-6 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary-500 border-4 border-white shadow-sm z-20 md:hidden"></div>
+
+                  {/* Spacer for Desktop Grid */}
+                  <div className="flex-1 hidden md:block"></div>
+
+                  {/* Card Content */}
+                  <div className={`flex-1 pl-12 md:pl-0 ${isEven ? 'md:pr-24' : 'md:pl-24'}`}>
+                    <FadeIn delay={i * 0.1}>
+                      <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="glass-card p-8 rounded-[2rem] relative group border border-white/60 hover:border-primary-300 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-primary-900/10 bg-white/40"
+                      >
+                        {/* Step Badge */}
+                        <div className="absolute -top-6 left-8 bg-gradient-to-r from-secondary-600 to-primary-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg flex items-center gap-2">
+                          <Icon className="w-4 h-4" />
+                          <span>Step {stage.step}</span>
+                        </div>
+
+                        <h3 className="text-2xl font-display font-bold text-secondary-900 mt-4 mb-3">{stage.title}</h3>
+                        <p className="text-secondary-600 leading-relaxed text-lg">{stage.description}</p>
+                      </motion.div>
+                    </FadeIn>
+                  </div>
+
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
@@ -518,58 +523,61 @@ const Journey = () => {
 const InnerState = () => {
   return (
     <section id="services" className="py-32 relative overflow-hidden bg-slate-900">
-       {/* Dark theme for contrast */}
-       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-500/20 rounded-full blur-[120px] -z-10"></div>
-       <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary-600/20 rounded-full blur-[120px] -z-10"></div>
+      {/* Dark theme for contrast */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-500/20 rounded-full blur-[120px] -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary-600/20 rounded-full blur-[120px] -z-10"></div>
 
-       <div className="max-w-[90rem] mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-             
-             {/* Text Content */}
-             <div className="lg:col-span-4">
-                <FadeIn>
-                  <span className="text-primary-400 font-bold tracking-widest text-sm uppercase mb-4 block">Psycho-education</span>
-                  <h2 className="text-5xl lg:text-7xl font-display font-medium text-white mb-8">
-                    Explore Your <br/>
-                    <span className="italic text-primary-300">Inner State</span>
-                  </h2>
-                  <p className="text-slate-300 text-lg mb-10 leading-relaxed">
-                    Select a dimension of mental well-being to understand common patterns. We believe that naming a feeling is the first step to taming it.
-                  </p>
-                  <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-primary-50 transition-colors">
-                    View All Resources
-                  </button>
-                </FadeIn>
-             </div>
+      <div className="max-w-[90rem] mx-auto px-6 relative z-10">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
 
-             {/* Cards Grid */}
-             <div className="lg:col-span-8">
-                <div className="grid md:grid-cols-2 gap-6">
-                   {PSYCHO_ED_DATA.map((item, i) => {
-                     const Icon = item.icon
-                     return (
-                       <FadeIn key={i} delay={i * 0.1}>
-                          <motion.div 
-                            whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-                            className="bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] transition-all duration-300 group cursor-pointer h-full"
-                          >
-                             <div className="flex justify-between items-start mb-6">
-                               <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:bg-primary-500 transition-colors">
-                                  <Icon className="w-7 h-7" strokeWidth={1.5} />
-                               </div>
-                               <ArrowRight className="text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                             </div>
-                             <h3 className="text-2xl font-display font-bold text-white mb-3">{item.title}</h3>
-                             <p className="text-slate-300 leading-relaxed">{item.description}</p>
-                          </motion.div>
-                       </FadeIn>
-                     )
-                   })}
-                </div>
-             </div>
+          {/* Text Content */}
+          <div className="lg:col-span-4">
+            <FadeIn>
+              <span className="text-primary-400 font-bold tracking-widest text-sm uppercase mb-4 block">Psycho-education</span>
+              <h2 className="text-5xl lg:text-7xl font-display font-medium text-white mb-8">
+                Explore Your <br />
+                <span className="italic text-primary-300">Inner State</span>
+              </h2>
+              <p className="text-slate-300 text-lg mb-10 leading-relaxed">
+                Select a dimension of mental well-being to understand common patterns. We believe that naming a feeling is the first step to taming it.
+              </p>
+              <button
+                onClick={() => window.location.href = '/psycho-education'}
+                className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-primary-50 transition-colors"
+              >
+                View All Resources
+              </button>
+            </FadeIn>
           </div>
-       </div>
+
+          {/* Cards Grid */}
+          <div className="lg:col-span-8">
+            <div className="grid md:grid-cols-2 gap-6">
+              {PSYCHO_ED_DATA.map((item, i) => {
+                const Icon = item.icon
+                return (
+                  <FadeIn key={i} delay={i * 0.1}>
+                    <motion.div
+                      whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                      className="bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] transition-all duration-300 group cursor-pointer h-full"
+                    >
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:bg-primary-500 transition-colors">
+                          <Icon className="w-7 h-7" strokeWidth={1.5} />
+                        </div>
+                        <ArrowRight className="text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                      </div>
+                      <h3 className="text-2xl font-display font-bold text-white mb-3">{item.title}</h3>
+                      <p className="text-slate-300 leading-relaxed">{item.description}</p>
+                    </motion.div>
+                  </FadeIn>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
@@ -580,7 +588,7 @@ const Services = () => {
     target: ref,
     offset: ["start end", "end start"]
   })
-  
+
   const yIcon1 = useTransform(scrollYProgress, [0, 1], [0, -50])
   const yIcon2 = useTransform(scrollYProgress, [0, 1], [0, -30])
 
@@ -588,7 +596,7 @@ const Services = () => {
     <section className="py-32 relative overflow-hidden bg-white">
       {/* Animated Background */}
       <FloatingBlobs />
-      
+
       <div className="max-w-screen-xl mx-auto px-6 relative z-10">
         <FadeIn className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-primary-600 font-bold tracking-widest text-sm uppercase mb-3 block">Services we offer</span>
@@ -599,57 +607,57 @@ const Services = () => {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
           {/* Card 1 */}
           <FadeIn direction='up' className="h-full">
-             <div className="glass-card rounded-[3rem] p-12 h-full hover:bg-white/90 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-900/10 group border border-secondary-100/50 relative overflow-hidden">
-                <div className="flex items-center justify-between mb-10 relative z-10">
-                  <motion.div style={{ y: yIcon1 }} className="w-20 h-20 bg-primary-100 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform text-primary-600">
-                    <Brain className="w-10 h-10" />
-                  </motion.div>
-                  <div className="px-5 py-2 rounded-full bg-secondary-900 text-xs font-bold text-white uppercase tracking-wider shadow-lg">
-                    Most Popular
+            <div className="glass-card rounded-[3rem] p-12 h-full hover:bg-white/90 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-900/10 group border border-secondary-100/50 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-10 relative z-10">
+                <motion.div style={{ y: yIcon1 }} className="w-20 h-20 bg-primary-100 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform text-primary-600">
+                  <Brain className="w-10 h-10" />
+                </motion.div>
+                <div className="px-5 py-2 rounded-full bg-secondary-900 text-xs font-bold text-white uppercase tracking-wider shadow-lg">
+                  Most Popular
+                </div>
+              </div>
+
+              <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Individual Therapies</h3>
+              <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Focused one-on-one sessions to help you understand your patterns, process emotions, and build resilience.</p>
+
+              <div className="space-y-4 relative z-10">
+                {['Cognitive Behavioural Therapy (CBT)', 'Dialectical Behavioural Therapy (DBT)', 'Acceptance & Commitment Therapy (ACT)', 'Schema Therapy'].map(item => (
+                  <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
+                    <div className="w-2 h-2 rounded-full bg-primary-400"></div>
+                    {item}
                   </div>
-                </div>
-                
-                <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Individual Therapies</h3>
-                <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Focused one-on-one sessions to help you understand your patterns, process emotions, and build resilience.</p>
-                
-                <div className="space-y-4 relative z-10">
-                  {['Cognitive Behavioural Therapy (CBT)', 'Dialectical Behavioural Therapy (DBT)', 'Acceptance & Commitment Therapy (ACT)', 'Schema Therapy'].map(item => (
-                    <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
-                      <div className="w-2 h-2 rounded-full bg-primary-400"></div>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-             </div>
+                ))}
+              </div>
+            </div>
           </FadeIn>
 
           {/* Card 2 */}
           <FadeIn direction='up' delay={0.2} className="h-full">
-             <div className="glass-card rounded-[3rem] p-12 h-full hover:bg-white/90 transition-all duration-500 hover:shadow-2xl hover:shadow-secondary-900/10 group border border-secondary-100/50 relative overflow-hidden">
-                <div className="flex items-center justify-between mb-10 relative z-10">
-                  <motion.div style={{ y: yIcon2 }} className="w-20 h-20 bg-secondary-100 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform text-secondary-600">
-                    <Users className="w-10 h-10" />
-                  </motion.div>
-                </div>
-                
-                <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Relational & Supportive</h3>
-                <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Creating safe spaces for couples and individuals to explore relationships, communication, and emotional bonds.</p>
-                
-                <div className="space-y-4 relative z-10">
-                  {['Emotion-Focused Couples Therapy', 'Mindfulness-Based Cognitive Therapy', 'Client-Centred Therapy', 'Space to integrate these approaches'].map(item => (
-                    <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
-                      <div className="w-2 h-2 rounded-full bg-secondary-400"></div>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-             </div>
+            <div className="glass-card rounded-[3rem] p-12 h-full hover:bg-white/90 transition-all duration-500 hover:shadow-2xl hover:shadow-secondary-900/10 group border border-secondary-100/50 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-10 relative z-10">
+                <motion.div style={{ y: yIcon2 }} className="w-20 h-20 bg-secondary-100 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform text-secondary-600">
+                  <Users className="w-10 h-10" />
+                </motion.div>
+              </div>
+
+              <h3 className="text-4xl font-display font-bold text-secondary-900 mb-6 relative z-10">Relational & Supportive</h3>
+              <p className="text-secondary-600 mb-10 leading-relaxed text-lg relative z-10">Creating safe spaces for couples and individuals to explore relationships, communication, and emotional bonds.</p>
+
+              <div className="space-y-4 relative z-10">
+                {['Emotion-Focused Couples Therapy', 'Mindfulness-Based Cognitive Therapy', 'Client-Centred Therapy', 'Space to integrate these approaches'].map(item => (
+                  <div key={item} className="flex items-center gap-4 text-secondary-800 font-medium">
+                    <div className="w-2 h-2 rounded-full bg-secondary-400"></div>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </FadeIn>
         </div>
 
         {/* Single Learn More Button */}
         <FadeIn delay={0.3} className="mt-12 text-center">
-          <a href="/therapies" className="inline-block px-12 py-5 rounded-2xl bg-secondary-900 text-white font-bold hover:bg-secondary-800 transition-all duration-300 text-lg shadow-lg hover:shadow-xl">
+          <a href="/therapies" className="btn btn-primary text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl">
             Learn More About Our Therapies
           </a>
         </FadeIn>
@@ -661,9 +669,9 @@ const Services = () => {
 const Process = () => {
   return (
     <section className="py-32 relative bg-secondary-50/50">
-       <div className="max-w-screen-xl mx-auto px-6 relative z-10">
+      <div className="max-w-screen-xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-12 gap-16">
-          
+
           {/* Sticky Left Content */}
           <div className="lg:col-span-5 relative">
             <div className="lg:sticky lg:top-32">
@@ -674,19 +682,19 @@ const Process = () => {
                   We have made the process as simple and transparent as possible. No confusing forms, just a clear path to getting support.
                 </p>
                 <div className="p-6 bg-white rounded-3xl shadow-sm border border-primary-100">
-                   <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                        <MessageCircle className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-secondary-900">Need help deciding?</p>
-                        <p className="text-sm text-secondary-500">Chat with us for a quick consultation.</p>
-                      </div>
-                   </div>
-                   <button 
-                     className="w-full py-3 bg-secondary-900 text-white rounded-xl font-medium hover:bg-secondary-800 transition-colors"
-                     onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
-                   >Start Chat</button>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-secondary-900">Need help deciding?</p>
+                      <p className="text-sm text-secondary-500">Chat with us for a quick consultation.</p>
+                    </div>
+                  </div>
+                  <button
+                    className="btn btn-primary w-full py-3 rounded-xl"
+                    onClick={() => window.dispatchEvent(new CustomEvent('openChatbot'))}
+                  >Start Chat</button>
                 </div>
               </FadeIn>
             </div>
@@ -694,24 +702,24 @@ const Process = () => {
 
           {/* Scrolling Right Content */}
           <div className="lg:col-span-7">
-             <div className="relative border-l-2 border-primary-200 ml-6 md:ml-0 space-y-16 py-4">
-                {STEPS.map((step, index) => (
-                  <FadeIn key={step.number} delay={index * 0.1} className="relative pl-12 md:pl-16">
-                     {/* Dot */}
-                     <div className="absolute -left-[9px] top-0 w-5 h-5 rounded-full bg-primary-500 border-4 border-white shadow-md"></div>
-                     
-                     <div className="bg-white p-8 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-lg transition-all duration-300">
-                        <span className="text-4xl font-display font-bold text-primary-100 absolute top-4 right-6 select-none">{step.number}</span>
-                        <h3 className="text-2xl font-bold text-secondary-900 mb-3 relative z-10">{step.title}</h3>
-                        <p className="text-secondary-600 leading-relaxed relative z-10">{step.description}</p>
-                     </div>
-                  </FadeIn>
-                ))}
-             </div>
+            <div className="relative border-l-2 border-primary-200 ml-6 md:ml-0 space-y-16 py-4">
+              {STEPS.map((step, index) => (
+                <FadeIn key={step.number} delay={index * 0.1} className="relative pl-12 md:pl-16">
+                  {/* Dot */}
+                  <div className="absolute -left-[9px] top-0 w-5 h-5 rounded-full bg-primary-500 border-4 border-white shadow-md"></div>
+
+                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-lg transition-all duration-300">
+                    <span className="text-4xl font-display font-bold text-primary-100 absolute top-4 right-6 select-none">{step.number}</span>
+                    <h3 className="text-2xl font-bold text-secondary-900 mb-3 relative z-10">{step.title}</h3>
+                    <p className="text-secondary-600 leading-relaxed relative z-10">{step.description}</p>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
           </div>
 
         </div>
-       </div>
+      </div>
     </section>
   )
 }
@@ -723,19 +731,19 @@ const FAQ = () => {
     <section id="faqs" className="py-32 relative overflow-hidden bg-white">
       <div className="max-w-screen-xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-12 gap-16">
-          
+
           {/* Header Column */}
           <div className="lg:col-span-4">
-             <FadeIn>
+            <FadeIn>
               <span className="text-primary-600 font-bold tracking-widest text-sm uppercase mb-3 block">Questions you might have</span>
               <h2 className="text-5xl lg:text-6xl font-display font-bold text-secondary-900 mb-8">FAQs</h2>
               <p className="text-lg text-secondary-600 mb-8">
                 Can't find what you're looking for? Reach out to our support team directly.
               </p>
-              <a href="#contact" className="inline-flex items-center text-primary-600 font-bold hover:text-primary-800 transition-colors">
-                 Contact Support <ArrowRight className="w-4 h-4 ml-2" />
+              <a href="/contact" className="btn btn-primary inline-flex items-center gap-2">
+                Contact Support <ArrowRight className="w-4 h-4" />
               </a>
-             </FadeIn>
+            </FadeIn>
           </div>
 
           {/* Accordion Column */}
@@ -745,7 +753,7 @@ const FAQ = () => {
                 const isOpen = openIndex === index
                 return (
                   <FadeIn key={index} delay={index * 0.1}>
-                    <div 
+                    <div
                       className={`rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden ${isOpen ? 'bg-secondary-50 border-secondary-200' : 'bg-white border-gray-100 hover:border-secondary-200'}`}
                       onClick={() => setOpenIndex(isOpen ? -1 : index)}
                     >
@@ -759,7 +767,7 @@ const FAQ = () => {
                       </div>
                       <AnimatePresence>
                         {isOpen && (
-                          <motion.div 
+                          <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
@@ -801,9 +809,9 @@ export default function HomePage() {
         <Process />
         <FAQ />
       </main>
-      
+
       {/* Floating Chat Button */}
-      <motion.button 
+      <motion.button
         className="fixed bottom-8 right-8 w-14 h-14 bg-secondary-900 text-white rounded-full shadow-2xl flex items-center justify-center z-40 hover:bg-secondary-800 transition-colors border-2 border-white/20"
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
