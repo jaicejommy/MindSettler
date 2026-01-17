@@ -100,7 +100,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field-grid">
+            <div className="field-grid mt-6">
               <div className="field">
                 <label htmlFor="corp-email">Email *</label>
                 <input
@@ -123,7 +123,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field-grid">
+            <div className="field-grid mt-6">
               <div className="field">
                 <label htmlFor="groupSize">Approximate group size</label>
                 <input
@@ -135,7 +135,7 @@ export default function CorporatePage() {
                 />
               </div>
             </div>
-            <div className="field">
+            <div className="field mt-6">
               <label htmlFor="requirements">Tell us a little about what you need *</label>
               <textarea
                 id="requirements"
