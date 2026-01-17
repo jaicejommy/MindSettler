@@ -1299,6 +1299,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.8);
   transition: all var(--transition-normal);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  flex-wrap: wrap;
 }
 
 .booking-card:hover {
@@ -1324,7 +1325,7 @@ body {
 
 .booking-info {
   flex: 1;
-  min-width: 0;
+  min-width: 150px;
 }
 
 .booking-name {
@@ -1343,7 +1344,8 @@ body {
 .booking-meta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
@@ -1360,6 +1362,7 @@ body {
 .booking-actions {
   display: flex;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .btn-action {
