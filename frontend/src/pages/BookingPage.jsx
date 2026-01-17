@@ -236,7 +236,7 @@ export default function BookingPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     // Validate policy acceptance for first-time sessions
     if (form.isFirstSession && !acceptPolicies) {
       setError('You must accept the policies to book your first session.')
@@ -249,7 +249,7 @@ export default function BookingPage() {
       setError('Please upload a payment screenshot.')
       return
     }
-    
+
     setSubmitting(true)
     setError('')
     setResult(null)
@@ -382,36 +382,42 @@ export default function BookingPage() {
             <h3>Sign in to Book</h3>
             <p>You need to be logged in to book a session.</p>
             <div style={{ marginTop: '1.5rem' }}>
-              <Link to="/auth" className="primary-btn">
+              <Link to="/auth" className="inline-block px-6 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 no-underline" style={{ background: '#3F2965', color: '#ffffff' }} onMouseEnter={(e) => e.target.style.background = '#DD1764'} onMouseLeave={(e) => e.target.style.background = '#3F2965'}>
                 Sign In / Register
               </Link>
             </div>
           </div>
         ) : result ? (
           <div className="booking-grid">
-            <div className="card booking-highlight">
-              <h3>Booking Request Sent!</h3>
-              <p>
-                Thank you, <strong>{result.name}</strong>! We're excited to connect with you. Your booking request has been received and we can't wait to support you on your journey. Once approved, a confirmation email will be sent to you.
+            <div className="card booking-highlight" style={{ textAlign: 'center', padding: '2rem' }}>
+              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.75rem', color: '#3F2965' }}>Booking Request Sent!</h3>
+              <p style={{ marginBottom: '1.5rem', lineHeight: '1.7', fontSize: '1rem', color: '#444' }}>
+                Thank you, <strong>{result.name}</strong>! We're excited to connect with you.
+                <br />
+                Your booking request has been received and we can't wait to support you on your journey.
+                <br />
+                Once approved, a confirmation email will be sent to you.
               </p>
-              <div className="info-pill">
-                <p>
-                  <strong>{result.date}</strong> at <strong>{result.time}</strong> • {result.mode === 'offline' ? 'In-person at studio' : 'Online'}
+              <div className="info-pill" style={{ display: 'inline-block', padding: '1rem 1.5rem', background: 'rgba(63, 41, 101, 0.08)', borderRadius: '12px', marginBottom: '1.5rem' }}>
+                <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>
+                  <strong style={{ color: '#3F2965' }}>{result.date}</strong> at <strong style={{ color: '#3F2965' }}>{result.time}</strong>
+                  <span style={{ margin: '0 0.5rem', color: '#999' }}>•</span>
+                  <span style={{ color: '#666' }}>{result.mode === 'offline' ? 'In-person at studio' : 'Online'}</span>
                 </p>
               </div>
               {calendarAdded ? (
-                <p className="muted" style={{ color: 'var(--primary)' }}>
+                <p className="muted" style={{ color: '#3F2965', fontWeight: 500, marginTop: '1rem' }}>
                   ✓ This session has been automatically added to your Google Calendar.
                 </p>
               ) : (
-                <>
-                  <p className="muted">
+                <div style={{ marginTop: '1rem' }}>
+                  <p className="muted" style={{ marginBottom: '1rem', color: '#666' }}>
                     You can add this to your calendar in advance:
                   </p>
-                  <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="primary-btn">
+                  <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="inline-block px-6 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 no-underline" style={{ background: '#3F2965', color: '#ffffff' }} onMouseEnter={(e) => e.target.style.background = '#DD1764'} onMouseLeave={(e) => e.target.style.background = '#3F2965'}>
                     Add to Google Calendar
                   </a>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -423,7 +429,7 @@ export default function BookingPage() {
                 {/* Progress Line */}
                 <div className="step-progress-bg" />
                 <div className="step-progress-fill" style={{ width: currentStep === 1 ? '0%' : currentStep === 2 ? '35%' : '70%' }} />
-                
+
                 {[1, 2, 3].map((step) => (
                   <div key={step} className="step-item">
                     <div className={`step-circle ${currentStep >= step ? 'active' : ''}`}>
@@ -707,7 +713,7 @@ export default function BookingPage() {
                 <>
                   <div className="card booking-payment" style={{ padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
                     <h3>Complete Payment</h3>
-                    
+
                     {/* Payment option selection for offline bookings */}
                     {form.mode === 'offline' && (
                       <div style={{ marginBottom: '1.5rem' }}>
@@ -842,14 +848,23 @@ export default function BookingPage() {
                 {currentStep < 3 ? (
                   <button
                     type="button"
-                    className="primary-btn"
+                    className="flex-1 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                     onClick={handleNext}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, background: '#3F2965', color: '#ffffff' }}
+                    onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+                    onMouseLeave={(e) => e.target.style.background = '#3F2965'}
                   >
                     Next
                   </button>
                 ) : (
-                  <button type="submit" className="primary-btn" disabled={submitting} style={{ flex: 1 }}>
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                    disabled={submitting}
+                    style={{ flex: 1, background: '#3F2965', color: '#ffffff' }}
+                    onMouseEnter={(e) => e.target.style.background = '#DD1764'}
+                    onMouseLeave={(e) => e.target.style.background = '#3F2965'}
+                  >
                     {submitting ? 'Submitting…' : 'Book session'}
                   </button>
                 )}
