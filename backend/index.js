@@ -36,6 +36,9 @@ connectDB().then(() => {
 
 const { seedArticles } = require('./seedArticles')
 
+const app = express()
+const PORT = process.env.PORT || 5000
+
 // Temporary endpoint to seed DB in production
 app.get('/api/seed-articles', async (req, res) => {
   try {
@@ -45,9 +48,6 @@ app.get('/api/seed-articles', async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
-
-const app = express()
-const PORT = process.env.PORT || 5000
 
 // File uploads: profile pictures
 const uploadsDir = path.join(__dirname, 'uploads')
