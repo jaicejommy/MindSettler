@@ -241,7 +241,7 @@ function Header() {
   return (
     <header className="top-nav">
       <div className="nav-inner">
-        <div className="brand" onClick={() => { navigate('/'); closeMobileMenu() }} style={{ cursor: 'pointer' }}>
+        <div className="brand" onClick={() => { window.location.href = '/'; closeMobileMenu() }} style={{ cursor: 'pointer' }}>
           <img
             src="/Mindsettler_logo_Final-Photoroom.png"
             alt="MindSettler by Parnika - Psycho-education & mental well-being studio"
@@ -512,6 +512,8 @@ function Header() {
                   src="/Mindsettler_logo_Final-Photoroom.png"
                   alt="MindSettler"
                   className="mobile-nav-logo"
+                  onClick={() => { window.location.href = '/'; closeMobileMenu() }}
+                  style={{ cursor: 'pointer' }}
                 />
                 <button type="button" className="mobile-nav-close" onClick={closeMobileMenu}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

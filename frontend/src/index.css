@@ -219,6 +219,131 @@ a:not(.primary-btn):not(.secondary-btn):hover::after {
   box-shadow: 0 8px 24px rgba(221, 23, 100, 0.35);
 }
 
+/* ========================================
+   BUTTON STYLING SYSTEM
+   Consistent button styles across the site
+   ======================================== */
+
+/* Base button styles */
+.btn,
+.btn-primary,
+.btn-secondary,
+.primary-btn,
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+/* Primary Button - Purple bg, white text, pink hover */
+.btn-primary,
+.primary-btn {
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25);
+}
+
+.btn-primary:hover,
+.primary-btn:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #f472b6 100%);
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.35);
+  transform: translateY(-2px);
+  color: #ffffff !important;
+}
+
+.btn-primary:active,
+.primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(221, 23, 100, 0.3);
+}
+
+.btn-primary:disabled,
+.primary-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Secondary Button - Outline style */
+.btn-secondary,
+.secondary-btn {
+  background: transparent;
+  color: #3F2965 !important;
+  border: 2px solid #3F2965;
+  box-shadow: 0 2px 8px rgba(63, 41, 101, 0.1);
+}
+
+.btn-secondary:hover,
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #3F2965 0%, #5a3d7d 100%);
+  color: #ffffff !important;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(63, 41, 101, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active,
+.secondary-btn:active {
+  transform: translateY(0);
+}
+
+/* Small button variant */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Large button variant */
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* Full width button */
+.btn-block {
+  width: 100%;
+}
+
+/* Button without underline effect */
+.btn-primary::after,
+.btn-secondary::after,
+.primary-btn::after,
+.secondary-btn::after {
+  display: none !important;
+}
+
+/* Mobile responsive buttons */
+@media (max-width: 480px) {
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .primary-btn,
+  .secondary-btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+
 html,
 body {
   margin: 0;
@@ -2290,9 +2415,9 @@ textarea {
 
 .pill {
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(63, 41, 101, 0.2);
-  background: linear-gradient(135deg, rgba(240, 240, 240, 0.9) 0%, rgba(235, 235, 235, 0.9) 100%);
-  color: var(--text-soft);
+  border: none;
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  color: #FFFFFF;
   padding: 0.35rem 0.9rem;
   font-size: 0.8rem;
   cursor: pointer;
@@ -2321,9 +2446,9 @@ textarea {
 }
 
 .pill:hover {
-  border-color: rgba(221, 23, 100, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(221, 23, 100, 0.1);
+  background: linear-gradient(135deg, #a855f7 0%, #f472b6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3);
 }
 
 .pill.active {
@@ -3075,20 +3200,38 @@ textarea {
   position: fixed;
   right: 1.2rem;
   bottom: 1.2rem;
-  z-index: 9999;
-  animation: fadeInUp 0.5s ease-out;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .chatbot-panel {
-  width: min(320px, 90vw);
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  width: min(360px, 90vw);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
   border-radius: 18px;
   border: 1px solid rgba(63, 41, 101, 0.15);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 250, 0.96) 100%);
-  box-shadow: 0 16px 50px rgba(221, 23, 100, 0.2);
-  padding: 0.9rem 1rem 1rem;
-  margin-bottom: 0.7rem;
+  box-shadow: 0 16px 50px rgba(63, 41, 101, 0.2);
+  padding: 1rem;
   backdrop-filter: blur(10px);
-  animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .chatbot-header {
@@ -3490,8 +3633,10 @@ textarea {
   }
 
   .chatbot-panel {
-    width: min(280px, 88vw);
-    padding: 0.75rem 0.85rem;
+    width: min(300px, 92vw);
+    max-height: calc(100vh - 150px);
+    bottom: 55px;
+    padding: 0.75rem;
   }
 
   .chatbot-toggle {
@@ -3887,15 +4032,7 @@ textarea {
   font-size: 0.8rem;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #ec4899, #8b5cf6);
-  color: #fff;
-  border: none;
-}
 
-.btn-primary:hover {
-  filter: brightness(1.05);
-}
 
 .btn-secondary {
   background: rgba(148, 163, 184, 0.15);
@@ -4088,5 +4225,754 @@ textarea {
 
   .normalize-fact {
     font-size: 0.98rem;
+  }
+}
+
+/* ========================================
+   COMPREHENSIVE MOBILE VIEW FIXES
+   Addresses: chatbot overlap, oversized elements,
+   low contrast, cramped layouts, tap targets
+   ======================================== */
+
+/* --- CHATBOT POSITIONING FIXES --- */
+@media (max-width: 768px) {
+  .chatbot-container {
+    bottom: 1rem !important;
+    right: 0.75rem !important;
+    z-index: 9998 !important;
+  }
+
+  .chatbot-toggle {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .chatbot-panel {
+    width: min(320px, calc(100vw - 2rem)) !important;
+    max-height: calc(100vh - 120px) !important;
+    bottom: 65px !important;
+    right: 0 !important;
+  }
+}
+
+/* --- HERO SECTION MOBILE FIXES --- */
+@media (max-width: 768px) {
+
+  .hero-content h1,
+  .hero h1 {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-content p,
+  .hero p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .hero-section {
+    padding: 4rem 1rem 2rem !important;
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .hero-content h1,
+  .hero h1 {
+    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+  }
+
+  .hero-content p,
+  .hero p {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* --- STATS SECTION - FIX OVERSIZED NUMBERS --- */
+@media (max-width: 768px) {
+
+  .stat-number,
+  .stats-number,
+  .stat-value {
+    font-size: clamp(2.5rem, 12vw, 4rem) !important;
+  }
+
+  .stat-label,
+  .stats-label {
+    font-size: 0.9rem !important;
+  }
+
+  .stats-grid,
+  .stat-grid {
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .stat-number,
+  .stats-number,
+  .stat-value {
+    font-size: clamp(2rem, 10vw, 3rem) !important;
+  }
+}
+
+/* --- PROCESS STEPS - FIX NUMBER OVERLAPS --- */
+@media (max-width: 768px) {
+
+  .process-step-number,
+  .step-number,
+  .timeline-number {
+    font-size: 2.5rem !important;
+    opacity: 0.08 !important;
+    position: absolute !important;
+    z-index: 0 !important;
+  }
+
+  .process-step-content,
+  .step-content,
+  .timeline-content {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .process-step h3,
+  .step-title,
+  .timeline-title {
+    font-size: 1.1rem !important;
+  }
+
+  .process-step p,
+  .step-description,
+  .timeline-description {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* --- CARDS - FIX CRAMPED PADDING --- */
+@media (max-width: 768px) {
+
+  .card,
+  .therapy-card,
+  .service-card,
+  .resource-card,
+  .inner-card {
+    padding: 1.25rem !important;
+    margin: 0 0.5rem !important;
+  }
+
+  .cards-grid,
+  .therapy-grid,
+  .services-grid {
+    gap: 1rem !important;
+    padding: 0 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .card,
+  .therapy-card,
+  .service-card,
+  .resource-card,
+  .inner-card {
+    padding: 1rem !important;
+  }
+}
+
+/* --- TEXT CONTRAST IMPROVEMENTS --- */
+@media (max-width: 768px) {
+
+  /* Improve light text visibility */
+  .faq-question,
+  .accordion-header,
+  .section-subtitle,
+  .eyebrow,
+  .muted {
+    color: #5a5a6b !important;
+  }
+
+  /* Ensure headings are readable */
+  .section h2,
+  .section-header h2 {
+    color: #3F2965 !important;
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+
+  /* Philosophy and quote sections */
+  .philosophy-text,
+  .quote-text {
+    color: #4a4a5a !important;
+  }
+
+  /* Corporate hero text */
+  .corporate-hero-text,
+  .corporate-subtitle {
+    color: #4a4a5a !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+/* --- MOBILE NAVIGATION IMPROVEMENTS --- */
+@media (max-width: 768px) {
+
+  .mobile-nav,
+  .mobile-menu {
+    padding-top: 1rem !important;
+  }
+
+  .mobile-nav-links a,
+  .mobile-menu a {
+    padding: 0.875rem 1rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* Ensure Sign Up button in menu is not overlapped */
+  .mobile-nav .primary-btn,
+  .mobile-menu .primary-btn,
+  .mobile-nav .btn-primary,
+  .mobile-menu .btn-primary {
+    margin-bottom: 80px !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+}
+
+/* --- BUTTON TAP TARGETS --- */
+@media (max-width: 768px) {
+
+  .primary-btn,
+  .secondary-btn,
+  .btn-primary,
+  .btn-secondary,
+  button[type="submit"],
+  .form-submit-btn {
+    min-height: 48px !important;
+    min-width: 48px !important;
+    padding: 0.875rem 1.5rem !important;
+  }
+}
+
+/* --- FORM INPUTS MOBILE --- */
+@media (max-width: 768px) {
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    /* Prevents iOS zoom */
+    padding: 0.875rem 1rem !important;
+  }
+
+  .field label,
+  .form-label {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* --- SECTION PADDING MOBILE --- */
+@media (max-width: 768px) {
+
+  .section,
+  section {
+    padding: 2.5rem 1rem !important;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .section,
+  section {
+    padding: 2rem 0.75rem !important;
+  }
+}
+
+/* --- CATEGORY TABS MOBILE --- */
+@media (max-width: 768px) {
+
+  .category-tabs,
+  .filter-tabs,
+  .pill-group {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+
+  .category-tab,
+  .filter-tab,
+  .pill {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.85rem !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+/* --- FOOTER MOBILE FIXES --- */
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1rem !important;
+  }
+
+  .footer-grid {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  .footer-section {
+    text-align: center !important;
+  }
+
+  /* Add space above chatbot */
+  .footer-bottom {
+    margin-bottom: 70px !important;
+  }
+}
+
+/* --- BOOKING PAGE MOBILE --- */
+@media (max-width: 768px) {
+  .booking-grid {
+    padding: 0 0.5rem !important;
+  }
+
+  .booking-form {
+    padding: 1.25rem !important;
+  }
+
+  .step-indicator {
+    padding: 0 0.5rem !important;
+  }
+
+  .step-circle {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .step-label {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* --- CONTACT PAGE MOBILE --- */
+@media (max-width: 768px) {
+  .contact-form {
+    padding: 1.25rem !important;
+  }
+
+  .contact-info {
+    padding: 1rem !important;
+  }
+
+  /* Ensure message field not covered by chatbot */
+  .contact-form textarea {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* --- PSYCHO-EDUCATION PAGE MOBILE --- */
+@media (max-width: 768px) {
+
+  .resources-grid,
+  .articles-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding: 0 0.75rem !important;
+  }
+
+  .resource-card,
+  .article-card {
+    margin: 0 !important;
+  }
+}
+
+/* --- ABOUT PAGE MOBILE --- */
+@media (max-width: 768px) {
+  .founder-message {
+    padding: 1.25rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .core-values-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Reduce decorative element sizes */
+  .decorative-letter,
+  .background-letter {
+    font-size: 8rem !important;
+    opacity: 0.03 !important;
+  }
+}
+
+/* --- CORPORATE PAGE MOBILE --- */
+@media (max-width: 768px) {
+  .corporate-hero {
+    padding: 3rem 1rem !important;
+  }
+
+  .corporate-services {
+    padding: 0 0.75rem !important;
+  }
+
+  .service-list li {
+    padding: 0.75rem 0 !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* --- INNER STATE CARDS CONTRAST FIX --- */
+@media (max-width: 768px) {
+
+  .inner-state-card,
+  .path-card,
+  .plateau-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .inner-state-card p,
+  .path-card p,
+  .plateau-card p {
+    color: #4a4a5a !important;
+  }
+}
+
+/* --- TIMELINE / PROCESS STEPS MOBILE --- */
+@media (max-width: 768px) {
+
+  .timeline,
+  .process-timeline {
+    padding-left: 1rem !important;
+  }
+
+  .timeline::before,
+  .process-timeline::before {
+    left: 0.5rem !important;
+    width: 2px !important;
+  }
+
+  .timeline-dot,
+  .process-dot {
+    width: 12px !important;
+    height: 12px !important;
+    left: 0 !important;
+  }
+}
+
+/* --- THERAPY CARDS LAYOUT --- */
+@media (max-width: 768px) {
+
+  .therapy-cards,
+  .therapies-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .therapy-card {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* --- PREVENT HORIZONTAL SCROLL --- */
+@media (max-width: 768px) {
+
+  body,
+  html,
+  #root,
+  .app {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  img,
+  video,
+  iframe {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* ========================================
+   HEADER LOGO IMAGE MOBILE FIX
+   ======================================== */
+@media (max-width: 768px) {
+  .brand-logo-img {
+    max-height: 32px !important;
+    max-width: 180px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-logo-img {
+    max-height: 28px !important;
+    max-width: 150px !important;
+  }
+}
+
+/* --- SAFE AREA FOR BOTTOM FIXED ELEMENTS --- */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 80px !important;
+  }
+}
+
+/* ========================================
+   TAILWIND TEXT CLASS MOBILE OVERRIDES
+   Override inline Tailwind classes for mobile
+   ======================================== */
+
+@media (max-width: 768px) {
+
+  /* Override Tailwind large text classes on mobile */
+  .text-5xl,
+  .text-6xl,
+  .text-7xl,
+  .text-8xl {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+    line-height: 1.15 !important;
+  }
+
+  .lg\:text-5xl,
+  .lg\:text-6xl,
+  .lg\:text-7xl,
+  .lg\:text-8xl {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+  }
+
+  .xl\:text-7xl,
+  .xl\:text-8xl {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+  }
+
+  /* Target font-display headings specifically */
+  .font-display {
+    line-height: 1.2 !important;
+  }
+
+  /* Section titles */
+  .text-4xl {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+
+  .lg\:text-4xl,
+  .lg\:text-5xl {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+
+  /* Medium headings */
+  .text-3xl {
+    font-size: clamp(1.25rem, 5vw, 1.75rem) !important;
+  }
+
+  .text-2xl {
+    font-size: clamp(1.125rem, 4.5vw, 1.5rem) !important;
+  }
+
+  /* Body text */
+  .text-xl {
+    font-size: 1rem !important;
+  }
+
+  .text-lg {
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .text-5xl,
+  .text-6xl,
+  .text-7xl,
+  .text-8xl,
+  .lg\:text-5xl,
+  .lg\:text-6xl,
+  .lg\:text-7xl,
+  .lg\:text-8xl {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+
+  .text-4xl,
+  .lg\:text-4xl {
+    font-size: clamp(1.25rem, 5.5vw, 1.5rem) !important;
+  }
+
+  .text-3xl {
+    font-size: clamp(1.125rem, 4.5vw, 1.35rem) !important;
+  }
+
+  .text-2xl {
+    font-size: clamp(1rem, 4vw, 1.25rem) !important;
+  }
+}
+
+/* ========================================
+   HOMEPAGE-SPECIFIC MOBILE FIXES
+   ======================================== */
+
+@media (max-width: 768px) {
+
+  /* Hero section */
+  section.min-h-screen {
+    min-height: auto !important;
+    padding-top: 2rem !important;
+  }
+
+  /* Brand/Logo in Navbar (HomePage internal nav) */
+  nav .font-display.text-2xl {
+    font-size: 1.25rem !important;
+  }
+
+  /* Stats numbers */
+  .text-7xl.font-display {
+    font-size: 3rem !important;
+  }
+
+  /* Grid adjustments */
+  .grid.lg\:grid-cols-2,
+  .grid.md\:grid-cols-2,
+  .grid.lg\:grid-cols-12 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Padding adjustments */
+  .px-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .py-24,
+  .py-32 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* Inner State dark section */
+  section.bg-slate-900 .text-5xl,
+  section.bg-slate-900 .lg\:text-7xl {
+    font-size: clamp(2rem, 7vw, 2.5rem) !important;
+  }
+
+  /* Cards in dark section */
+  section.bg-slate-900 .grid.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* FAQ section */
+  #faqs .lg\:col-span-4,
+  #faqs .lg\:col-span-8 {
+    grid-column: span 1 !important;
+  }
+
+  /* Process section */
+  .lg\:sticky {
+    position: relative !important;
+  }
+
+  .lg\:top-32 {
+    top: 0 !important;
+  }
+
+  /* Journey section cards */
+  .glass-card {
+    padding: 1.25rem !important;
+  }
+
+  .glass-card .text-2xl {
+    font-size: 1.15rem !important;
+  }
+}
+
+/* ========================================
+   ABOUT PAGE BRAND LOGO MOBILE
+   ======================================== */
+@media (max-width: 768px) {
+
+  /* Reduce brand logo + text combo */
+  .group .flex-col .font-display.text-2xl,
+  a.group .font-display.text-2xl {
+    font-size: 1.1rem !important;
+  }
+
+  /* Icon container size */
+  .group .w-10.h-10 {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .group .w-10.h-10 svg,
+  .group .w-10.h-10 .w-5.h-5 {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* The "by Parnika" text */
+  .group .text-\[10px\] {
+    font-size: 8px !important;
+  }
+}
+
+/* ========================================
+   ADDITIONAL UTILITY FIXES
+   ======================================== */
+@media (max-width: 768px) {
+
+  /* Ensure rounded corners don't break on small screens */
+  .rounded-\[2rem\],
+  .rounded-\[3rem\] {
+    border-radius: 1rem !important;
+  }
+
+  /* Reduce large gaps */
+  .gap-12,
+  .gap-16 {
+    gap: 1.5rem !important;
+  }
+
+  .lg\:gap-16 {
+    gap: 1.5rem !important;
+  }
+
+  /* Padding reductions */
+  .p-8,
+  .p-10,
+  .p-12 {
+    padding: 1.25rem !important;
+  }
+
+  .lg\:p-24 {
+    padding: 1.5rem !important;
+  }
+
+  /* Margin adjustments */
+  .mb-8,
+  .mb-10 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .mb-16,
+  .mb-20,
+  .mb-24 {
+    margin-bottom: 2rem !important;
+  }
+
+  /* Max-width containers */
+  .max-w-2xl,
+  .max-w-xl,
+  .max-w-lg {
+    max-width: 100% !important;
   }
 }
