@@ -1,0 +1,36 @@
+/* Cursor Glitter Effect - Subtle ambient particle trail */
+
+.cursor-glitter-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    /* Never block interaction */
+    z-index: 9999;
+    /* On top of everything */
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .cursor-glitter-canvas {
+        display: none;
+    }
+}
+
+/* Hide on mobile/small screens */
+@media (max-width: 768px) {
+    .cursor-glitter-canvas {
+        display: none;
+    }
+}
+
+/* Hide on touch devices - handled in JS but CSS backup */
+@media (hover: none) {
+    .cursor-glitter-canvas {
+        display: none;
+    }
+}
