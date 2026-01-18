@@ -1,17 +1,10 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create transporter with environment variables
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-};
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Helper for 'from' address
+const getFromAddress = () => process.env.EMAIL_FROM || 'onboarding@resend.dev';
 
 /**
  * Send password reset email
@@ -21,8 +14,6 @@ const createTransporter = () => {
  * @param {boolean} isAdmin - Whether this is for admin
  */
 async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = false) {
-  const transporter = createTransporter();
-
   const subject = isAdmin
     ? 'MindSettler Admin - Password Reset Request'
     : 'MindSettler - Password Reset Request';
@@ -97,26 +88,11 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
     </html>
   `;
 
-  const text = `
-    MindSettler - Password Reset Request
-
-    Hi ${name},
-
-    We received a request to reset your password. Click the link below to create a new password:
-
-    ${resetUrl}
-
-    This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
-
-    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-  `;
-
   try {
-    await transporter.sendMail({
-      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: getFromAddress(),
       to,
       subject,
-      text,
       html,
     });
 
@@ -134,8 +110,6 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
  * @param {object} booking - Booking details
  */
 async function sendBookingConfirmationEmail(to, booking) {
-  const transporter = createTransporter();
-
   const subject = 'MindSettler - Your Session is Confirmed! ✓';
 
   const html = `
@@ -230,34 +204,11 @@ async function sendBookingConfirmationEmail(to, booking) {
     </html>
   `;
 
-  const text = `
-    MindSettler - Session Confirmed!
-
-    Hi ${booking.name || 'there'},
-
-    Great news! Your therapy session has been confirmed.
-
-    Booking Details:
-    - Date: ${booking.date}
-    - Time: ${booking.time}
-    - Mode: ${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}
-    - Session Type: ${booking.sessionType || 'Individual'}
-
-    ${booking.mode === 'online'
-      ? 'You will receive a meeting link via email before your session starts.'
-      : 'Please arrive 10 minutes before your scheduled time.'}
-
-    If you need to reschedule or cancel, please contact us at least 24 hours in advance.
-
-    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-  `;
-
   try {
-    await transporter.sendMail({
-      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: getFromAddress(),
       to,
       subject,
-      text,
       html,
     });
 
@@ -276,8 +227,6 @@ async function sendBookingConfirmationEmail(to, booking) {
  * @param {string} reason - Rejection reason from admin
  */
 async function sendBookingRejectionEmail(to, booking, reason) {
-  const transporter = createTransporter();
-
   const subject = 'MindSettler - Session Update';
   const reasonText = reason || 'Unfortunately, the requested time slot is not available. Please try booking a different slot.';
 
@@ -363,31 +312,11 @@ async function sendBookingRejectionEmail(to, booking, reason) {
     </html>
   `;
 
-  const text = `
-    MindSettler - Session Update
-
-    Hi ${booking.name || 'there'},
-
-    We regret to inform you that your session request could not be confirmed at this time.
-
-    Session Details:
-    - Date: ${booking.date}
-    - Time: ${booking.time}
-    - Mode: ${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}
-
-    Reason: ${reasonText}
-
-    We apologize for any inconvenience. Please feel free to book another available slot.
-
-    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-  `;
-
   try {
-    await transporter.sendMail({
-      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: getFromAddress(),
       to,
       subject,
-      text,
       html,
     });
 
@@ -399,21 +328,12 @@ async function sendBookingRejectionEmail(to, booking, reason) {
   }
 }
 
-module.exports = {
-  sendPasswordResetEmail,
-  sendBookingConfirmationEmail,
-  sendBookingRejectionEmail,
-  sendWelcomeEmail,
-};
-
 /**
  * Send welcome email to new users after signup
  * @param {string} to - Recipient email
  * @param {string} name - User's name
  */
 async function sendWelcomeEmail(to, name = 'there') {
-  const transporter = createTransporter();
-
   const subject = 'Welcome to MindSettler 🌿';
 
   const html = `
@@ -510,35 +430,11 @@ async function sendWelcomeEmail(to, name = 'there') {
     </html>
   `;
 
-  const text = `
-    Welcome to MindSettler 🌿
-
-    Hi ${name},
-
-    Thank you for joining MindSettler. We're glad you're here.
-
-    This is a space where you can slow down, reflect, and understand yourself a little better—at your own pace, without pressure or judgment.
-
-    What you can do here:
-    • Book a session when you're ready
-    • Take things at your own pace
-    • Explore resources on mental wellness
-    • Reach out whenever you need support
-
-    There's no rush. No pressure. Just a gentle space waiting when you need it.
-
-    Take care,
-    The MindSettler Team
-
-    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-  `;
-
   try {
-    await transporter.sendMail({
-      from: `"MindSettler" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: getFromAddress(),
       to,
       subject,
-      text,
       html,
     });
 
@@ -551,3 +447,9 @@ async function sendWelcomeEmail(to, name = 'there') {
   }
 }
 
+module.exports = {
+  sendPasswordResetEmail,
+  sendBookingConfirmationEmail,
+  sendBookingRejectionEmail,
+  sendWelcomeEmail,
+};

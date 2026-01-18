@@ -1,31 +1,23 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create transporter with environment variables
-const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT) || 587,
-        secure: false,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
-};
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Helper for 'from' address
+const getFromAddress = () => process.env.EMAIL_FROM || 'onboarding@resend.dev';
 
 /**
  * Send reschedule proposal email
  */
 async function sendRescheduleEmail(to, booking, newDate, newTime, message) {
-    const transporter = createTransporter();
-    const subject = 'MindSettler - Session Reschedule Proposal';
-    const adminMessage = message || 'We need to reschedule your session due to unforeseen circumstances.';
-    const userName = booking.name || 'there';
-    const oldDate = booking.date;
-    const oldTime = booking.time;
-    const year = new Date().getFullYear();
+  const subject = 'MindSettler - Session Reschedule Proposal';
+  const adminMessage = message || 'We need to reschedule your session due to unforeseen circumstances.';
+  const userName = booking.name || 'there';
+  const oldDate = booking.date;
+  const oldTime = booking.time;
+  const year = new Date().getFullYear();
 
-    const html = `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -95,7 +87,7 @@ async function sendRescheduleEmail(to, booking, newDate, newTime, message) {
 </body>
 </html>`;
 
-    const text = `MindSettler - Session Reschedule Proposal
+  const text = `MindSettler - Session Reschedule Proposal
 
 Hi ${userName},
 
@@ -114,20 +106,20 @@ We apologize for any inconvenience and thank you for your understanding.
 
 © ${year} MindSettler. All rights reserved.`;
 
-    try {
-        await transporter.sendMail({
-            from: `"MindSettler" <${process.env.SMTP_USER}>`,
-            to,
-            subject,
-            text,
-            html,
-        });
-        console.log(`Reschedule email sent to ${to}`);
-        return true;
-    } catch (error) {
-        console.error('Failed to send reschedule email:', error);
-        throw error;
-    }
+  try {
+    await resend.emails.send({
+      from: getFromAddress(),
+      to,
+      subject,
+      text,
+      html,
+    });
+    console.log(`Reschedule email sent to ${to}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send reschedule email:', error);
+    throw error;
+  }
 }
 
 module.exports = { sendRescheduleEmail };
