@@ -7,6 +7,7 @@ const crypto = require('crypto')
 const multer = require('multer')
 const connectDB = require('./config/db')
 const { GoogleGenAI } = require('@google/genai')
+const admin = require('./firebaseAdmin') // Import Firebase Admin
 
 // Models
 const Booking = require('./models/Booking')
@@ -439,6 +440,21 @@ app.post('/api/auth/reset-password', async (req, res) => {
     user.resetToken = undefined
     user.resetTokenExpiry = undefined
     await user.save()
+
+    // SYNC WITH FIREBASE AUTH
+    try {
+      if (user.firebaseUID) {
+        await admin.auth().updateUser(user.firebaseUID, {
+          password: newPassword
+        })
+        console.log(`Synced password update to Firebase for ${user.email}`)
+      }
+    } catch (firebaseError) {
+      console.error('Failed to sync password to Firebase:', firebaseError)
+      // We continue, as Mongo is updated. 
+      // But ideally we should rollback or alert. 
+      // For now, returning success but logging error.
+    }
 
     return res.json({ message: 'Password reset successful. You can now login with your new password.' })
   } catch (err) {

@@ -10,9 +10,8 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-  confirmPasswordReset,
 } from 'firebase/auth'
+import axios from 'axios'
 
 // TODO: replace these placeholder values with your actual Firebase project config
 // from Firebase Console -> Project settings -> General -> Your apps -> Web app
@@ -71,16 +70,18 @@ export async function logout() {
   await signOut(auth)
 }
 
-// Password reset using Firebase Auth
-export async function sendPasswordReset(email, continueUrl) {
-  const actionCodeSettings = continueUrl ? {
-    url: continueUrl,
-    handleCodeInApp: true
-  } : undefined
-  await firebaseSendPasswordResetEmail(auth, email, actionCodeSettings)
+// Password reset using Backend API (for styled emails)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+export async function sendPasswordReset(email) {
+  // Call backend to generate token and send styled email
+  await axios.post(`${API_URL}/auth/forgot-password`, { email })
 }
 
-
-export async function confirmReset(oobCode, newPassword) {
-  await confirmPasswordReset(auth, oobCode, newPassword)
+export async function confirmReset(token, newPassword) {
+  // Call backend to verify token and update password
+  await axios.post(`${API_URL}/auth/reset-password`, {
+    token,
+    newPassword
+  })
 }

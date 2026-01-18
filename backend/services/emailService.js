@@ -11,6 +11,25 @@ if (process.env.BREVO_API_KEY) {
 // Helper for 'from' address
 // IMPORTANT: This must match a verified "Sender" in Brevo
 const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com';
+const getWebsiteUrl = () => process.env.CLIENT_URL || 'https://mindsettler.com';
+
+// Common Styles
+const styles = {
+  body: "margin: 0; padding: 0; font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6;",
+  container: "width: 100%; max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08);",
+  header: "background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%); padding: 60px 40px; text-align: center;",
+  headerTitle: "color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; text-shadow: 0 2px 4px rgba(0,0,0,0.1);",
+  headerSubtitle: "color: rgba(255,255,255,0.95); margin: 12px 0 0; font-size: 16px; font-weight: 500;",
+  content: "padding: 40px;",
+  heading: "color: #1f2937; margin: 0 0 20px; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;",
+  text: "color: #4b5563; margin: 0 0 24px; font-size: 16px; line-height: 1.7;",
+  buttonTable: "margin: 32px 0;",
+  buttonLink: "display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; text-decoration: none; padding: 18px 48px; border-radius: 50px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease;",
+  secondaryButtonLink: "display: inline-block; background-color: #f3f4f6; color: #4b5563; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-weight: 600; font-size: 14px; margin-top: 16px; transition: background-color 0.2s;",
+  footer: "background-color: #f9fafb; padding: 32px 40px; text-align: center; border-top: 1px solid #e5e7eb;",
+  footerText: "color: #9ca3af; margin: 0 0 8px; font-size: 13px;",
+  card: "background-color: #f8fafc; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; margin-bottom: 24px;"
+};
 
 /**
  * Send password reset email
@@ -22,7 +41,7 @@ const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com'
 async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = false) {
   const subject = isAdmin
     ? 'MindSettler Admin - Password Reset Request'
-    : 'MindSettler - Password Reset Request';
+    : 'MindSettler - Reset Your Password';
 
   const html = `
     <!DOCTYPE html>
@@ -31,62 +50,45 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Password Reset</title>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <body style="${styles.body}">
       <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
+          <td align="center">
+            <div style="${styles.container}">
               <!-- Header -->
-              <tr>
-                <td style="background: linear-gradient(135deg, #6366f1, #ec4899); padding: 40px 30px; text-align: center;">
-                  <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">MindSettler</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">${isAdmin ? 'Admin Console' : 'Mental Well-being Platform'}</p>
-                </td>
-              </tr>
+              <div style="${styles.header}">
+                <h1 style="${styles.headerTitle}">MindSettler</h1>
+                <p style="${styles.headerSubtitle}">${isAdmin ? 'Admin Security' : 'Account Recovery'}</p>
+              </div>
               
               <!-- Content -->
-              <tr>
-                <td style="padding: 40px 30px;">
-                  <h2 style="color: #1a1a2e; margin: 0 0 16px; font-size: 22px;">Password Reset Request</h2>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.6;">
-                    Hi ${name},
-                  </p>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.6;">
-                    We received a request to reset your password. Click the button below to create a new password:
-                  </p>
-                  
-                  <!-- Button -->
-                  <table role="presentation" style="margin: 30px 0;">
-                    <tr>
-                      <td style="background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 8px;">
-                        <a href="${resetUrl}" style="display: inline-block; padding: 16px 40px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600;">
-                          Reset Password
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <p style="color: #94a3b8; margin: 24px 0 0; font-size: 14px; line-height: 1.6;">
-                    This link will expire in <strong>1 hour</strong>. If you didn't request a password reset, you can safely ignore this email.
-                  </p>
-                  
-                  <p style="color: #94a3b8; margin: 16px 0 0; font-size: 12px; line-height: 1.6;">
-                    If the button doesn't work, copy and paste this link into your browser:<br>
-                    <a href="${resetUrl}" style="color: #6366f1; word-break: break-all;">${resetUrl}</a>
-                  </p>
-                </td>
-              </tr>
+              <div style="${styles.content}">
+                <h2 style="${styles.heading}">Reset Password Request</h2>
+                <p style="${styles.text}">Hi ${name},</p>
+                <p style="${styles.text}">We received a request to reset your password. No worries, we can help you get back in.</p>
+                
+                <div style="text-align: center; ${styles.buttonTable}">
+                  <a href="${resetUrl}" style="${styles.buttonLink}">Reset My Password</a>
+                </div>
+                
+                <p style="${styles.text} font-size: 14px; color: #6b7280;">
+                  This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
+                </p>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f3f4f6;">
+                  <p style="font-size: 12px; color: #9ca3af; word-break: break-all; margin-bottom: 5px;">Button not working? Copy this link:</p>
+                  <a href="${resetUrl}" style="font-size: 12px; color: #6366f1;">${resetUrl}</a>
+                </div>
+              </div>
               
               <!-- Footer -->
-              <tr>
-                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
-                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-                  </p>
-                </td>
-              </tr>
-            </table>
+              <div style="${styles.footer}">
+                <p style="${styles.footerText}">© ${new Date().getFullYear()} MindSettler. All rights reserved.</p>
+                <a href="${getWebsiteUrl()}" style="${styles.secondaryButtonLink}">Visit Website</a>
+              </div>
+            </div>
           </td>
         </tr>
       </table>
@@ -117,7 +119,7 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
  * @param {object} booking - Booking details
  */
 async function sendBookingConfirmationEmail(to, booking) {
-  const subject = 'MindSettler - Your Session is Confirmed! ✓';
+  const subject = 'Session Confirmed! 🎉';
 
   const html = `
     <!DOCTYPE html>
@@ -126,84 +128,52 @@ async function sendBookingConfirmationEmail(to, booking) {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Session Confirmed</title>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <body style="${styles.body}">
       <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
-              <!-- Header -->
-              <tr>
-                <td style="background: linear-gradient(135deg, #10b981, #059669); padding: 40px 30px; text-align: center;">
-                  <div style="font-size: 48px; margin-bottom: 12px;">✓</div>
-                  <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Session Confirmed!</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">MindSettler - Mental Well-being Platform</p>
-                </td>
-              </tr>
+          <td align="center">
+            <div style="${styles.container}">
+              <div style="${styles.header} background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                <div style="font-size: 48px; margin-bottom: 10px;">✨</div>
+                <h1 style="${styles.headerTitle}">You're All Set!</h1>
+                <p style="${styles.headerSubtitle}">Your session has been successfully confirmed.</p>
+              </div>
               
-              <!-- Content -->
-              <tr>
-                <td style="padding: 40px 30px;">
-                  <h2 style="color: #1a1a2e; margin: 0 0 16px; font-size: 22px;">Hi ${booking.name || 'there'},</h2>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.6;">
-                    Great news! Your therapy session has been confirmed. Here are your booking details:
-                  </p>
-                  
-                  <!-- Booking Details Card -->
-                  <table role="presentation" style="width: 100%; background-color: #f8fafc; border-radius: 12px; margin: 24px 0;">
-                    <tr>
-                      <td style="padding: 24px;">
-                        <table role="presentation" style="width: 100%;">
-                          <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
-                              <span style="color: #94a3b8; font-size: 14px;">📅 Date</span><br>
-                              <span style="color: #1a1a2e; font-size: 16px; font-weight: 600;">${booking.date}</span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
-                              <span style="color: #94a3b8; font-size: 14px;">🕐 Time</span><br>
-                              <span style="color: #1a1a2e; font-size: 16px; font-weight: 600;">${booking.time}</span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
-                              <span style="color: #94a3b8; font-size: 14px;">📍 Mode</span><br>
-                              <span style="color: #1a1a2e; font-size: 16px; font-weight: 600;">${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}</span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 8px 0;">
-                              <span style="color: #94a3b8; font-size: 14px;">👤 Session Type</span><br>
-                              <span style="color: #1a1a2e; font-size: 16px; font-weight: 600;">${booking.sessionType || 'Individual'}</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <p style="color: #64748b; margin: 24px 0; font-size: 16px; line-height: 1.6;">
-                    ${booking.mode === 'online'
-      ? 'You will receive a meeting link via email before your session starts.'
-      : 'Please arrive 10 minutes before your scheduled time.'}
-                  </p>
-                  
-                  <p style="color: #94a3b8; margin: 24px 0 0; font-size: 14px; line-height: 1.6;">
-                    If you need to reschedule or cancel, please contact us at least 24 hours in advance.
-                  </p>
-                </td>
-              </tr>
+              <div style="${styles.content}">
+                <p style="${styles.text}">Hi ${booking.name || 'there'},</p>
+                <p style="${styles.text}">We're looking forward to seeing you. Here are the details for your upcoming session:</p>
+                
+                <div style="${styles.card}">
+                  <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px;">
+                    <span style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 600;">Date & Time</span>
+                    <span style="font-size: 18px; font-weight: 700; color: #0f172a;">${booking.date} at ${booking.time}</span>
+                  </div>
+                  <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px;">
+                    <span style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 600;">Mode</span>
+                    <span style="font-size: 16px; font-weight: 600; color: #0f172a;">${booking.mode === 'online' ? '🎥 Online Session' : '🏢 In-Person Session'}</span>
+                  </div>
+                  <div>
+                    <span style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 600;">Session Type</span>
+                    <span style="font-size: 16px; font-weight: 600; color: #0f172a;">${booking.sessionType || 'Individual Therapy'}</span>
+                  </div>
+                </div>
+
+                <div style="text-align: center; ${styles.buttonTable}">
+                  <a href="${getWebsiteUrl()}/dashboard" style="${styles.buttonLink}">View My Bookings</a>
+                </div>
+
+                 <p style="${styles.text} font-size: 14px; text-align: center;">
+                    Needed to reschedule? You can do so from your dashboard at least 24h in advance.
+                </p>
+              </div>
               
-              <!-- Footer -->
-              <tr>
-                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
-                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-                  </p>
-                </td>
-              </tr>
-            </table>
+               <div style="${styles.footer}">
+                <p style="${styles.footerText}">© ${new Date().getFullYear()} MindSettler. All rights reserved.</p>
+                <a href="${getWebsiteUrl()}" style="${styles.secondaryButtonLink}">Visit Website</a>
+              </div>
+            </div>
           </td>
         </tr>
       </table>
@@ -235,8 +205,8 @@ async function sendBookingConfirmationEmail(to, booking) {
  * @param {string} reason - Rejection reason from admin
  */
 async function sendBookingRejectionEmail(to, booking, reason) {
-  const subject = 'MindSettler - Session Update';
-  const reasonText = reason || 'Unfortunately, the requested time slot is not available. Please try booking a different slot.';
+  const subject = 'Update Regarding Your Session';
+  const reasonText = reason || 'Unfortunately, the requested time slot is no longer available.';
 
   const html = `
     <!DOCTYPE html>
@@ -245,74 +215,44 @@ async function sendBookingRejectionEmail(to, booking, reason) {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Session Update</title>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <body style="${styles.body}">
       <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
-              <!-- Header -->
-              <tr>
-                <td style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 40px 30px; text-align: center;">
-                  <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
-                  <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Session Update</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">MindSettler - Mental Well-being Platform</p>
-                </td>
-              </tr>
+          <td align="center">
+            <div style="${styles.container}">
+              <div style="${styles.header} background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                 <div style="font-size: 48px; margin-bottom: 10px;">📅</div>
+                <h1 style="${styles.headerTitle}">Session Update</h1>
+                <p style="${styles.headerSubtitle}">We couldn't confirm your request.</p>
+              </div>
               
-              <!-- Content -->
-              <tr>
-                <td style="padding: 40px 30px;">
-                  <h2 style="color: #1a1a2e; margin: 0 0 16px; font-size: 22px;">Hi ${booking.name || 'there'},</h2>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.6;">
-                    We regret to inform you that your session request could not be confirmed at this time.
-                  </p>
-                  
-                  <!-- Booking Details Card -->
-                  <table role="presentation" style="width: 100%; background-color: #fef2f2; border-radius: 12px; margin: 24px 0; border-left: 4px solid #ef4444;">
-                    <tr>
-                      <td style="padding: 24px;">
-                        <p style="color: #991b1b; font-weight: 600; margin: 0 0 8px; font-size: 14px;">SESSION DETAILS</p>
-                        <p style="color: #1a1a2e; margin: 0; font-size: 16px;">
-                          <strong>Date:</strong> ${booking.date}<br>
-                          <strong>Time:</strong> ${booking.time}<br>
-                          <strong>Mode:</strong> ${booking.mode === 'online' ? 'Online Session' : 'In-Person Session'}
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <!-- Reason Section -->
-                  <table role="presentation" style="width: 100%; background-color: #f8fafc; border-radius: 12px; margin: 24px 0;">
-                    <tr>
-                      <td style="padding: 24px;">
-                        <p style="color: #64748b; font-weight: 600; margin: 0 0 8px; font-size: 14px;">REASON FROM OUR TEAM</p>
-                        <p style="color: #1a1a2e; margin: 0; font-size: 16px; line-height: 1.6;">
-                          ${reasonText}
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <p style="color: #64748b; margin: 24px 0; font-size: 16px; line-height: 1.6;">
-                    We apologize for any inconvenience. Please feel free to book another available slot that works for you.
-                  </p>
-                  
-                  <p style="color: #94a3b8; margin: 24px 0 0; font-size: 14px; line-height: 1.6;">
-                    If you have any questions, please don't hesitate to contact us.
-                  </p>
-                </td>
-              </tr>
+              <div style="${styles.content}">
+                <p style="${styles.text}">Hi ${booking.name || 'there'},</p>
+                <p style="${styles.text}">We regret to inform you that we couldn't proceed with your specific booking request:</p>
+                
+                 <div style="${styles.card} border-left: 4px solid #ef4444;">
+                   <strong style="color: #991b1b;">${booking.date} at ${booking.time}</strong>
+                </div>
+
+                <div style="background-color: #fff1f2; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+                  <strong style="color: #9f1239; display: block; margin-bottom: 5px; font-size: 13px; text-transform: uppercase;">Message from Team</strong>
+                  <p style="margin: 0; color: #881337;">${reasonText}</p>
+                </div>
+
+                <p style="${styles.text}">Please don't be discouraged! We have other slots available that might work for you.</p>
+
+                <div style="text-align: center; ${styles.buttonTable}">
+                  <a href="${getWebsiteUrl()}/book" style="${styles.buttonLink}">Book Another Slot</a>
+                </div>
+              </div>
               
-              <!-- Footer -->
-              <tr>
-                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
-                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-                  </p>
-                </td>
-              </tr>
-            </table>
+               <div style="${styles.footer}">
+                <p style="${styles.footerText}">© ${new Date().getFullYear()} MindSettler. All rights reserved.</p>
+                <a href="${getWebsiteUrl()}" style="${styles.secondaryButtonLink}">Visit Website</a>
+              </div>
+            </div>
           </td>
         </tr>
       </table>
@@ -352,86 +292,46 @@ async function sendWelcomeEmail(to, name = 'there') {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Welcome to MindSettler</title>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <body style="${styles.body}">
       <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
-              <!-- Header -->
-              <tr>
-                <td style="background: linear-gradient(135deg, #3F2965 0%, #DD1764 100%); padding: 50px 30px; text-align: center;">
-                  <div style="font-size: 48px; margin-bottom: 16px;">🌿</div>
-                  <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">Welcome to MindSettler</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0; font-size: 16px;">A calm space to make sense of what you're feeling</p>
-                </td>
-              </tr>
+          <td align="center">
+            <div style="${styles.container}">
+              <div style="${styles.header} background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                <div style="font-size: 56px; margin-bottom: 10px;">🌿</div>
+                <h1 style="${styles.headerTitle}">Welcome Home.</h1>
+                <p style="${styles.headerSubtitle}">Your journey to mental wellness starts here.</p>
+              </div>
               
-              <!-- Content -->
-              <tr>
-                <td style="padding: 40px 30px;">
-                  <h2 style="color: #3F2965; margin: 0 0 20px; font-size: 24px;">Hi ${name},</h2>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.7;">
-                    Thank you for joining MindSettler. We're glad you're here.
-                  </p>
-                  <p style="color: #64748b; margin: 0 0 24px; font-size: 16px; line-height: 1.7;">
-                    This is a space where you can slow down, reflect, and understand yourself a little better—at your own pace, without pressure or judgment.
-                  </p>
-                  
-                  <!-- What to expect -->
-                  <table role="presentation" style="width: 100%; background: linear-gradient(135deg, rgba(63,41,101,0.04) 0%, rgba(221,23,100,0.04) 100%); border-radius: 12px; margin: 28px 0;">
-                    <tr>
-                      <td style="padding: 28px;">
-                        <p style="color: #3F2965; font-weight: 700; margin: 0 0 16px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">What you can do here</p>
-                        <table role="presentation" style="width: 100%;">
-                          <tr>
-                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
-                              <span style="color: #DD1764; margin-right: 10px;">•</span> Book a session when you're ready
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
-                              <span style="color: #DD1764; margin-right: 10px;">•</span> Take things at your own pace
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
-                              <span style="color: #DD1764; margin-right: 10px;">•</span> Explore resources on mental wellness
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 10px 0; color: #64748b; font-size: 15px; line-height: 1.5;">
-                              <span style="color: #DD1764; margin-right: 10px;">•</span> Reach out whenever you need support
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <p style="color: #64748b; margin: 24px 0; font-size: 16px; line-height: 1.7;">
-                    There's no rush. No pressure. Just a gentle space waiting when you need it.
-                  </p>
-                  
-                  <p style="color: #64748b; margin: 0; font-size: 16px; line-height: 1.7;">
-                    Take care,<br>
-                    <span style="color: #3F2965; font-weight: 600;">The MindSettler Team</span>
-                  </p>
-                </td>
-              </tr>
+              <div style="${styles.content}">
+                <p style="${styles.text}">Hi ${name},</p>
+                <p style="${styles.text}">
+                  Thank you for joining <strong>MindSettler</strong>. We've created this space for you to slow down, reflect, and prioritize your well-being without any pressure.
+                </p>
+                
+                <div style="background-color: #f5f3ff; border-radius: 16px; padding: 30px; margin: 30px 0;">
+                  <h3 style="color: #5b21b6; margin-top: 0;">What you can do here:</h3>
+                  <ul style="padding-left: 20px; color: #4c1d95; margin-bottom: 0;">
+                    <li style="margin-bottom: 10px;">🗓️ Book professional therapy sessions</li>
+                    <li style="margin-bottom: 10px;">🧘 Explore wellness resources</li>
+                    <li style="margin-bottom: 0;">💬 Connect with our support team</li>
+                  </ul>
+                </div>
+
+                <div style="text-align: center; ${styles.buttonTable}">
+                  <a href="${getWebsiteUrl()}" style="${styles.buttonLink}">Explore MindSettler</a>
+                </div>
+              </div>
               
-              <!-- Footer -->
-              <tr>
-                <td style="background-color: #f8fafc; padding: 24px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                  <p style="color: #94a3b8; margin: 0 0 8px; font-size: 13px;">
-                    Questions? Simply reply to this email or visit our website.
-                  </p>
-                  <p style="color: #94a3b8; margin: 0; font-size: 12px;">
-                    © ${new Date().getFullYear()} MindSettler. All rights reserved.
-                  </p>
-                </td>
-              </tr>
-            </table>
+               <div style="${styles.footer}">
+                <p style="${styles.footerText}">© ${new Date().getFullYear()} MindSettler. All rights reserved.</p>
+                <div style="margin-top: 20px;">
+                  <a href="${getWebsiteUrl()}" style="${styles.secondaryButtonLink}">Visit Website</a>
+                </div>
+              </div>
+            </div>
           </td>
         </tr>
       </table>
