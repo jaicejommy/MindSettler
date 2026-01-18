@@ -74,12 +74,15 @@ export default function ArticlePage() {
     const [error, setError] = useState(null)
     const [readProgress, setReadProgress] = useState(0)
 
+    // VITE_API_URL already includes /api, localhost fallback needs it added
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
     // Fetch article
     useEffect(() => {
         async function fetchArticle() {
             try {
                 setLoading(true)
-                const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles/${slug}`)
+                const response = await fetch(`${apiBase}/articles/${slug}`)
 
                 if (!response.ok) {
                     throw new Error('Article not found')

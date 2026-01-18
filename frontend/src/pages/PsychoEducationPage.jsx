@@ -15,10 +15,13 @@ export default function PsychoEducationPage() {
   const [loading, setLoading] = useState(true)
 
   // Fetch articles from API
+  // VITE_API_URL already includes /api, localhost fallback needs it added
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles`)
+        const response = await fetch(`${apiBase}/articles`)
 
         if (response.ok) {
           const data = await response.json()
