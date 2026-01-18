@@ -148,6 +148,7 @@ function Header() {
 
   const [firebaseUser, setFirebaseUser] = useState(null)
   const [accountUser, setAccountUser] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true) // Track auth loading state
 
   // Notifications state
   const [messages, setMessages] = useState([])
@@ -160,6 +161,7 @@ function Header() {
       setAccountUser(null)
       setMessages([])
       setUnreadCount(0)
+      setAuthLoading(false) // Auth check complete
 
       if (user) {
         try {
@@ -867,8 +869,8 @@ function Header() {
             </div>
           )}
 
-          {/* Profile Button */}
-          {firebaseUser && (
+          {/* Profile Button - only show when auth is loaded and user is logged in */}
+          {!authLoading && firebaseUser && (
             <a
               href="/auth"
               onClick={(e) => {
@@ -880,15 +882,17 @@ function Header() {
             </a>
           )}
 
-          {/* Sign in / Logout */}
-          {firebaseUser ? (
-            <button type="button" onClick={handleLogout} className="nav-logout-btn">
-              Logout
-            </button>
-          ) : (
-            <a href="/auth">
-              <button type="button" className="nav-signin-btn">Sign in</button>
-            </a>
+          {/* Sign in / Logout - only show when auth is loaded */}
+          {!authLoading && (
+            firebaseUser ? (
+              <button type="button" onClick={handleLogout} className="nav-logout-btn">
+                Logout
+              </button>
+            ) : (
+              <a href="/auth">
+                <button type="button" className="nav-signin-btn">Sign in</button>
+              </a>
+            )
           )}
 
           {/* Admin Button */}
@@ -1008,6 +1012,45 @@ export default function Layout({ children }) {
       <div className="app-root app-ready">
         {children}
         <Footer />
+      </div>
+    </>
+  )
+}
+
+// Admin layout - no navbar, just a back button
+export function AdminLayout({ children }) {
+  return (
+    <>
+      <div className="admin-back-bar" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '48px',
+        background: 'linear-gradient(135deg, #3f2965 0%, #6b5b95 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        paddingLeft: '1rem',
+        zIndex: 1000,
+      }}>
+        <a href="/" style={{
+          color: 'white',
+          textDecoration: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.9rem',
+          fontWeight: 500,
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Website
+        </a>
+      </div>
+      <div style={{ paddingTop: '48px', minHeight: '100vh' }}>
+        {children}
       </div>
     </>
   )

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import './CursorGlitter.css';
 
 /**
@@ -155,12 +156,14 @@ const CursorGlitter = () => {
     // Don't render on mobile/touch
     if (shouldDisable()) return null;
 
-    return (
+    // Use a portal to render outside the React root, avoiding z-index/transform stacking context issues
+    return ReactDOM.createPortal(
         <canvas
             ref={canvasRef}
             className="cursor-glitter-canvas"
             aria-hidden="true"
-        />
+        />,
+        document.body
     );
 };
 

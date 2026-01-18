@@ -7,7 +7,7 @@ import './reel.css'
 import './no-step-labels.css'
 import './fix-interactions.css'
 import './carousel-reset.css'
-import Layout from './components/Layout'
+import Layout, { AdminLayout } from './components/Layout'
 import IntroPage from './pages/IntroPage'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -84,14 +84,14 @@ function App() {
         <Route path="/therapy/:id" element={<Layout><TherapyArticlePage /></Layout>} />
 
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/admin" element={<AdminLayout><AdminLoginPage /></AdminLayout>} />
         <Route path="/admin/dashboard" element={
           <AdminProtectedRoute>
-            <AdminDashboardPage />
+            <AdminLayout><AdminDashboardPage /></AdminLayout>
           </AdminProtectedRoute>
         } />
-        <Route path="/admin/forgot-password" element={<AdminForgotPasswordPage />} />
-        <Route path="/admin/reset-password" element={<AdminResetPasswordPage />} />
+        <Route path="/admin/forgot-password" element={<AdminLayout><AdminForgotPasswordPage /></AdminLayout>} />
+        <Route path="/admin/reset-password" element={<AdminLayout><AdminResetPasswordPage /></AdminLayout>} />
       </Routes>
       <ChatBot />
     </>
