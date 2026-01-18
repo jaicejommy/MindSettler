@@ -890,6 +890,11 @@ function Header() {
               <button type="button" className="nav-signin-btn">Sign in</button>
             </a>
           )}
+
+          {/* Admin Button */}
+          <a href="/admin">
+            <button type="button" className="nav-admin-btn">Admin</button>
+          </a>
         </div>
       </div>
     </header>

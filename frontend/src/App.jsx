@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import './design-system.css'
 import './overrides.css'
@@ -26,6 +26,18 @@ import ArticlePage from './pages/ArticlePage'
 import TherapiesPage from './pages/TherapiesPage'
 import TherapyArticlePage from './pages/TherapyArticlePage'
 import ChatBot from './components/ChatBot'
+
+// Admin pages
+import AdminLoginPage from './pages/admin/AdminLoginPage'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import AdminForgotPasswordPage from './pages/admin/AdminForgotPasswordPage'
+import AdminResetPasswordPage from './pages/admin/AdminResetPasswordPage'
+
+// Protected route for admin dashboard
+function AdminProtectedRoute({ children }) {
+  const isAdminAuthed = Boolean(localStorage.getItem('mindsettler_admin_token'))
+  return isAdminAuthed ? children : <Navigate to="/admin" replace />
+}
 
 function App() {
   const location = useLocation()
@@ -70,6 +82,16 @@ function App() {
         <Route path="/article/:slug" element={<Layout><ArticlePage /></Layout>} />
         <Route path="/therapies" element={<Layout><TherapiesPage /></Layout>} />
         <Route path="/therapy/:id" element={<Layout><TherapyArticlePage /></Layout>} />
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/admin/dashboard" element={
+          <AdminProtectedRoute>
+            <AdminDashboardPage />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/forgot-password" element={<AdminForgotPasswordPage />} />
+        <Route path="/admin/reset-password" element={<AdminResetPasswordPage />} />
       </Routes>
       <ChatBot />
     </>
@@ -77,3 +99,4 @@ function App() {
 }
 
 export default App
+

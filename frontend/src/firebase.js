@@ -72,8 +72,12 @@ export async function logout() {
 }
 
 // Password reset using Firebase Auth
-export async function sendPasswordReset(email) {
-  await firebaseSendPasswordResetEmail(auth, email)
+export async function sendPasswordReset(email, continueUrl) {
+  const actionCodeSettings = continueUrl ? {
+    url: continueUrl,
+    handleCodeInApp: true
+  } : undefined
+  await firebaseSendPasswordResetEmail(auth, email, actionCodeSettings)
 }
 
 
