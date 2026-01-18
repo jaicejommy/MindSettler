@@ -601,24 +601,26 @@ function Header() {
 
               {/* Mobile Nav Auth Buttons */}
               <div className="mobile-nav-auth">
-                {firebaseUser ? (
-                  <>
-                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
-                      Profile
-                    </a>
-                    <button type="button" onClick={handleLogout} className="mobile-nav-btn-primary">
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
-                      Login
-                    </a>
-                    <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-primary">
-                      Sign Up Now
-                    </a>
-                  </>
+                {!authLoading && (
+                  firebaseUser ? (
+                    <>
+                      <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
+                        Profile
+                      </a>
+                      <button type="button" onClick={handleLogout} className="mobile-nav-btn-primary">
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-outline">
+                        Login
+                      </a>
+                      <a href="/auth" onClick={closeMobileMenu} className="mobile-nav-btn-primary">
+                        Sign Up Now
+                      </a>
+                    </>
+                  )
                 )}
               </div>
             </nav>
