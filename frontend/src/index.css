@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import './stats-layout.css';
 @import './scroll-animations.css';
 @import './components/ChatBot.css';
@@ -5003,7 +5004,7 @@ textarea {
 /* ============================================ */
 
 /* Admin Portal Styles - MindSettler */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 
 :root {
   /* Brand Colors - Premium Palette */
@@ -7182,6 +7183,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .nav-admin-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(63, 41, 101, 0.35);
@@ -7208,6 +7210,7 @@ body {
   border: none !important;
   border-bottom: none !important;
 }
+
 .admin-login-page .forgot-password-link::before,
 .admin-login-page .forgot-password-link::after {
   display: none !important;
@@ -7218,13 +7221,16 @@ body {
 .admin-dashboard-page {
   padding-top: 48px !important;
 }
+
 .admin-dashboard-page .admin-sidebar {
   top: 48px !important;
   height: calc(100vh - 48px) !important;
 }
+
 .admin-dashboard-page .admin-topbar {
   top: 48px !important;
 }
+
 .admin-login-page {
   padding-top: 48px !important;
 }
@@ -7245,10 +7251,12 @@ body {
     transform: scale(0) rotate(0deg);
     opacity: 1;
   }
+
   50% {
     transform: scale(1) rotate(180deg);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(0) rotate(360deg);
     opacity: 0;
@@ -7260,6 +7268,7 @@ body {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+
   100% {
     transform: translateY(-30px) scale(0);
     opacity: 0;
@@ -7291,7 +7300,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(221, 23, 100, 0.3) 0%, transparent 8%),
     radial-gradient(circle at 80% 20%, rgba(107, 91, 149, 0.3) 0%, transparent 6%),
     radial-gradient(circle at 40% 70%, rgba(255, 107, 157, 0.3) 0%, transparent 7%),
@@ -7304,10 +7313,13 @@ body {
 }
 
 @keyframes glitter-shimmer {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.02);
@@ -7354,7 +7366,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(221, 23, 100, 0.15) 0%, transparent 8%),
     radial-gradient(circle at 80% 20%, rgba(107, 91, 149, 0.15) 0%, transparent 6%),
     radial-gradient(circle at 40% 70%, rgba(255, 107, 157, 0.15) 0%, transparent 7%);
@@ -7377,7 +7389,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(221, 23, 100, 0.15) 0%, transparent 8%),
     radial-gradient(circle at 80% 20%, rgba(107, 91, 149, 0.15) 0%, transparent 6%),
     radial-gradient(circle at 40% 70%, rgba(255, 107, 157, 0.15) 0%, transparent 7%);
@@ -7398,7 +7410,7 @@ body {
   content: '' !important;
   position: absolute !important;
   inset: 0 !important;
-  background: 
+  background:
     linear-gradient(125deg, transparent 0%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.3) 55%, transparent 100%),
     radial-gradient(circle at 50% 50%, rgba(221, 23, 100, 0.1) 0%, transparent 60%);
   background-size: 200% 200%, 100% 100%;
@@ -7416,7 +7428,11 @@ body {
 }
 
 @keyframes glitter-sweep {
-  0% { background-position: 0% 0%, 50% 50%; }
-  100% { background-position: 100% 100%, 50% 50%; }
-}
+  0% {
+    background-position: 0% 0%, 50% 50%;
+  }
 
+  100% {
+    background-position: 100% 100%, 50% 50%;
+  }
+}
