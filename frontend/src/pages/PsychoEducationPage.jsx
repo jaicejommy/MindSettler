@@ -2,52 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './ResourcesPage.css'
 
-// Fallback data if API is empty or fails - slugs match seeded articles
-const fallbackData = [
-  {
-    id: 1,
-    slug: 'understanding-anxiety-what-your-body-is-trying-to-tell-you',
-    category: 'article',
-    title: 'Understanding Anxiety: What Your Body is Trying to Tell You',
-    excerpt: "Anxiety isn't always the enemy. Sometimes it's your body's way of signaling that something needs attention."
-  },
-  {
-    id: 2,
-    slug: 'the-5-4-3-2-1-grounding-technique',
-    category: 'exercise',
-    title: 'The 5-4-3-2-1 Grounding Technique',
-    excerpt: 'A simple sensory exercise to help you return to the present moment when anxiety feels overwhelming.'
-  },
-  {
-    id: 3,
-    slug: 'setting-healthy-boundaries-without-guilt',
-    category: 'article',
-    title: 'Setting Healthy Boundaries Without Guilt',
-    excerpt: 'Learn how to establish and maintain boundaries that protect your mental well-being without feeling guilty.'
-  },
-  {
-    id: 4,
-    slug: 'body-scan-meditation-where-do-i-feel-it',
-    category: 'exercise',
-    title: 'Body Scan Meditation: Where Do I Feel It?',
-    excerpt: 'A guided practice that connects physical sensations with emotional patterns for deeper self-awareness.'
-  },
-  {
-    id: 5,
-    slug: 'emotional-hygiene-daily-practices-for-mental-wellness',
-    category: 'article',
-    title: 'Emotional Hygiene: Daily Practices for Mental Wellness',
-    excerpt: "Small, doable practices that help you check in with yourself before things feel too heavy."
-  },
-  {
-    id: 6,
-    slug: 'understanding-your-emotional-patterns',
-    category: 'video',
-    title: 'Understanding Your Emotional Patterns',
-    excerpt: 'Explore how our emotions develop patterns over time and what we can do to recognize them.'
-  }
-]
-
 const categories = [
   { id: 'all', label: 'All' },
   { id: 'article', label: 'Articles' },
@@ -68,18 +22,13 @@ export default function PsychoEducationPage() {
 
         if (response.ok) {
           const data = await response.json()
-          if (data.articles && data.articles.length > 0) {
-            setResources(data.articles)
-          } else {
-            // Use fallback if API returns empty
-            setResources(fallbackData)
-          }
+          setResources(data.articles || [])
         } else {
-          setResources(fallbackData)
+          setResources([])
         }
       } catch (err) {
         console.error('Failed to fetch articles:', err)
-        setResources(fallbackData)
+        setResources([])
       } finally {
         setLoading(false)
       }
