@@ -112,6 +112,14 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .intro-video {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+
   .intro-skip-btn {
     bottom: 20px;
     right: 20px;
@@ -139,6 +147,7 @@
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
   .intro-overlay,
   .intro-logo-floating,
   .intro-logo-centered {
@@ -176,6 +185,7 @@ body.intro-playing .brand-logo-img {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
