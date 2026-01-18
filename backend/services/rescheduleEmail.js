@@ -1,12 +1,13 @@
-const sgMail = require('@sendgrid/mail');
+const Brevo = require('@getbrevo/brevo');
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Initialize Brevo
+const apiInstance = new Brevo.TransactionalEmailsApi();
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 }
 
 // Helper for 'from' address
-// IMPORTANT: This must match a verified "Single Sender" in SendGrid
+// IMPORTANT: This must match a verified "Sender" in Brevo
 const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com';
 
 /**
@@ -110,21 +111,18 @@ We apologize for any inconvenience and thank you for your understanding.
 © ${year} MindSettler. All rights reserved.`;
 
   try {
-    const msg = {
-      to,
-      from: getFromAddress(),
-      subject,
-      text,
-      html,
-    };
-    await sgMail.send(msg);
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+    sendSmtpEmail.textContent = text;
+    sendSmtpEmail.sender = { name: "MindSettler", email: getFromAddress() };
+    sendSmtpEmail.to = [{ email: to, name: userName }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log(`Reschedule email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send reschedule email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     throw error;
   }
 }

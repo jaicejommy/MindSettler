@@ -1,14 +1,15 @@
-const sgMail = require('@sendgrid/mail');
+const Brevo = require('@getbrevo/brevo');
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Initialize Brevo
+const apiInstance = new Brevo.TransactionalEmailsApi();
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 } else {
-  console.warn('WARNING: SENDGRID_API_KEY is missing in environment variables.');
+  console.warn('WARNING: BREVO_API_KEY is missing in environment variables.');
 }
 
 // Helper for 'from' address
-// IMPORTANT: This must match a verified "Single Sender" in SendGrid
+// IMPORTANT: This must match a verified "Sender" in Brevo
 const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com';
 
 /**
@@ -94,21 +95,18 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
   `;
 
   try {
-    const msg = {
-      to,
-      from: getFromAddress(),
-      subject,
-      html,
-    };
-    await sgMail.send(msg);
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+    sendSmtpEmail.sender = { name: "MindSettler", email: getFromAddress() };
+    sendSmtpEmail.to = [{ email: to, name: name }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     console.log(`Password reset email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send password reset email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     throw error;
   }
 }
@@ -214,21 +212,18 @@ async function sendBookingConfirmationEmail(to, booking) {
   `;
 
   try {
-    const msg = {
-      to,
-      from: getFromAddress(),
-      subject,
-      html,
-    };
-    await sgMail.send(msg);
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+    sendSmtpEmail.sender = { name: "MindSettler", email: getFromAddress() };
+    sendSmtpEmail.to = [{ email: to, name: booking.name || 'User' }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     console.log(`Booking confirmation email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send booking confirmation email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     throw error;
   }
 }
@@ -326,21 +321,18 @@ async function sendBookingRejectionEmail(to, booking, reason) {
   `;
 
   try {
-    const msg = {
-      to,
-      from: getFromAddress(),
-      subject,
-      html,
-    };
-    await sgMail.send(msg);
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+    sendSmtpEmail.sender = { name: "MindSettler", email: getFromAddress() };
+    sendSmtpEmail.to = [{ email: to, name: booking.name || 'User' }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     console.log(`Booking rejection email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send booking rejection email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     throw error;
   }
 }
@@ -448,21 +440,18 @@ async function sendWelcomeEmail(to, name = 'there') {
   `;
 
   try {
-    const msg = {
-      to,
-      from: getFromAddress(),
-      subject,
-      html,
-    };
-    await sgMail.send(msg);
+    const sendSmtpEmail = new Brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+    sendSmtpEmail.sender = { name: "MindSettler", email: getFromAddress() };
+    sendSmtpEmail.to = [{ email: to, name: name }];
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     console.log(`Welcome email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send welcome email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     return false;
   }
 }
