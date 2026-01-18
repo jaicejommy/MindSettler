@@ -240,7 +240,7 @@ const Hero = ({ navigate }) => {
       <div className="max-w-screen-xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center w-full relative z-10">
         <div className="order-2 lg:order-1">
           <FadeIn delay={0.2}>
-            <h1 className="font-display text-5xl lg:text-7xl xl:text-8xl font-bold text-secondary-950 leading-[1.1] mb-6 drop-shadow-sm">
+            <h1 className="font-display text-4xl lg:text-7xl xl:text-8xl font-bold text-secondary-950 leading-[1.1] mb-6 drop-shadow-sm">
               Making sense of <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 relative">
                 what you feel.
@@ -282,7 +282,7 @@ const Stats = () => {
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40"></div>
 
       <div className="max-w-screen-xl mx-auto px-6 relative z-10">
-        <FadeIn className="text-center mb-16">
+        <FadeIn className="text-center mb-8 lg:mb-16">
           <span className="text-primary-600 font-bold tracking-widest text-sm uppercase mb-3 block">Mental Wellness by the numbers</span>
           <h2 className="text-4xl lg:text-5xl font-display font-bold text-secondary-900">Small facts, big reasons to care</h2>
         </FadeIn>

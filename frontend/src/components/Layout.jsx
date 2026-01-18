@@ -905,7 +905,7 @@ function Footer() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-800/20 rounded-full blur-[100px]"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12 lg:mb-16">
           <div className="col-span-1 md:col-span-1">
             <img
               src="/Mindsettler_logo_Final-Photoroom.png"
