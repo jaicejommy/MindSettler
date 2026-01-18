@@ -20,13 +20,16 @@
 }
 
 /* Video element - covers full viewport */
+/* Video element - covers full viewport */
 .intro-video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  background-color: #ffffff;
+  /* Prevents seeing background during loading */
 }
 
 /* Centered logo during hold phase - sized to match video end frame */
@@ -112,6 +115,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .intro-video {
+    object-fit: contain;
+    /* Show full video content on mobile, centered vertically */
+  }
+
   .intro-skip-btn {
     bottom: 20px;
     right: 20px;
@@ -139,6 +147,7 @@
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
   .intro-overlay,
   .intro-logo-floating,
   .intro-logo-centered {
@@ -176,6 +185,7 @@ body.intro-playing .brand-logo-img {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

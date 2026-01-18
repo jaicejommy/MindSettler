@@ -597,6 +597,15 @@ function Header() {
                   </span>
                   <span className="mobile-nav-text">Contact</span>
                 </a>
+
+                <a href="/admin" onClick={closeMobileMenu} className={`mobile-nav-item ${isActive('/admin') ? 'active' : ''}`}>
+                  <span className="mobile-nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                  </span>
+                  <span className="mobile-nav-text">Admin</span>
+                </a>
               </div>
 
               {/* Mobile Nav Auth Buttons */}
