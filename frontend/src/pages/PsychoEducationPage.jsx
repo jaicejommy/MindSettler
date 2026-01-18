@@ -2,63 +2,49 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './ResourcesPage.css'
 
-// Fallback data if API is empty or fails
+// Fallback data if API is empty or fails - slugs match seeded articles
 const fallbackData = [
   {
     id: 1,
-    slug: 'stress-vs-burnout',
+    slug: 'understanding-anxiety-what-your-body-is-trying-to-tell-you',
     category: 'article',
-    title: 'Stress vs. Burnout: What\'s the Difference?',
-    excerpt: 'Why feeling tired isn\'t the same as being emotionally exhausted, and how to notice early warning signs.'
+    title: 'Understanding Anxiety: What Your Body is Trying to Tell You',
+    excerpt: "Anxiety isn't always the enemy. Sometimes it's your body's way of signaling that something needs attention."
   },
   {
     id: 2,
-    slug: 'understanding-emotional-patterns',
-    category: 'video',
-    title: 'Understanding Your Emotional Patterns',
-    excerpt: 'A guided video exploring how our emotions develop patterns over time and what we can do to recognize them.'
-  },
-  {
-    id: 3,
-    slug: 'emotional-hygiene',
-    category: 'article',
-    title: 'Emotional Hygiene for Everyday Life',
-    excerpt: 'Small, doable practices that help you check in with yourself before things feel too heavy.'
-  },
-  {
-    id: 4,
-    slug: 'grounding-technique',
+    slug: 'the-5-4-3-2-1-grounding-technique',
     category: 'exercise',
     title: 'The 5-4-3-2-1 Grounding Technique',
     excerpt: 'A simple sensory exercise to help you return to the present moment when anxiety feels overwhelming.'
   },
   {
-    id: 5,
-    slug: 'healthy-boundaries',
+    id: 3,
+    slug: 'setting-healthy-boundaries-without-guilt',
     category: 'article',
-    title: 'Setting Healthy Boundaries',
-    excerpt: 'Learn how to establish and maintain boundaries that protect your mental well-being without guilt.'
+    title: 'Setting Healthy Boundaries Without Guilt',
+    excerpt: 'Learn how to establish and maintain boundaries that protect your mental well-being without feeling guilty.'
+  },
+  {
+    id: 4,
+    slug: 'body-scan-meditation-where-do-i-feel-it',
+    category: 'exercise',
+    title: 'Body Scan Meditation: Where Do I Feel It?',
+    excerpt: 'A guided practice that connects physical sensations with emotional patterns for deeper self-awareness.'
+  },
+  {
+    id: 5,
+    slug: 'emotional-hygiene-daily-practices-for-mental-wellness',
+    category: 'article',
+    title: 'Emotional Hygiene: Daily Practices for Mental Wellness',
+    excerpt: "Small, doable practices that help you check in with yourself before things feel too heavy."
   },
   {
     id: 6,
-    slug: 'body-scan',
-    category: 'exercise',
-    title: 'Body Scan: Where Do I Feel It?',
-    excerpt: 'A guided prompt that connects physical sensations with emotional patterns for deeper self-awareness.'
-  },
-  {
-    id: 7,
-    slug: 'mindful-breathing',
+    slug: 'understanding-your-emotional-patterns',
     category: 'video',
-    title: 'Mindful Breathing: A 10-Minute Practice',
-    excerpt: 'Follow along with this calming video to learn breathing techniques that reduce stress and anxiety.'
-  },
-  {
-    id: 8,
-    slug: 'journaling-prompts',
-    category: 'exercise',
-    title: 'Journaling Prompts for Self-Reflection',
-    excerpt: 'Thoughtful questions to help you explore your feelings and gain clarity on what matters most.'
+    title: 'Understanding Your Emotional Patterns',
+    excerpt: 'Explore how our emotions develop patterns over time and what we can do to recognize them.'
   }
 ]
 
