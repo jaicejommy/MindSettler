@@ -797,6 +797,47 @@ app.get('/api/me/bookings', firebaseAuth, async (req, res) => {
   }
 })
 
+// Get current user profile (syncs with Firebase)
+app.get('/api/me', firebaseAuth, async (req, res) => {
+  try {
+    const email = (req.user && req.user.email) || (req.firebaseUser && req.firebaseUser.email)
+    const firebaseUID = (req.user && req.user.uid) || (req.firebaseUser && req.firebaseUser.uid)
+    const name = (req.user && req.user.name) || (req.firebaseUser && req.firebaseUser.name) || 'User'
+
+    if (!email) {
+      return res.status(400).json({ message: 'No email associated with this user' })
+    }
+
+    let user = await User.findOne({ email: email.toLowerCase() })
+
+    if (!user) {
+      // Create new user if not found
+      user = await User.create({
+        name,
+        email: email.toLowerCase(),
+        firebaseUID,
+        role: 'user', // Default role
+        preferences: {
+          emailNotifications: true,
+          smsNotifications: false,
+        },
+      })
+      console.log(`Created new user for ${email}`)
+    }
+
+    // Ensure firebaseUID is set if it was missing (migration)
+    if (user && !user.firebaseUID && firebaseUID) {
+      user.firebaseUID = firebaseUID
+      await user.save()
+    }
+
+    return res.json({ user })
+  } catch (err) {
+    console.error('Failed to sync user', err)
+    return res.status(500).json({ message: 'Failed to sync user' })
+  }
+})
+
 // Get authenticated user's messages
 app.get('/api/me/messages', firebaseAuth, async (req, res) => {
   try {
