@@ -238,7 +238,7 @@ function AdminDashboardPage() {
         coverImage: '',
         excerpt: '',
         content: '',
-        isPublished: false,
+        isPublished: true,
         tags: ''
     })
     const [editingArticle, setEditingArticle] = useState(null)
@@ -559,7 +559,7 @@ function AdminDashboardPage() {
             coverImage: '',
             excerpt: '',
             content: '',
-            isPublished: false,
+            isPublished: true,
             tags: ''
         })
     }
