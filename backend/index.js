@@ -823,6 +823,13 @@ app.get('/api/me', firebaseAuth, async (req, res) => {
         },
       })
       console.log(`Created new user for ${email}`)
+
+      // Send welcome email
+      try {
+        await sendWelcomeEmail(email, name)
+      } catch (emailErr) {
+        console.error('Failed to send welcome email:', emailErr)
+      }
     }
 
     // Ensure firebaseUID is set if it was missing (migration)
