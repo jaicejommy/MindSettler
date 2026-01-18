@@ -1,10 +1,15 @@
-const { Resend } = require('resend');
+const sgMail = require('@sendgrid/mail');
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+} else {
+  console.warn('WARNING: SENDGRID_API_KEY is missing in environment variables.');
+}
 
 // Helper for 'from' address
-const getFromAddress = () => process.env.EMAIL_FROM || 'onboarding@resend.dev';
+// IMPORTANT: This must match a verified "Single Sender" in SendGrid
+const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com';
 
 /**
  * Send password reset email
@@ -89,17 +94,21 @@ async function sendPasswordResetEmail(to, resetUrl, name = 'User', isAdmin = fal
   `;
 
   try {
-    await resend.emails.send({
-      from: getFromAddress(),
+    const msg = {
       to,
+      from: getFromAddress(),
       subject,
       html,
-    });
+    };
+    await sgMail.send(msg);
 
     console.log(`Password reset email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send password reset email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
     throw error;
   }
 }
@@ -205,17 +214,21 @@ async function sendBookingConfirmationEmail(to, booking) {
   `;
 
   try {
-    await resend.emails.send({
-      from: getFromAddress(),
+    const msg = {
       to,
+      from: getFromAddress(),
       subject,
       html,
-    });
+    };
+    await sgMail.send(msg);
 
     console.log(`Booking confirmation email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send booking confirmation email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
     throw error;
   }
 }
@@ -313,17 +326,21 @@ async function sendBookingRejectionEmail(to, booking, reason) {
   `;
 
   try {
-    await resend.emails.send({
-      from: getFromAddress(),
+    const msg = {
       to,
+      from: getFromAddress(),
       subject,
       html,
-    });
+    };
+    await sgMail.send(msg);
 
     console.log(`Booking rejection email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send booking rejection email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
     throw error;
   }
 }
@@ -431,18 +448,21 @@ async function sendWelcomeEmail(to, name = 'there') {
   `;
 
   try {
-    await resend.emails.send({
-      from: getFromAddress(),
+    const msg = {
       to,
+      from: getFromAddress(),
       subject,
       html,
-    });
+    };
+    await sgMail.send(msg);
 
     console.log(`Welcome email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send welcome email:', error);
-    // Don't throw - welcome email failure shouldn't break signup
+    if (error.response) {
+      console.error(error.response.body);
+    }
     return false;
   }
 }

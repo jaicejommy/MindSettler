@@ -1,10 +1,13 @@
-const { Resend } = require('resend');
+const sgMail = require('@sendgrid/mail');
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 // Helper for 'from' address
-const getFromAddress = () => process.env.EMAIL_FROM || 'onboarding@resend.dev';
+// IMPORTANT: This must match a verified "Single Sender" in SendGrid
+const getFromAddress = () => process.env.EMAIL_FROM || 'mindsettler@example.com';
 
 /**
  * Send reschedule proposal email
@@ -107,17 +110,21 @@ We apologize for any inconvenience and thank you for your understanding.
 © ${year} MindSettler. All rights reserved.`;
 
   try {
-    await resend.emails.send({
-      from: getFromAddress(),
+    const msg = {
       to,
+      from: getFromAddress(),
       subject,
       text,
       html,
-    });
+    };
+    await sgMail.send(msg);
     console.log(`Reschedule email sent to ${to}`);
     return true;
   } catch (error) {
     console.error('Failed to send reschedule email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
     throw error;
   }
 }
